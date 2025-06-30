@@ -343,27 +343,46 @@ export const postAPIFetch = async (url, body, tokenRequired = false) => {
 //   return response;
 // };
 
-export const putAPI = async (url, body) => {
+export const putAPI = async (url, body, tokenRequired = false) => {
+  let response = {
+    error: false,
+    message: "Something went wrong",
+    data: "",
+    headers: {},
+  };
+
+  console.log("PUT Request URL:", url);
+  console.log("PUT Request Body:", body);
+
   try {
-    const access_token = getAccessToken();
-    const config = {
-      headers: {
-        Authorization: access_token,
-      },
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
     };
-    const response = await axios.put(url, body, config);
-    const result = handleResponseError(response);
-    if (result.error) {
-      return { error: true, message: result.message };
+
+    // Add token if required
+    if (tokenRequired) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers["access-token"] = token; // Match backend expectation
+      }
     }
-    return { data: result, error: false };
-  } catch (res) {
-    if (res && res.response && res.response.data && res.response.data.message) {
-      return { error: true, message: res.response.data.message };
-    }
-    return { error: true, message: "Something went wrong" };
-  } finally {
+
+    const resp = await axios.put(url, body, { headers });
+
+    response.data = resp.data;
+    response.error = false;
+    response.message = "Success";
+    response.headers = resp.headers;
+
+    console.log("PUT API Response:", response);
+  } catch (ex) {
+    console.error("PUT API Error:", ex);
+    response.error = true;
+    response.message = ex?.response?.data?.message || "Request failed";
   }
+
+  return response;
 };
 
 export const put = async (url, body, headers = null) => {
@@ -393,30 +412,52 @@ export const put = async (url, body, headers = null) => {
 
 
 
-export const deleteAPI = async (url, body) => {
-  const axiosInstance = getAxiosInstance(url);
+export const deleteAPI = async (url, body, tokenRequired = false) => {
+  let response = {
+    error: false,
+    message: "Something went wrong",
+    data: "",
+    headers: {},
+  };
+
+  console.log("DELETE Request URL:", url);
+  console.log("DELETE Request Body:", body);
+
   try {
-    const access_token = getAccessToken();
-    const config = {
-      headers: {
-        Authorization: access_token,
-      },
-      data: body,
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
     };
-    const response = await axiosInstance.delete(url, config);
-    const result = handleResponseError(response);
-    if (result.error) {
-      return { error: true, message: result.message };
+
+    if (tokenRequired) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers["access-token"] = token;
+      }
     }
-    return { data: result, error: false };
-  } catch (res) {
-    if (res && res.response && res.response.data && res.response.data.message) {
-      return { error: true, message: res.response.data.message };
-    }
-    return { error: true, message: "Something went wrong" };
-  } finally {
+
+    const config = {
+      headers,
+      data: body, // axios requires `data` field for DELETE body
+    };
+
+    const resp = await axios.delete(url, config);
+
+    response.data = resp.data;
+    response.error = false;
+    response.message = "Success";
+    response.headers = resp.headers;
+
+    console.log("DELETE API Response:", response);
+  } catch (ex) {
+    console.error("DELETE API Error:", ex);
+    response.error = true;
+    response.message = ex?.response?.data?.message || "Request failed";
   }
+
+  return response;
 };
+
 export const docDeleteAPI = async (url, body, chatId) => {
   // const axiosInstance = getAxiosInstance(url);
   try {

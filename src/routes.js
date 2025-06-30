@@ -57,7 +57,7 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/Houses",
+    path: "/Houses/:userid/:username",
     name: "Houses",
     icon: "ni ni-building text-pink",
     component: <Houses/>,

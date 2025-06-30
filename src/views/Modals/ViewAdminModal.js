@@ -14,47 +14,23 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 
-const EditAdminModal = ({ handleclose, admintoedit }) => {
+const ViewAdminModal = ({ handleclose, admintoedit }) => {
   console.log(admintoedit);
   const [firstname, setfirstname] = useState(admintoedit.firstname);
   const [lastname, setlastname] = useState(admintoedit.lastname);
-  const handleadminedit = async (e) => {
-    e.preventDefault();
-    if(firstname===admintoedit.firstname&&lastname===admintoedit.lastname){
-        toastService.warn("You haven't made any changes")
-        return
-    }
-    const body = {
-      fname: firstname,
-      lname: lastname,
-    };
-
-    await updateAdminName(body, admintoedit.id); // No need to store in `response` if unused
-    toastService.success("Updated success");
-    handleclose();
-  };
-
+  const handleclosemodal=(e)=>{
+    e.preventDefault()
+    handleclose()
+  }
   return (
     <>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
-          <span
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              fontSize: "30px",
-              cursor: "pointer",
-            }}
-            onClick={handleclose}
-          >
-            &times;
-          </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Edit Admin</small>
+              <small>Details</small>
             </div>
-            <Form role="form" onSubmit={(e) => handleadminedit(e)}>
+            <Form role="form" onSubmit={(e) => handleclosemodal(e)}>
               <FormGroup className="mb-3">
                 <label>First Name</label>
                 <InputGroup className="input-group-alternative">
@@ -63,6 +39,7 @@ const EditAdminModal = ({ handleclose, admintoedit }) => {
                     type="text"
                     value={firstname}
                     onChange={(e) => setfirstname(e.target.value)}
+                    readOnly
                   />
                 </InputGroup>
               </FormGroup>
@@ -74,12 +51,13 @@ const EditAdminModal = ({ handleclose, admintoedit }) => {
                     type="text"
                     value={lastname}
                     onChange={(e) => setlastname(e.target.value)}
+                    readOnly
                   />
                 </InputGroup>
               </FormGroup>
               <div className="text-center">
                 <Button className="my-4" color="primary" type="submit">
-                  Edit
+                  Close
                 </Button>
               </div>
             </Form>
@@ -90,4 +68,4 @@ const EditAdminModal = ({ handleclose, admintoedit }) => {
   );
 };
 
-export default EditAdminModal;
+export default ViewAdminModal;

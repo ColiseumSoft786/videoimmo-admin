@@ -39,11 +39,43 @@ import {
   Row,
   UncontrolledTooltip,
 } from "reactstrap";
+import EditAdminModal from "./Modals/EditAdminModal";
+import ViewAdminModal from "./Modals/ViewAdminModal";
+import { deleteAdmin } from "Api/Admins";
+import toastService from "Toaster/toaster";
 // core components
 
 const Admins = () => {
     const [admins,setadmins]=useState([])
     const [isloading,setisloading] = useState(true)
+    const [isediting,setisediting] = useState(false)
+    const [isviewing,setisviewing] = useState(false)
+    const [isdeleted,setisdeleted] = useState(false)
+    const [main,setmain] = useState(null)
+    const handleeditclick = (e,id,firstname,lastname)=>{
+      e.preventDefault()
+      console.log('main id',id)
+      const admintoedit = {
+        id:id,
+        firstname:firstname,
+        lastname:lastname
+      }
+      console.log('in admin ',admintoedit)
+      setmain(admintoedit)
+      setisediting(true)
+    }
+    const handleviewclick = (e,id,firstname,lastname)=>{
+      e.preventDefault()
+      console.log('main id',id)
+      const admintoedit = {
+        id:id,
+        firstname:firstname,
+        lastname:lastname
+      }
+      console.log('in admin ',admintoedit)
+      setmain(admintoedit)
+      setisviewing(true)
+    }
     const handlegetalladmins = async()=>{
         try {
             const response = await GetAllAdmins()
@@ -56,12 +88,17 @@ const Admins = () => {
             console.log(error)
         }
     }
+    const handleDeleteAdmin=async(e,id)=>{
+      e.preventDefault()
+      const response = await deleteAdmin(id)
+      if(!response.error){
+        toastService.success('Admin Deleted Successfully')
+        setisdeleted(!isdeleted)
+      }
+    }
     useEffect(()=>{
         handlegetalladmins()
-    },[])
-    useEffect(()=>{
-        console.log('all admins',admins)
-    },[admins])
+    },[isediting,isdeleted])
   return (
     <>
       <Header />
@@ -109,20 +146,18 @@ const Admins = () => {
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => handleviewclick(e,admin._id,admin.fname,admin.lname)}
                           >
                             View
                           </DropdownItem>
                           <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => handleeditclick(e,admin._id,admin.fname,admin.lname)}
                           >
                             Edit
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => handleDeleteAdmin(e,admin._id)}
                           >
                             Delete
                           </DropdownItem>
@@ -139,6 +174,12 @@ const Admins = () => {
           </div>
         </Row>
       </Container>
+      {(isediting||isviewing)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh'}}>
+          {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} admintoedit={main}/>}
+          {isviewing&&<ViewAdminModal handleclose={()=>setisviewing(false)} admintoedit={main}/>}
+        </div>
+        )}
     </>
   );
 };
