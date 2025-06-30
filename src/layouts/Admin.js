@@ -25,11 +25,12 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
+import Houses from "views/Houses";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-  const isloggedin = localStorage.getItem("isLoggedIn")
+  const isloggedin = localStorage.getItem("isLoggedIn");
 
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -39,10 +40,8 @@ const Admin = (props) => {
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
-        return (
-          <Route path={prop.path} element={prop.component} key={key} />
-        );
+      if (prop.layout === "/") {
+        return <Route path={prop.path} element={prop.component} key={key} />;
       } else {
         return null;
       }
@@ -67,7 +66,7 @@ const Admin = (props) => {
         {...props}
         routes={routes}
         logo={{
-          innerLink: "/admin/index",
+          innerLink: "/index",
           imgSrc: require("../assets/img/brand/argon-react.png"),
           imgAlt: "...",
         }}
@@ -79,7 +78,12 @@ const Admin = (props) => {
         />
         <Routes>
           {getRoutes(routes)}
-          {isloggedin&&<Route path="*" element={<Navigate to="/admin/index" replace />} />}
+          {isloggedin && (
+            <>
+              <Route path="/*" element={<Navigate to="/index" replace />} />
+              <Route path="/houses/:userid/:username" element={<Houses />} />
+            </>
+          )}
         </Routes>
       </div>
     </>

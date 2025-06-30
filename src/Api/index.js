@@ -90,6 +90,52 @@ export const getAPI = async (url, tokenRequired = false) => {
 
   return response;
 };
+export const getUserHouseAPI = async (url, body, tokenRequired = false) => {
+  let response = {
+    error: false,
+    message: "Something went wrong",
+    data: "",
+    headers: {},
+  };
+
+  console.log("FORCED GET Request URL:", url);
+  console.log("FORCED GET Request Body:", body);
+
+  try {
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    };
+
+    if (tokenRequired) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers["access-token"] = token;
+      }
+    }
+
+    // Using axios.request to manually override method and attach data
+    const resp = await axios.request({
+      url,
+      method: "get",
+      headers,
+      body, 
+    });
+
+    response.data = resp.data;
+    response.error = false;
+    response.message = "Success";
+    response.headers = resp.headers;
+
+    console.log("FORCED GET API Response:", response);
+  } catch (ex) {
+    console.error("FORCED GET API Error:", ex);
+    response.error = true;
+    response.message = ex?.response?.data?.message || "Request failed";
+  }
+
+  return response;
+};
 
 
 export const getAPITool = async (baseURL, endpoint, headers = {}) => {
@@ -120,32 +166,47 @@ export const getAPITool = async (baseURL, endpoint, headers = {}) => {
   }
 };
 
-
-export const postAPI = async (url, body, tokenRequired = false, header) => {
+export const postAPI = async (url, body, tokenRequired = false) => {
   let response = {
     error: false,
     message: "Something went wrong",
     data: "",
+    headers: {},
   };
 
-  // header = {"chat-id" : "63r6 vv84y4 b489"} for example 
-  console.log("URL AT POST API : ", url);
-  console.log("BODY AT POST API : ", body)
+  console.log("URL AT POST API:", url);
+  console.log("BODY AT POST API:", body);
+
   try {
-    var resp = await axios.post(url, body, { headers: header });
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    };
+
+    if (tokenRequired) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers["access-token"] = token;
+      }
+    }
+
+    const resp = await axios.post(url, body, { headers });
+
     response.data = resp.data;
     response.headers = resp.headers;
     response.error = false;
     response.message = "Success";
-    console.log(response);
+
+    console.log("POST API Response:", response);
   } catch (ex) {
+    console.error("POST API Error:", ex);
     response.error = true;
-    response.message = "failed";
-    console.log(response);
+    response.message = ex?.response?.data?.message || "Request failed";
   }
 
   return response;
 };
+
 
 export const patchAPI = async (url, body) => {
   try {

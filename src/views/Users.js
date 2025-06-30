@@ -19,6 +19,7 @@ import { getAllUsers } from "Api/Users";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Badge,
   Card,
@@ -39,11 +40,18 @@ import {
   UncontrolledTooltip,
   Button,
 } from "reactstrap";
+import AddtoTeamModal from "./Modals/AddtoTeamModal";
+import ViewUserModal from "./Modals/ViewUserModal";
 // core components
 
 const Users = () => {
   const [users, setusers] = useState([]);
   const [isloading,setisloading] = useState(true)
+  const [usertoaddteam,setusertoaddteam]=useState(null)
+  const [isadding,setisadding] = useState(false)
+  const [usertoview,setusertoview] = useState(null)
+  const [isviewing,setisviewing] = useState(false)
+  const navigate = useNavigate()
   const handlegetallUsers = async () => {
     try {
       const response = await getAllUsers();
@@ -62,6 +70,17 @@ const Users = () => {
   useEffect(() => {
     console.log("all Users", users);
   }, [users]);
+  const handlelisthousesclick = (id,username)=>{
+    navigate(`/houses/${id}/${username}`)
+  }
+  const handleaddtoteamclick = (id)=>{
+    setusertoaddteam(id)
+    setisadding(true)
+  }
+  const handleviewClick = (user)=>{
+    setusertoview(user)
+    setisviewing(true)
+  }
   return (
     <>
       <Header />
@@ -120,8 +139,7 @@ const Users = () => {
                         <td>
                           <Button
                             color="info"
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={()=>handlelisthousesclick(user.user._id,user.user.fname)}
                           >
                             List Houses
                           </Button>
@@ -129,8 +147,7 @@ const Users = () => {
                         <td>
                           <Button
                             color="info"
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
+                            onClick={()=>handleaddtoteamclick(user.user._id)}
                           >
                             +
                           </Button>
@@ -159,7 +176,7 @@ const Users = () => {
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               <DropdownItem
                                 href="#pablo"
-                                onClick={(e) => e.preventDefault()}
+                                onClick={()=>handleviewClick(user.user)}
                               >
                                 View
                               </DropdownItem>
@@ -187,6 +204,12 @@ const Users = () => {
           </div>
         </Row>
       </Container>
+      {(isadding||isviewing)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isviewing?'5vh':'10vh',zIndex:20}}>
+          {isadding&&<AddtoTeamModal handleclose={()=>setisadding(false)} userid={usertoaddteam}/>}
+          {isviewing&&<ViewUserModal handleclose={()=>setisviewing(false)} userdetails={usertoview}/>}
+        </div>
+        )}
     </>
   );
 };

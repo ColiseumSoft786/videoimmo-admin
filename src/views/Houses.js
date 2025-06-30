@@ -16,9 +16,11 @@
 
 */
 import { getAllHouses } from "Api/Houses";
+import { getUserHouses } from "Api/Users";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import {
   Badge,
   Card,
@@ -43,26 +45,35 @@ import {
 
 const Houses = () => {
   const [houses, setHouses] = useState([]);
-  const [isloading,setisloading] = useState(true)
+  const [isloading, setisloading] = useState(true);
+  const { userid,username } = useParams();
+  const location = useLocation()
+  console.log(userid);
   const getHouseTimestamp = (createdAt) => {
-  return new Date(createdAt).getTime(); // or .valueOf()
-};
+    return new Date(createdAt).getTime(); // or .valueOf()
+  };
 
   const handlegetallHouses = async () => {
+    let response = null
+    setisloading(true)
     try {
-      const response = await getAllHouses();
-      console.log("Houses", response);
-      if (response.data.length > 0) {
-        setHouses(response.data);
-        setisloading(false)
+      if(userid){
+        response = await getUserHouses(userid)
+      }else{
+       response = await getAllHouses();
+      }
+      if (response){
+        setHouses(response.data)
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setisloading(false); // ✅ move this outside the if block
     }
   };
   useEffect(() => {
     handlegetallHouses();
-  }, []);
+  }, [userid,username,location.pathname]);
   useEffect(() => {
     console.log("all houses", houses);
   }, [houses]);
@@ -76,103 +87,120 @@ const Houses = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
-                <h3 className="mb-0">Houses</h3>
+                <h3 className="mb-0">{username?`Houses of ${username}`:'Houses'}</h3>
               </CardHeader>
-              {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Sr.#</th>
-                    <th scope="col">Thumbnail</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">House Type</th>
-                    <th scope="col">User</th>
-                    <th scope="col">View House</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {houses.map((house, index) => {
-                    return (
-                      <tr>
-                        <td>{index + 1}</td>
-                        <td>
+              {isloading ? (
+                <div
+                  style={{
+                    height: "250px",
+                    width: "100%",
+                    marginTop: "20vh",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Loader />
+                </div>
+              ) : (
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Sr.#</th>
+                      <th scope="col">Thumbnail</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">House Type</th>
+                      <th scope="col">User</th>
+                      <th scope="col">View House</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {houses?.map((house, index) => {
+                      return (
+                        <tr>
+                          <td>{index + 1}</td>
+                          <td>
                             <div
                               style={{
                                 height: "60px",
                                 width: "60px",
                                 overflow: "hidden",
-                                alignItems:'center',
-                                alignContent:"center"
+                                alignItems: "center",
+                                alignContent: "center",
                               }}
                             >
-                                {house.thumbnail!==''&& <img
-                                style={{ maxHeight: "100%", maxWidth: "100%", }}
-                                src={`https://api.videorpi.com/${house.thumbnail}`}
-                              />}
+                              {house.thumbnail !== "" && (
+                                <img
+                                  style={{
+                                    maxHeight: "100%",
+                                    maxWidth: "100%",
+                                  }}
+                                  src={`https://api.videorpi.com/${house.thumbnail}`}
+                                />
+                              )}
                             </div>
-                        </td>
-                        <td>{house.type}</td>
-                        <td>
-                          {house.houseType}
-                        </td>
-                        <td>
-                          {house?.user?.fname}
-                        </td>
-                        <td>
-                          <Button
-                            color="info"
-                            tag="a"
-                            href={`https://web.videorpi.com/v/${getHouseTimestamp(house.createdAt)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Visit
-                          </Button>
-                        </td>
-                        <td>
-                            {house.status}
-                        </td>
-                        <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              href="#pablo"
-                              role="button"
-                              size="sm"
-                              color=""
-                              onClick={(e) => e.preventDefault()}
+                          </td>
+                          <td>{house.type}</td>
+                          <td>{house.houseType}</td>
+                          <td>{house?.user?.fname}</td>
+                          <td>
+                            <Button
+                              color="info"
+                              tag="a"
+                              href={`https://web.videorpi.com/v/${getHouseTimestamp(
+                                house.createdAt
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem
+                              Visit
+                            </Button>
+                          </td>
+                          <td>{house.status}</td>
+                          <td className="text-right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
                                 href="#pablo"
+                                role="button"
+                                size="sm"
+                                color=""
                                 onClick={(e) => e.preventDefault()}
                               >
-                                View
-                              </DropdownItem>
-                              <DropdownItem
-                                href="#pablo"
-                                onClick={(e) => e.preventDefault()}
+                                <i className="fas fa-ellipsis-v" />
+                              </DropdownToggle>
+                              <DropdownMenu
+                                className="dropdown-menu-arrow"
+                                right
                               >
-                                Edit
-                              </DropdownItem>
-                              <DropdownItem
-                                href="#pablo"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Delete
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>)}
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  View
+                                </DropdownItem>
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Edit
+                                </DropdownItem>
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Delete
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
             </Card>
           </div>
         </Row>

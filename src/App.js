@@ -36,8 +36,8 @@ const App = () => {
         {!isLoggedIn && <Route path="/auth/*" element={<AuthLayout />} />}
         {isLoggedIn && (
           <>
-            <Route path="/admin/*" element={<AdminLayout />} />
-            <Route path="*" element={<Navigate to="/admin/index" replace />} />
+            <Route path="/*" element={<AdminLayout />} />
+            <Route path="/*" element={<Navigate to="/index" replace />} />
           </>
         )}
       </Routes>

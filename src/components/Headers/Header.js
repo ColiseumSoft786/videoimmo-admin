@@ -51,7 +51,7 @@ const Header = () => {
   return (
     <>
       <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
-        {window.location.pathname==='/admin/index'&&
+        {window.location.pathname==='/index'&&
         <Container fluid>
           <div className="header-body">
             {/* Card stats */}
