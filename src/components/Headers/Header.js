@@ -17,12 +17,41 @@
 */
 
 // reactstrap components
+import { getVideosLength } from "Api/dashboard";
+import { getHouseslength } from "Api/dashboard";
+import { getUserLength } from "Api/dashboard";
+import { useEffect, useState } from "react";
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 
 const Header = () => {
+  const [totalusers,settotalusers] = useState(0)
+  const [totalvideos,settotalvideos] = useState(0)
+  const [totalhouses,settotalhouses] = useState(0)
+  const getallstats = async()=>{
+    const totalusers = await getUserLength()
+    const totalvideos = await getVideosLength()
+    const totalhouses = await getHouseslength()
+    if(totalusers?.data){
+      settotalusers(totalusers?.data)
+    }
+    if(totalhouses?.data){
+      settotalhouses(totalhouses?.data)
+    }
+    if(totalvideos?.data){
+      settotalvideos(totalvideos?.data)
+    }
+    console.log(totalhouses,totalusers,totalvideos)
+  }
+  useEffect(()=>{
+   getallstats()
+  },[])
+  useEffect(()=>{
+    console.log('total videos',totalvideos)
+  },[totalvideos])
   return (
     <>
       <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
+        {window.location.pathname==='/admin/index'&&
         <Container fluid>
           <div className="header-body">
             {/* Card stats */}
@@ -36,10 +65,10 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          Traffic
+                          Total Users
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          350,897
+                          {totalusers}
                         </span>
                       </div>
                       <Col className="col-auto">
@@ -48,12 +77,6 @@ const Header = () => {
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fa fa-arrow-up" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
                   </CardBody>
                 </Card>
               </Col>
@@ -66,22 +89,16 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          New users
+                          Total Videos
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">2,356</span>
+                        <span className="h2 font-weight-bold mb-0">{totalvideos}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
-                          <i className="fas fa-chart-pie" />
+                          <i className="ni ni-button-play" />
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-danger mr-2">
-                        <i className="fas fa-arrow-down" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last week</span>
-                    </p>
                   </CardBody>
                 </Card>
               </Col>
@@ -94,56 +111,22 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          Sales
+                          Total Houses
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">924</span>
+                        <span className="h2 font-weight-bold mb-0">{totalhouses}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
-                          <i className="fas fa-users" />
+                          <i className="ni ni-building" />
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-warning mr-2">
-                        <i className="fas fa-arrow-down" /> 1.10%
-                      </span>{" "}
-                      <span className="text-nowrap">Since yesterday</span>
-                    </p>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col lg="6" xl="3">
-                <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody>
-                    <Row>
-                      <div className="col">
-                        <CardTitle
-                          tag="h5"
-                          className="text-uppercase text-muted mb-0"
-                        >
-                          Performance
-                        </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">49,65%</span>
-                      </div>
-                      <Col className="col-auto">
-                        <div className="icon icon-shape bg-info text-white rounded-circle shadow">
-                          <i className="fas fa-percent" />
-                        </div>
-                      </Col>
-                    </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fas fa-arrow-up" /> 12%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
                   </CardBody>
                 </Card>
               </Col>
             </Row>
           </div>
-        </Container>
+        </Container>}
       </div>
     </>
   );

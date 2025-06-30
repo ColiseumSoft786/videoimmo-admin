@@ -29,6 +29,7 @@ import routes from "routes.js";
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
+  const isloggedin = localStorage.getItem("isLoggedIn")
 
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -40,7 +41,7 @@ const Admin = (props) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
-          <Route path={prop.path} element={prop.component} key={key} exact />
+          <Route path={prop.path} element={prop.component} key={key} />
         );
       } else {
         return null;
@@ -78,11 +79,8 @@ const Admin = (props) => {
         />
         <Routes>
           {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/admin/index" replace />} />
+          {isloggedin&&<Route path="*" element={<Navigate to="/admin/index" replace />} />}
         </Routes>
-        <Container fluid>
-          <AdminFooter />
-        </Container>
       </div>
     </>
   );

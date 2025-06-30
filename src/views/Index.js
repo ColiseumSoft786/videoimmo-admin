@@ -66,7 +66,8 @@ const Index = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row>
+        
+        {/* <Row>
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="bg-gradient-default shadow">
               <CardHeader className="bg-transparent">
@@ -108,9 +109,9 @@ const Index = (props) => {
                   </div>
                 </Row>
               </CardHeader>
-              <CardBody>
+              <CardBody> */}
                 {/* Chart */}
-                <div className="chart">
+                {/* <div className="chart">
                   <Line
                     data={chartExample1[chartExample1Data]}
                     options={chartExample1.options}
@@ -132,9 +133,9 @@ const Index = (props) => {
                   </div>
                 </Row>
               </CardHeader>
-              <CardBody>
+              <CardBody> */}
                 {/* Chart */}
-                <div className="chart">
+                {/* <div className="chart">
                   <Bar
                     data={chartExample2.data}
                     options={chartExample2.options}
@@ -143,8 +144,8 @@ const Index = (props) => {
               </CardBody>
             </Card>
           </Col>
-        </Row>
-        <Row className="mt-5">
+        </Row> */}
+        {/* <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
               <CardHeader className="border-0">
@@ -329,7 +330,7 @@ const Index = (props) => {
               </Table>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
       </Container>
     </>
   );

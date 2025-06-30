@@ -17,14 +17,9 @@
 */
 import React from "react";
 import { useLocation, Route, Routes, Navigate } from "react-router-dom";
-// reactstrap components
 import { Container, Row, Col } from "reactstrap";
-
-// core components
 import AuthNavbar from "components/Navbars/AuthNavbar.js";
-import AuthFooter from "components/Footers/AuthFooter.js";
-
-import routes from "routes.js";
+import Login from "views/examples/Login";
 
 const Auth = (props) => {
   const mainContent = React.useRef(null);
@@ -91,14 +86,10 @@ const Auth = (props) => {
         {/* Page content */}
         <Container className="mt--8 pb-5">
           <Row className="justify-content-center">
-            <Routes>
-              {getRoutes(routes)}
-              <Route path="*" element={<Navigate to="/auth/login" replace />} />
-            </Routes>
+            <Login/>
           </Row>
         </Container>
       </div>
-      <AuthFooter />
     </>
   );
 };

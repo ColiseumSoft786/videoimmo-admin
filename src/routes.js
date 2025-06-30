@@ -22,6 +22,10 @@ import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
+import Admins from "views/Admins";
+import Users from "views/Users";
+import Videos from "views/Videos";
+import Houses from "views/Houses";
 
 var routes = [
   {
@@ -32,46 +36,39 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/Admins",
+    name: "Admins",
+    icon: "ni ni-single-02 text-orange",
+    component: <Admins/>,
+    layout: "/admin",
+  },
+  {
+    path: "/Users",
+    name: "Users",
+    icon: "ni ni-circle-08 text-yellow",
+    component: <Users/>,
+    layout: "/admin",
+  },
+  {
+    path: "/Videos",
+    name: "Videos List",
+    icon: "ni ni-button-play text-info",
+    component: <Videos/>,
+    layout: "/admin",
+  },
+  {
+    path: "/Houses",
+    name: "Houses",
+    icon: "ni ni-building text-pink",
+    component: <Houses/>,
+    layout: "/admin",
+  },
+  {
     path: "/icons",
     name: "Icons",
     icon: "ni ni-planet text-blue",
     component: <Icons />,
     layout: "/admin",
-  },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "ni ni-pin-3 text-orange",
-    component: <Maps />,
-    layout: "/admin",
-  },
-  {
-    path: "/user-profile",
-    name: "User Profile",
-    icon: "ni ni-single-02 text-yellow",
-    component: <Profile />,
-    layout: "/admin",
-  },
-  {
-    path: "/tables",
-    name: "Tables",
-    icon: "ni ni-bullet-list-67 text-red",
-    component: <Tables />,
-    layout: "/admin",
-  },
-  {
-    path: "/login",
-    name: "Login",
-    icon: "ni ni-key-25 text-info",
-    component: <Login />,
-    layout: "/auth",
-  },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
   },
 ];
 export default routes;

@@ -17,6 +17,10 @@
 */
 
 // reactstrap components
+import { loginadmin } from "Api/auth";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -31,60 +35,51 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { setisLoggedIn } from "ReduxSlices/AdminSlice";
+import toastService from "Toaster/toaster";
 
 const Login = () => {
+  const [adminEmail,setAdminEmail] = useState('')
+  const [adminPassword,setAdminPassword] = useState('')
+  const [isinvalid,setisinvalid] = useState(false)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const handleAdminLogin = async(e) =>{
+    e.preventDefault()
+    const requestbody = {
+      email:adminEmail,
+      password:adminPassword
+    }
+    const response = await loginadmin(requestbody)
+    console.log(response)
+    if(response.data.message==='Wrong'){
+      localStorage.clear()
+      toastService.warn('Wrong Credentials Please Try Again')
+      setisinvalid(true)
+      return
+    }
+    if(response.data.message==='Success'){
+      localStorage.setItem("username", response.data.user);
+      localStorage.setItem("access_token", response.data.token);
+      dispatch(setisLoggedIn(true))
+      localStorage.setItem("isLoggedIn", true);
+      toastService.success('LoggedIn Successfuly')
+      setTimeout(() => {
+        navigate('/admin/*',{replace:true})
+      }, 1000);
+    }
+  }
   return (
     <>
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
-          <CardHeader className="bg-transparent pb-5">
-            <div className="text-muted text-center mt-2 mb-3">
-              <small>Sign in with</small>
-            </div>
-            <div className="btn-wrapper text-center">
-              <Button
-                className="btn-neutral btn-icon"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/github.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Github</span>
-              </Button>
-              <Button
-                className="btn-neutral btn-icon"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/google.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Google</span>
-              </Button>
-            </div>
-          </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Or sign in with credentials</small>
+              <small>Sign in with credentials</small>
             </div>
-            <Form role="form">
+            <Form role="form" onSubmit={(e)=>handleAdminLogin(e)}>
               <FormGroup className="mb-3">
-                <InputGroup className="input-group-alternative">
+                <InputGroup className="input-group-alternative" style={{border:isinvalid?'1px solid red':undefined}}>
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
                       <i className="ni ni-email-83" />
@@ -94,11 +89,13 @@ const Login = () => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
+                    value={adminEmail}
+                    onChange={(e)=>setAdminEmail(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
               <FormGroup>
-                <InputGroup className="input-group-alternative">
+                <InputGroup className="input-group-alternative" style={{border:isinvalid?'1px solid red':undefined}}>
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
                       <i className="ni ni-lock-circle-open" />
@@ -108,10 +105,12 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    value={adminPassword}
+                    onChange={(e)=>setAdminPassword(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
-              <div className="custom-control custom-control-alternative custom-checkbox">
+              {/* <div className="custom-control custom-control-alternative custom-checkbox">
                 <input
                   className="custom-control-input"
                   id=" customCheckLogin"
@@ -123,35 +122,15 @@ const Login = () => {
                 >
                   <span className="text-muted">Remember me</span>
                 </label>
-              </div>
+              </div> */}
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
+                <Button className="my-4" color="primary" type="submit">
                   Sign in
                 </Button>
               </div>
             </Form>
           </CardBody>
         </Card>
-        <Row className="mt-3">
-          <Col xs="6">
-            <a
-              className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
-            >
-              <small>Forgot password?</small>
-            </a>
-          </Col>
-          <Col className="text-right" xs="6">
-            <a
-              className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
-            >
-              <small>Create new account</small>
-            </a>
-          </Col>
-        </Row>
       </Col>
     </>
   );
