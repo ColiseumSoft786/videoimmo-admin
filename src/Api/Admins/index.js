@@ -1,7 +1,9 @@
 import { deleteAPI } from "Api"
 import { putAPI } from "Api"
+import { postAPI } from "Api"
 import { getAPI } from "Api"
 import { DELETE_ADMIN } from "Api/apiurls"
+import { ADD_ADMIN } from "Api/apiurls"
 import { UPDATE_ADMIN_NAME } from "Api/apiurls"
 import { GET_ALL_ADMINS } from "Api/apiurls"
 
@@ -32,5 +34,14 @@ export const deleteAdmin = async(id)=>{
         return response
     } catch (error) {
         console.log('error in delete admin api',error)
+    }
+}
+export const addAdmin = async(body)=>{
+    try {
+        const response = await postAPI(ADD_ADMIN,body,true)
+        console.log('response from add admin',response)
+        return response
+    } catch (error) {
+        console.log('errors in the add admin ',error)
     }
 }

@@ -19,7 +19,7 @@ import { getAllUsers } from "Api/Users";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
   Card,
@@ -39,6 +39,7 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
+  Input,
 } from "reactstrap";
 import AddtoTeamModal from "./Modals/AddtoTeamModal";
 import ViewUserModal from "./Modals/ViewUserModal";
@@ -46,76 +47,44 @@ import EditUserModal from "./Modals/EditUserModal";
 import { deleteUser } from "Api/Users";
 import toastService from "Toaster/toaster";
 import AddUserModal from "./Modals/AddUserModal";
-import { useSelector } from "react-redux";
+import { getManagerTeam } from "Api/Users";
 // core components
 
-const Users = () => {
-  const searchtext = useSelector((state)=>state.admin.searchText)
-  const [users, setusers] = useState([]);
+const Teams = () => {
+  const {managerid} = useParams()
+  const [teams,setteams] = useState([])
+  const [selectedteam,setselectedteam] = useState('')
+  const [managers,setmanagers] = useState([])
+  const [memebers,setmembers]= useState([])
   const [isloading,setisloading] = useState(true)
-  const [usertoaddteam,setusertoaddteam]=useState(null)
-  const [isadding,setisadding] = useState(false)
-  const [isaddingUser,setisaddingUser] = useState(false)
-  const [usertoview,setusertoview] = useState(null)
-  const [isviewing,setisviewing] = useState(false)
-  const [isediting,setisediting] = useState(false)
-  const [filteredusers,setfilteredusers]= useState([])
-  const navigate = useNavigate()
-  const handlegetallUsers = async () => {
-    setisloading(true)
+  const handlegetteam= async()=>{
     try {
-      const response = await getAllUsers();
-      console.log("Users", response);
-      if (response.data.length > 0) {
-        setusers(response.data);
-        setfilteredusers(response.data)
-        setisloading(false)
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    handlegetallUsers();
-  }, [isediting]);
-  useEffect(() => {
-    console.log("all Users", users);
-  }, [users]);
-  const handlelisthousesclick = (id,username)=>{
-    navigate(`/houses/${id}/${username}`)
-  }
-  const handleaddtoteamclick = (id)=>{
-    setusertoaddteam(id)
-    setisadding(true)
-  }
-  const handleviewClick = (user)=>{
-    setusertoview(user)
-    setisviewing(true)
-  }
-  const handleEditClick = (user)=>{
-    setusertoview(user)
-    setisediting(true)
-  }
-  const handleDeleteClick = async(id,name)=>{
-    const response = await deleteUser(id)
+        setisloading(true)
+    const response = await getManagerTeam(managerid)
     if(!response.error){
-      toastService.success(`${name} Deleted Successfully`)
-      handlegetallUsers()
-    }else{
-      toastService.warn('Something went wrong')
+        const teamsarray = response.data.data
+       if(teamsarray)
+        { const selectedteamname = teamsarray[0].name
+        const managersarray = teamsarray[0].managers
+        const membersarray = teamsarray[0].members
+        setteams(teamsarray)
+        setmanagers(managersarray)
+        setmembers(membersarray)}
     }
-  }
-  const handlefilter=()=>{
-    if(users?.length>0){
-      setfilteredusers(users?.filter((user)=>user.user.fname.toLowerCase().includes(searchtext.toLowerCase())))
+    } catch (error) {
+        console.log(error)
+    } finally{
+        setisloading(false)
     }
   }
   useEffect(()=>{
-    handlefilter()
-  },[searchtext])
-  const handleTeamsClick = async(id)=>{
-    navigate(`/users/team/${id}`)
-  }
+    if(managerid){
+    handlegetteam()}
+  },[])
+  useEffect(()=>{
+    if(teams.length>0){
+    setselectedteam(teams[0].name)}
+  },[teams])
   return (
     <>
       <Header />
@@ -126,31 +95,57 @@ const Users = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
-                <h3 className="mb-0">Users</h3>
-                <Button color="info" onClick={()=>setisaddingUser(true)}>
-                  Add User
+                <h3 className="mb-0">Team</h3>
+                <div style={{display:'flex', flexDirection:'column', width:'50%',gap:'20px'}}>
+                <div style={{width:'100%', display:'flex',justifyContent:'space-between'}}>
+                    <div style={{width:'66%',marginRight:'4%'}}>
+                    <Input type="select" value={selectedteam} onChange={(e)=>setselectedteam(e.target.value)}>
+                    {teams?.map((team,index)=>{
+                        return(
+                            <option value={team.name} key={index}>{team.name}</option>
+                        )
+                    })}
+                </Input>
+                </div>
+                <Button color="info" >
+                  Add
                 </Button>
+                <Button color="info" >
+                  Edit
+                </Button>
+                </div>
+                <div style={{width:'100%', display:'flex',justifyContent:'space-between'}}>
+                    <Button color="info" >
+                  Add Member
+                </Button>
+                <Button color="info" >
+                  Add Existing Member
+                </Button>
+                <Button color="info" >
+                  Add Manager
+                </Button>
+                </div>
+                </div>
               </CardHeader>
+              <div style={{width:'100%',padding:'0 20px'}}><h3 className="mb-0">Managers</h3></div>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Sr.#</th>
                     <th scope="col">Image</th>
-                    <th scope="col">First Name</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Mobile #</th>
-                    <th scope="col">House</th>
-                    <th scope="col">Members</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredusers.map((user, index) => {
+                  {managers?.map((manager, index) => {
                     return (
                       <tr>
                         <td>{index + 1}</td>
                         <td>
-                          {user.user.image === "" ? (
+                          {manager.image === "" ? (
                             <i style={{fontSize:'25px'}} className="ni ni-circle-08"></i>
                           ) : (
                             <div
@@ -165,40 +160,16 @@ const Users = () => {
                             >
                               <img
                                 style={{ height: "100%", width: "100%", }}
-                                src={`https://api.videorpi.com/${user.user.image}`}
+                                src={`https://api.videorpi.com/${manager.image}`}
                               />
                             </div>
                           )}
                         </td>
-                        <td>{user.user.fname}</td>
+                        <td>{manager.fname}</td>
                         <td>
-                          {user.user.country_Code}-{user.user.mobile_no}
+                          {manager.country_Code}-{manager.mobile_no}
                         </td>
-                        <td>
-                          <Button
-                            color="info"
-                            onClick={()=>handlelisthousesclick(user.user._id,user.user.fname)}
-                          >
-                            List Houses
-                          </Button>
-                        </td>
-                        <td>
-                          <Button
-                            color="info"
-                            onClick={()=>handleaddtoteamclick(user.user._id)}
-                          >
-                            +
-                          </Button>
-                          {user.user.team && (
-                            <Button
-                              color="info"
-                              onClick={()=>handleTeamsClick(user.user._id)}
-                            >
-                              Teams
-                            </Button>
-                          )}
-                        </td>
-                        <td className="text-right">
+                        {/* <td className="text-right">
                           <UncontrolledDropdown>
                             <DropdownToggle
                               className="btn-icon-only text-light"
@@ -228,6 +199,56 @@ const Users = () => {
                               </DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
+                        </td> */}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>)}
+              <div style={{width:'100%',padding:'0 20px'}}><h3>Members</h3></div>
+              {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th scope="col">Sr.#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mobile #</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {memebers?.map((memeber, index) => {
+                    return (
+                      <tr>
+                        <td>{index + 1}</td>
+                        <td>
+                          {memeber.image === "" ? (
+                            <i style={{fontSize:'25px'}} className="ni ni-circle-08"></i>
+                          ) : (
+                            <div
+                              style={{
+                                height: "25px",
+                                width: "25px",
+                                borderRadius: "50%",
+                                overflow: "hidden",
+                                alignItems:'center',
+                                alignContent:"center"
+                              }}
+                            >
+                              <img
+                                style={{ height: "100%", width: "100%", }}
+                                src={`https://api.videorpi.com/${memeber.image}`}
+                              />
+                            </div>
+                          )}
+                        </td>
+                        <td>{memeber.fname}</td>
+                        <td>
+                          {memeber.country_Code}-{memeber.mobile_no}
+                        </td>
+                        <td className="text-right">
+                          <Button color="info">Delete</Button>
                         </td>
                       </tr>
                     );
@@ -238,16 +259,12 @@ const Users = () => {
           </div>
         </Row>
       </Container>
-      {(isadding||isviewing||isediting||isaddingUser)&&(
+      {/* {(isadding||isviewing||isediting||isaddingUser)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isediting||isaddingUser?'5vh':'10vh',zIndex:20}}>
-          {isadding&&<AddtoTeamModal handleclose={()=>setisadding(false)} userid={usertoaddteam}/>}
-          {isviewing&&<ViewUserModal handleclose={()=>setisviewing(false)} userdetails={usertoview}/>}
-          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview}/>}
-          {isaddingUser&&<AddUserModal handleclose={()=>setisaddingUser(false)} fetchusers = {handlegetallUsers}/>}
         </div>
-        )}
+        )} */}
     </>
   );
 };
 
-export default Users;
+export default Teams;

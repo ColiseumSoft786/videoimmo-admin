@@ -22,25 +22,15 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
   }
   return (
     <>
-      <Col lg="5" md="7">
+      <Col lg="7" md="7">
         <Card className="bg-secondary shadow border-0">
             <span style={{fontSize:'30px',position:'absolute',top:'10px',right:'10px',cursor:'pointer'}} onClick={handleclose}>&times;</span>
-          <CardBody className="px-lg-5 py-lg-2">
+          <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
               <small>Details</small>
             </div>
-            <Form role="form" onSubmit={(e) => handleclosemodal(e)}>
-              <FormGroup className="mb-3">
-                <label>Full Name</label>
-                <InputGroup className="input-group-alternative">
-                  <Input
-                    placeholder="Last name"
-                    type="text"
-                    value={userdetails.fname}
-                    readOnly
-                  />
-                </InputGroup>
-              </FormGroup>
+            <Form role="form" style={{display:'flex',gap:'5%'}} onSubmit={(e) => handleclosemodal(e)}>
+              <div style={{width:'60%'}}>
               <FormGroup className="mb-3">
                 <label>Country Code</label>
                 <InputGroup className="input-group-alternative">
@@ -74,16 +64,16 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                   />
                 </InputGroup>
               </FormGroup>
-              <FormGroup className="mb-3">
-                <label>Image</label>
-                <div>
+              </div>
+                <div style={{width:"35%",display:'grid',alignContent:'center',alignItems:'center',justifyContent:'center'}}>
+                  <div>
                     {userdetails.image === "" ? (
-                            <i style={{fontSize:'100px'}} className="ni ni-circle-08"></i>
+                            <i style={{fontSize:'15vw'}} className="ni ni-circle-08"></i>
                           ) : (
                             <div
                               style={{
-                                height: "100px",
-                                width: "100px",
+                                height: "15vw",
+                                width: "15vw",
                                 borderRadius: "50%",
                                 overflow: "hidden",
                                 alignItems:'center',
@@ -96,8 +86,9 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                               />
                             </div>
                           )}
+                          </div>
+                          <div style={{margin:'auto'}}>{userdetails.fname}</div>
                 </div>
-              </FormGroup>
             </Form>
           </CardBody>
         </Card>

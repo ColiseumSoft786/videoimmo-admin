@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import { deleteHouseById } from "Api/Houses";
 import { getAllHouses } from "Api/Houses";
 import { getUserHouses } from "Api/Users";
 import Header from "components/Headers/Header";
@@ -41,6 +42,7 @@ import {
   UncontrolledTooltip,
   Button,
 } from "reactstrap";
+import toastService from "Toaster/toaster";
 // core components
 
 const Houses = () => {
@@ -77,6 +79,15 @@ const Houses = () => {
   useEffect(() => {
     console.log("all houses", houses);
   }, [houses]);
+  const handleDeleteHouse = async(id)=>{
+    const response = await deleteHouseById(id)
+    if(!response.error){
+      toastService.success('House Deleted Successfully')
+      handlegetallHouses()
+    }else{
+      toastService.warn('Something Went Wrong')
+    }
+  }
   return (
     <>
       <Header />
@@ -182,13 +193,7 @@ const Houses = () => {
                                 </DropdownItem>
                                 <DropdownItem
                                   href="#pablo"
-                                  onClick={(e) => e.preventDefault()}
-                                >
-                                  Edit
-                                </DropdownItem>
-                                <DropdownItem
-                                  href="#pablo"
-                                  onClick={(e) => e.preventDefault()}
+                                  onClick={()=>handleDeleteHouse(house._id)}
                                 >
                                   Delete
                                 </DropdownItem>

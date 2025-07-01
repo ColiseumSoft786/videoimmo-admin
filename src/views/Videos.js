@@ -39,6 +39,8 @@ import {
   Button,
 } from "reactstrap";
 import Loader from "Loader/Loader";
+import { deleteVideoById } from "Api/Videos";
+import toastService from "Toaster/toaster";
 // core components
 
 const Videos = () => {
@@ -46,6 +48,7 @@ const Videos = () => {
   const [isloading,setisloading] = useState(true)
   const handlegetallVideos = async () => {
     try {
+      setisloading(true)
       const response = await getAllVideos();
       console.log("Users", response);
       if (response.data.length > 0) {
@@ -62,6 +65,13 @@ const Videos = () => {
   useEffect(() => {
     console.log("all videos", videos);
   }, [videos]);
+  const handleDeleteVideo = async(id)=>{
+    const response = await deleteVideoById(id)
+    if(!response.error){
+      toastService.success('Video deleted successfully')
+      handlegetallVideos()
+    }
+  }
   return (
     <>
       <Header />
@@ -124,38 +134,7 @@ const Videos = () => {
                         <td>{video.house.type}</td>
                         <td>{video.status}</td>
                         <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              href="#pablo"
-                              role="button"
-                              size="sm"
-                              color=""
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem
-                                href="#pablo"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                View
-                              </DropdownItem>
-                              <DropdownItem
-                                href="#pablo"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Edit
-                              </DropdownItem>
-                              <DropdownItem
-                                href="#pablo"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Delete
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
+                          <Button color="info" onClick={()=>handleDeleteVideo(video._id)}>Delete</Button>
                         </td>
                       </tr>
                     );

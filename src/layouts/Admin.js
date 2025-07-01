@@ -26,6 +26,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
 import Houses from "views/Houses";
+import Teams from "views/Teams";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -82,6 +83,7 @@ const Admin = (props) => {
             <>
               <Route path="/*" element={<Navigate to="/index" replace />} />
               <Route path="/houses/:userid/:username" element={<Houses />} />
+              <Route path="/users/team/:managerid" element={<Teams/>}/>
             </>
           )}
         </Routes>

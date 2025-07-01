@@ -38,19 +38,26 @@ import {
   Container,
   Row,
   UncontrolledTooltip,
+  Button,
 } from "reactstrap";
 import EditAdminModal from "./Modals/EditAdminModal";
 import ViewAdminModal from "./Modals/ViewAdminModal";
 import { deleteAdmin } from "Api/Admins";
 import toastService from "Toaster/toaster";
+import AddAdminModal from "./Modals/AddAdminModal";
+import { useAsyncError } from "react-router-dom";
+import { useSelector } from "react-redux";
 // core components
 
 const Admins = () => {
+  const searchtext = useSelector((state)=>state.admin.searchText)
     const [admins,setadmins]=useState([])
     const [isloading,setisloading] = useState(true)
     const [isediting,setisediting] = useState(false)
     const [isviewing,setisviewing] = useState(false)
     const [isdeleted,setisdeleted] = useState(false)
+    const [isadding,setisadding] = useState(false)
+    const [filteredAdmins,setFilteredAdmins] = useState([])
     const [main,setmain] = useState(null)
     const handleeditclick = (e,id,firstname,lastname)=>{
       e.preventDefault()
@@ -77,11 +84,13 @@ const Admins = () => {
       setisviewing(true)
     }
     const handlegetalladmins = async()=>{
+      setisloading(true)
         try {
             const response = await GetAllAdmins()
             console.log('admins',response)
             if(response.data.length>0){
                 setadmins(response.data)
+                setFilteredAdmins(response.data)
                 setisloading(false)
             }
         } catch (error) {
@@ -99,6 +108,14 @@ const Admins = () => {
     useEffect(()=>{
         handlegetalladmins()
     },[isediting,isdeleted])
+    const handlefilter =()=>{
+      if(admins.length>0){
+        setFilteredAdmins(admins.filter((admin)=>admin.fname.toLowerCase().includes(searchtext.toLowerCase())))
+      }
+    }
+    useEffect(()=>{
+      handlefilter()
+    },[searchtext])
   return (
     <>
       <Header />
@@ -108,8 +125,9 @@ const Admins = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0">
+              <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
                 <h3 className="mb-0">Admins</h3>
+                <Button color="info" onClick={()=>setisadding(true)}>Add Admin</Button>
               </CardHeader>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
@@ -124,7 +142,7 @@ const Admins = () => {
                   </tr>
                 </thead>
                 <tbody>
-                    {admins.map((admin,index)=>{
+                    {filteredAdmins.map((admin,index)=>{
                         return(
                             <tr>
                     <td>{index+1}</td>
@@ -174,10 +192,11 @@ const Admins = () => {
           </div>
         </Row>
       </Container>
-      {(isediting||isviewing)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh'}}>
+      {(isediting||isviewing||isadding)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
           {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} admintoedit={main}/>}
           {isviewing&&<ViewAdminModal handleclose={()=>setisviewing(false)} admintoedit={main}/>}
+          {isadding&&<AddAdminModal handleclose={()=>setisadding(false)} fetchusers={handlegetalladmins}/>}
         </div>
         )}
     </>

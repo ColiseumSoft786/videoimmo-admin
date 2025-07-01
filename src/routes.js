@@ -26,6 +26,7 @@ import Admins from "views/Admins";
 import Users from "views/Users";
 import Videos from "views/Videos";
 import Houses from "views/Houses";
+import Settings from "views/Settings";
 
 var routes = [
   {
@@ -68,6 +69,13 @@ var routes = [
     name: "Icons",
     icon: "ni ni-planet text-blue",
     component: <Icons />,
+    layout: "/",
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    icon: "ni ni-settings text-blue",
+    component: <Settings />,
     layout: "/",
   },
 ];

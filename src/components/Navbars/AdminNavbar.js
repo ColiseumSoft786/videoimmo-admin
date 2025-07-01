@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 // reactstrap components
 import {
@@ -34,17 +34,22 @@ import {
   Container,
   Media,
 } from "reactstrap";
+import { setSearchText } from "ReduxSlices/AdminSlice";
 import { setisLoggedIn } from "ReduxSlices/AdminSlice";
 
 const AdminNavbar = (props) => {
   const dispatch = useDispatch()
   const adminName = localStorage.getItem("username")
+  const searchtext = useSelector((state)=>state.admin.searchText)
   const navigate = useNavigate()
   const handleLogOut = (e) =>{
     e.preventDefault()
     localStorage.clear()
     dispatch(setisLoggedIn(false))
     navigate("/auth/login",{replace:true})
+  }
+  const handlesearch = (value)=>{
+    dispatch(setSearchText(value))
   }
   return (
     <>
@@ -57,16 +62,16 @@ const AdminNavbar = (props) => {
             {props.brandText}
           </Link>
           <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-            <FormGroup className="mb-0">
+            {(window.location.pathname==='/users'||window.location.pathname==='/admins')&&<FormGroup className="mb-0">
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
+                <Input placeholder="Search" type="text" value={searchtext} onChange={(e)=>handlesearch(e.target.value)}/>
               </InputGroup>
-            </FormGroup>
+            </FormGroup>}
           </Form>
           <Nav className="align-items-center d-none d-md-flex" navbar>
             <UncontrolledDropdown nav>
