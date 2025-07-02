@@ -43,12 +43,15 @@ import {
   Button,
 } from "reactstrap";
 import toastService from "Toaster/toaster";
+import HouseViewModal from "./Modals/HouseViewModal";
 // core components
 
 const Houses = () => {
   const [houses, setHouses] = useState([]);
   const [isloading, setisloading] = useState(true);
   const { userid,username } = useParams();
+  const [isviewing,setisviewing] = useState(false)
+  const [housetoview,sethousetoview] = useState(null)
   const location = useLocation()
   console.log(userid);
   const getHouseTimestamp = (createdAt) => {
@@ -87,6 +90,10 @@ const Houses = () => {
     }else{
       toastService.warn('Something Went Wrong')
     }
+  }
+  const handleViewClick = (house)=>{
+    sethousetoview(house)
+    setisviewing(true)
   }
   return (
     <>
@@ -186,13 +193,11 @@ const Houses = () => {
                                 right
                               >
                                 <DropdownItem
-                                  href="#pablo"
-                                  onClick={(e) => e.preventDefault()}
+                                  onClick={()=>handleViewClick(house)}
                                 >
                                   View
                                 </DropdownItem>
                                 <DropdownItem
-                                  href="#pablo"
                                   onClick={()=>handleDeleteHouse(house._id)}
                                 >
                                   Delete
@@ -210,6 +215,10 @@ const Houses = () => {
           </div>
         </Row>
       </Container>
+      {(isviewing)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
+          {isviewing&&<HouseViewModal handleclose={()=>setisviewing(false)} houseDetails={housetoview} />}
+        </div>)}
     </>
   );
 };

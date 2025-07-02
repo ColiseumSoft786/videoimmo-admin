@@ -29,12 +29,12 @@ const App = () => {
     // Re-check on location change, like after a login redirect
     dispatch(setisLoggedIn((localStorage.getItem("isLoggedIn") === "true")));
   }, [location]);
-  // useEffect(()=>{
-  //   if(!isLoggedIn){
-  //     navigate('/auth/login')
-  //     console.log('navigating to the login')
-  //   }
-  // },[])
+  useEffect(()=>{
+    if(!isLoggedIn){
+      navigate('/auth/login')
+      console.log('navigating to the login')
+    }
+  },[])
 
   return (
     <>

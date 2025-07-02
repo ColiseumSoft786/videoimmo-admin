@@ -51,40 +51,48 @@ import { getManagerTeam } from "Api/Users";
 // core components
 
 const Teams = () => {
-  const {managerid} = useParams()
-  const [teams,setteams] = useState([])
-  const [selectedteam,setselectedteam] = useState('')
-  const [managers,setmanagers] = useState([])
-  const [memebers,setmembers]= useState([])
-  const [isloading,setisloading] = useState(true)
-  const handlegetteam= async()=>{
+  const { managerid } = useParams();
+  const [teams, setteams] = useState([]);
+  const [selectedteam, setselectedteam] = useState("");
+  const [managers, setmanagers] = useState([]);
+  const [memebers, setmembers] = useState([]);
+  const [isloading, setisloading] = useState(true);
+  const handlegetteam = async () => {
     try {
-        setisloading(true)
-    const response = await getManagerTeam(managerid)
-    if(!response.error){
-        const teamsarray = response.data.data
-       if(teamsarray)
-        { const selectedteamname = teamsarray[0].name
-        const managersarray = teamsarray[0].managers
-        const membersarray = teamsarray[0].members
-        setteams(teamsarray)
-        setmanagers(managersarray)
-        setmembers(membersarray)}
-    }
+      setisloading(true);
+      const response = await getManagerTeam(managerid);
+      if (!response.error) {
+        const teamsarray = response.data.data;
+        if (teamsarray) {
+          const selectedteamname = teamsarray[0].name;
+          const managersarray = teamsarray[0].managers;
+          const membersarray = teamsarray[0].members;
+          setteams(teamsarray);
+          setmanagers(managersarray);
+          setmembers(membersarray);
+        }
+      }
     } catch (error) {
-        console.log(error)
-    } finally{
-        setisloading(false)
+      console.log(error);
+    } finally {
+      setisloading(false);
     }
-  }
-  useEffect(()=>{
-    if(managerid){
-    handlegetteam()}
-  },[])
-  useEffect(()=>{
-    if(teams.length>0){
-    setselectedteam(teams[0].name)}
-  },[teams])
+  };
+  useEffect(() => {
+    if (managerid) {
+      handlegetteam();
+    }
+  }, []);
+  useEffect(() => {
+    if (teams.length > 0) {
+      setselectedteam(teams[0].name);
+    }
+  }, [teams]);
+  const handleUserDeleteClick = async (memberid) => {
+    const requestbody = {
+        
+    }
+  };
   return (
     <>
       <Header />
@@ -94,82 +102,117 @@ const Teams = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
+              <CardHeader
+                className="border-0"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <h3 className="mb-0">Team</h3>
-                <div style={{display:'flex', flexDirection:'column', width:'50%',gap:'20px'}}>
-                <div style={{width:'100%', display:'flex',justifyContent:'space-between'}}>
-                    <div style={{width:'66%',marginRight:'4%'}}>
-                    <Input type="select" value={selectedteam} onChange={(e)=>setselectedteam(e.target.value)}>
-                    {teams?.map((team,index)=>{
-                        return(
-                            <option value={team.name} key={index}>{team.name}</option>
-                        )
-                    })}
-                </Input>
-                </div>
-                <Button color="info" >
-                  Add
-                </Button>
-                <Button color="info" >
-                  Edit
-                </Button>
-                </div>
-                <div style={{width:'100%', display:'flex',justifyContent:'space-between'}}>
-                    <Button color="info" >
-                  Add Member
-                </Button>
-                <Button color="info" >
-                  Add Existing Member
-                </Button>
-                <Button color="info" >
-                  Add Manager
-                </Button>
-                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "50%",
+                    gap: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "66%", marginRight: "4%" }}>
+                      <Input
+                        type="select"
+                        value={selectedteam}
+                        onChange={(e) => setselectedteam(e.target.value)}
+                      >
+                        {teams?.map((team, index) => {
+                          return (
+                            <option value={team.name} key={index}>
+                              {team.name}
+                            </option>
+                          );
+                        })}
+                      </Input>
+                    </div>
+                    <Button color="info">Add</Button>
+                    <Button color="info">Edit</Button>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Button color="info">Add Member</Button>
+                    <Button color="info">Add Existing Member</Button>
+                    <Button color="info">Add Manager</Button>
+                  </div>
                 </div>
               </CardHeader>
-              <div style={{width:'100%',padding:'0 20px'}}><h3 className="mb-0">Managers</h3></div>
-              {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Sr.#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Mobile #</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {managers?.map((manager, index) => {
-                    return (
-                      <tr>
-                        <td>{index + 1}</td>
-                        <td>
-                          {manager.image === "" ? (
-                            <i style={{fontSize:'25px'}} className="ni ni-circle-08"></i>
-                          ) : (
-                            <div
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                alignItems:'center',
-                                alignContent:"center"
-                              }}
-                            >
-                              <img
-                                style={{ height: "100%", width: "100%", }}
-                                src={`https://api.videorpi.com/${manager.image}`}
-                              />
-                            </div>
-                          )}
-                        </td>
-                        <td>{manager.fname}</td>
-                        <td>
-                          {manager.country_Code}-{manager.mobile_no}
-                        </td>
-                        {/* <td className="text-right">
+              <div style={{ width: "100%", padding: "0 20px" }}>
+                <h3 className="mb-0">Managers</h3>
+              </div>
+              {isloading ? (
+                <div
+                  style={{
+                    height: "250px",
+                    width: "100%",
+                    marginTop: "20vh",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Loader />
+                </div>
+              ) : (
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Sr.#</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Mobile #</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {managers?.map((manager, index) => {
+                      return (
+                        <tr>
+                          <td>{index + 1}</td>
+                          <td>
+                            {manager.image === "" ? (
+                              <i
+                                style={{ fontSize: "25px" }}
+                                className="ni ni-circle-08"
+                              ></i>
+                            ) : (
+                              <div
+                                style={{
+                                  height: "25px",
+                                  width: "25px",
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  alignItems: "center",
+                                  alignContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ height: "100%", width: "100%" }}
+                                  src={`https://api.videorpi.com/${manager.image}`}
+                                />
+                              </div>
+                            )}
+                          </td>
+                          <td>{manager.fname}</td>
+                          <td>
+                            {manager.country_Code}-{manager.mobile_no}
+                          </td>
+                          {/* <td className="text-right">
                           <UncontrolledDropdown>
                             <DropdownToggle
                               className="btn-icon-only text-light"
@@ -200,61 +243,85 @@ const Teams = () => {
                             </DropdownMenu>
                           </UncontrolledDropdown>
                         </td> */}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>)}
-              <div style={{width:'100%',padding:'0 20px'}}><h3>Members</h3></div>
-              {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Sr.#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Mobile #</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {memebers?.map((memeber, index) => {
-                    return (
-                      <tr>
-                        <td>{index + 1}</td>
-                        <td>
-                          {memeber.image === "" ? (
-                            <i style={{fontSize:'25px'}} className="ni ni-circle-08"></i>
-                          ) : (
-                            <div
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                alignItems:'center',
-                                alignContent:"center"
-                              }}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
+              <div style={{ width: "100%", padding: "0 20px" }}>
+                <h3>Members</h3>
+              </div>
+              {isloading ? (
+                <div
+                  style={{
+                    height: "250px",
+                    width: "100%",
+                    marginTop: "20vh",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Loader />
+                </div>
+              ) : (
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Sr.#</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Mobile #</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {memebers?.map((memeber, index) => {
+                      return (
+                        <tr>
+                          <td>{index + 1}</td>
+                          <td>
+                            {memeber.image === "" ? (
+                              <i
+                                style={{ fontSize: "25px" }}
+                                className="ni ni-circle-08"
+                              ></i>
+                            ) : (
+                              <div
+                                style={{
+                                  height: "25px",
+                                  width: "25px",
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  alignItems: "center",
+                                  alignContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ height: "100%", width: "100%" }}
+                                  src={`https://api.videorpi.com/${memeber.image}`}
+                                />
+                              </div>
+                            )}
+                          </td>
+                          <td>{memeber.fname}</td>
+                          <td>
+                            {memeber.country_Code}-{memeber.mobile_no}
+                          </td>
+                          <td className="text-right">
+                            <Button
+                              color="info"
+                              onClick={() => handleUserDeleteClick()}
                             >
-                              <img
-                                style={{ height: "100%", width: "100%", }}
-                                src={`https://api.videorpi.com/${memeber.image}`}
-                              />
-                            </div>
-                          )}
-                        </td>
-                        <td>{memeber.fname}</td>
-                        <td>
-                          {memeber.country_Code}-{memeber.mobile_no}
-                        </td>
-                        <td className="text-right">
-                          <Button color="info">Delete</Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>)}
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
             </Card>
           </div>
         </Row>
