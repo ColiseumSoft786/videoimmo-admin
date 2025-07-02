@@ -77,7 +77,7 @@ const Users = () => {
   };
   useEffect(() => {
     handlegetallUsers();
-  }, [isediting]);
+  }, []);
   useEffect(() => {
     console.log("all Users", users);
   }, [users]);
@@ -242,7 +242,7 @@ const Users = () => {
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isediting||isaddingUser?'5vh':'10vh',zIndex:20}}>
           {isadding&&<AddtoTeamModal handleclose={()=>setisadding(false)} userid={usertoaddteam}/>}
           {isviewing&&<ViewUserModal handleclose={()=>setisviewing(false)} userdetails={usertoview}/>}
-          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview}/>}
+          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}
           {isaddingUser&&<AddUserModal handleclose={()=>setisaddingUser(false)} fetchusers = {handlegetallUsers}/>}
         </div>
         )}

@@ -55,7 +55,6 @@ const Admins = () => {
     const [isloading,setisloading] = useState(true)
     const [isediting,setisediting] = useState(false)
     const [isviewing,setisviewing] = useState(false)
-    const [isdeleted,setisdeleted] = useState(false)
     const [isadding,setisadding] = useState(false)
     const [filteredAdmins,setFilteredAdmins] = useState([])
     const [main,setmain] = useState(null)
@@ -102,12 +101,12 @@ const Admins = () => {
       const response = await deleteAdmin(id)
       if(!response.error){
         toastService.success('Admin Deleted Successfully')
-        setisdeleted(!isdeleted)
+        handlegetalladmins()
       }
     }
     useEffect(()=>{
         handlegetalladmins()
-    },[isediting,isdeleted])
+    },[])
     const handlefilter =()=>{
       if(admins.length>0){
         setFilteredAdmins(admins.filter((admin)=>admin.fname.toLowerCase().includes(searchtext.toLowerCase())))
@@ -194,7 +193,7 @@ const Admins = () => {
       </Container>
       {(isediting||isviewing||isadding)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
-          {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} admintoedit={main}/>}
+          {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} fetchusers={handlegetalladmins} admintoedit={main}/>}
           {isviewing&&<ViewAdminModal handleclose={()=>setisviewing(false)} admintoedit={main}/>}
           {isadding&&<AddAdminModal handleclose={()=>setisadding(false)} fetchusers={handlegetalladmins}/>}
         </div>

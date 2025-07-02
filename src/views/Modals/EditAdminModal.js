@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 
-const EditAdminModal = ({ handleclose, admintoedit }) => {
+const EditAdminModal = ({ handleclose, admintoedit , fetchusers }) => {
   console.log(admintoedit);
   const [firstname, setfirstname] = useState(admintoedit.firstname);
   const [lastname, setlastname] = useState(admintoedit.lastname);
@@ -32,6 +32,7 @@ const EditAdminModal = ({ handleclose, admintoedit }) => {
     await updateAdminName(body, admintoedit.id); // No need to store in `response` if unused
     toastService.success("Updated success");
     handleclose();
+    fetchusers()
   };
 
   return (

@@ -82,7 +82,7 @@ const Videos = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
-                <h3 className="mb-0">Users</h3>
+                <h3 className="mb-0">Videos</h3>
               </CardHeader>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>

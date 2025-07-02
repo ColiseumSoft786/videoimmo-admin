@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 
-const EditUserModal = ({ handleclose, usertoedit }) => {
+const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
   console.log(usertoedit);
   const [fullname,setfullname]=useState(usertoedit.fname)
   const [contact,setcontact]=useState(usertoedit.mobile_no)
@@ -44,6 +44,7 @@ const EditUserModal = ({ handleclose, usertoedit }) => {
     const response = await updateUserInfo(usertoedit._id,requestbody)
     if(!response.error){
         toastService.success('User updated successfully')
+        fetchUsers()
         handleclose()
     }
   }
