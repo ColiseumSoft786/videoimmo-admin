@@ -70,7 +70,7 @@ const AddtoTeamModal = ({ handleclose, userid }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Add to Team</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Add To Team</span>
             </div>
             {isloading ? (
               <div
@@ -106,12 +106,12 @@ const AddtoTeamModal = ({ handleclose, userid }) => {
                 <div className="text-center">
                   <Button
                     className="my-4"
-                    color="primary"
+                    color="danger"
                     onClick={handleclose}
                   >
                     Close
                   </Button>
-                  <Button className="my-4" color="primary" type="submit">
+                  <Button className="my-4" color="danger" type="submit">
                     Add
                   </Button>
                 </div>

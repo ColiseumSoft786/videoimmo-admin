@@ -61,7 +61,7 @@ const AddAdminModal = ({ handleclose, fetchusers }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Add Admin</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Add Admin</span>
             </div>
             <Form role="form" onSubmit={(e) => handleAddAdmin(e)}>
               <FormGroup className="mb-3">
@@ -109,7 +109,7 @@ const AddAdminModal = ({ handleclose, fetchusers }) => {
                 </InputGroup>
               </FormGroup>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="submit">
+                <Button className="my-4" color="danger" type="submit">
                   ADD
                 </Button>
               </div>

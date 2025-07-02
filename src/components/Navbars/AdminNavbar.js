@@ -36,6 +36,9 @@ import {
 } from "reactstrap";
 import { setSearchText } from "ReduxSlices/AdminSlice";
 import { setisLoggedIn } from "ReduxSlices/AdminSlice";
+import './enhancements.css'
+import { FaArrowLeft } from "react-icons/fa";
+
 
 const AdminNavbar = (props) => {
   const dispatch = useDispatch()
@@ -57,9 +60,10 @@ const AdminNavbar = (props) => {
         <Container fluid>
           <Link
             className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
+            style={{alignContent:"center",alignItems:'center'}}
             to="/"
           >
-            {props.brandText}
+              <FaArrowLeft/> <span> {props.brandText}</span>
           </Link>
           <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
             {(window.location.pathname==='/users'||window.location.pathname==='/admins')&&<FormGroup className="mb-0">
@@ -78,7 +82,7 @@ const AdminNavbar = (props) => {
               <DropdownToggle className="pr-0" nav>
                 <Media className="align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
-                    <i className="ni ni-circle-08" style={{fontSize:'36px'}}/>
+                    <i className="ni ni-circle-08" style={{fontSize:'40px'}}/>
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">

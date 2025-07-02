@@ -1,6 +1,8 @@
 import { updateAdminName } from "Api/Admins";
 import { updateUserInfo } from "Api/Users";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import {
   Button,
   Card,
@@ -18,16 +20,16 @@ import toastService from "Toaster/toaster";
 const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
   console.log(usertoedit);
   const [fullname,setfullname]=useState(usertoedit.fname)
-  const [contact,setcontact]=useState(usertoedit.mobile_no)
+  const [contact,setcontact]=useState(usertoedit.country_Code+usertoedit.mobile_no)
   const [useremail,setuseremail]= useState(usertoedit.email)
-  const [usertype,setusertype] = useState(usertoedit.type)
+  const [countryCode,setCountryCode]=  useState(usertoedit.country_Code)
   const handleUseredit = async(e)=>{
     e.preventDefault()
     if(fullname.trim()===''||contact.trim()==""||useremail.trim()===''){
         toastService.warn('All fields must be filled')
         return
     }
-    if(fullname===usertoedit.fname&&contact===usertoedit.mobile_no&&useremail===usertoedit.email&&usertype===usertoedit.type){
+    if(fullname===usertoedit.fname&&contact===usertoedit.mobile_no&&useremail===usertoedit.email){
         toastService.warn("No Changes to save")
         return
     }
@@ -37,9 +39,9 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
           email: useremail,
           image: usertoedit.image,
           seconds: '',
-          type: usertype,
-          mobile_no: contact,
-          country_Code: usertoedit.country_Code
+          type: usertoedit.type,
+          mobile_no: contact.slice(countryCode.length-1),
+          country_Code: countryCode
     }
     const response = await updateUserInfo(usertoedit._id,requestbody)
     if(!response.error){
@@ -48,6 +50,7 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
         handleclose()
     }
   }
+
   return (
     <>
       <Col lg="5" md="7">
@@ -66,14 +69,14 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Edit User</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Edit User</span>
             </div>
             <Form role="form" onSubmit={(e) => handleUseredit(e)}>
               <FormGroup className="mb-3">
                 <label>Full Name</label>
                 <InputGroup className="input-group-alternative">
                   <Input
-                    placeholder="First name"
+                    placeholder="Full name"
                     type="text"
                     value={fullname}
                     onChange={(e) => setfullname(e.target.value)}
@@ -93,31 +96,22 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
               </FormGroup>
               <FormGroup className="mb-3">
                 <label>User Contact</label>
-                <InputGroup className="input-group-alternative">
-                  <Input
-                    placeholder="User Contact"
-                    type="text"
-                    value={contact}
-                    onChange={(e) => setcontact(e.target.value)}
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className="mb-3">
-                <label>User Type</label>
-                <InputGroup className="input-group-alternative">
-                  <Input
-                    placeholder="First name"
-                    type="select"
-                    value={usertype}
-                    onChange={(e) => setusertype(e.target.value)}
-                  >
-                    <option value='user'>User</option>
-                    <option value='manager'>Manager</option>
-                  </Input>
-                </InputGroup>
+                  <PhoneInput
+                                    value={contact}
+                                    onChange={(value, data) => {
+                                      setcontact(value);
+                                      setCountryCode("+" + data.dialCode); // Sets +33
+                                    }}
+                                    inputStyle={{
+                                      width: "100%",
+                                      height: "45px",
+                                    }}
+                                    countryCodeEditable={false}
+                                    enableLongNumbers={true}
+                                  />
               </FormGroup>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="submit">
+                <Button className="my-4" color="danger" type="submit">
                   Edit
                 </Button>
               </div>

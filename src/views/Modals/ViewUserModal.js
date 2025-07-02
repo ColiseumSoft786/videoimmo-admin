@@ -27,7 +27,7 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
             <span style={{fontSize:'30px',position:'absolute',top:'10px',right:'10px',cursor:'pointer'}} onClick={handleclose}>&times;</span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Details</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Details</span>
             </div>
             <Form role="form" style={{display:'flex',gap:'5%'}} onSubmit={(e) => handleclosemodal(e)}>
               <div style={{width:'60%'}}>

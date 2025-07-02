@@ -1,0 +1,10 @@
+
+.dropdown-menu .dropdown-item:active{
+    background-color: #ee2303 !important;
+}
+.dropdown-menu .dropdown-item:focus{
+    background-color: #ee2303 !important;
+}
+.navbar-vertical.navbar-expand-md .navbar-nav .nav-link.active:before{
+            border-left: 2px solid #ee2303 !important;
+}

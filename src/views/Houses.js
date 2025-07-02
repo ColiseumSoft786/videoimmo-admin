@@ -44,6 +44,7 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 import HouseViewModal from "./Modals/HouseViewModal";
+import './Modals/enhancements.css'
 // core components
 
 const Houses = () => {
@@ -164,7 +165,7 @@ const Houses = () => {
                           <td>{house?.user?.fname}</td>
                           <td>
                             <Button
-                              color="info"
+                              color="danger"
                               tag="a"
                               href={`https://web.videorpi.com/v/${getHouseTimestamp(
                                 house.createdAt
@@ -175,7 +176,7 @@ const Houses = () => {
                               Visit
                             </Button>
                           </td>
-                          <td>{house.status}</td>
+                          <td className="text-center"><i style={{fontSize:house.status===1?'20px':''}} className={`${house.status===1?'ni ni-check-bold text-green':'ni ni-fat-remove text-red'}`}/></td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -183,17 +184,18 @@ const Houses = () => {
                                 href="#pablo"
                                 role="button"
                                 size="sm"
-                                color=""
+                                color="danger"
                                 onClick={(e) => e.preventDefault()}
                               >
                                 <i className="fas fa-ellipsis-v" />
                               </DropdownToggle>
                               <DropdownMenu
-                                className="dropdown-menu-arrow"
+                                className="dropdown-menu-arrow "
                                 right
                               >
                                 <DropdownItem
                                   onClick={()=>handleViewClick(house)}
+                                  
                                 >
                                   View
                                 </DropdownItem>

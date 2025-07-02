@@ -120,7 +120,7 @@ const Videos = () => {
                         </td>
                         <td>
                           <Button
-                            color="info"
+                            color="danger"
                             tag="a"
                             href={`https://dashboard.mux.com/organizations/lbf2kt/environments/aaogkk/video/assets/${video.mux_id}`}
                             target="_blank"
@@ -132,9 +132,9 @@ const Videos = () => {
 
                         <td>{video.video_length}</td>
                         <td>{video.house.type}</td>
-                        <td>{video.status}</td>
+                        <td className="text-center"><i style={{fontSize:video.status===1?'20px':''}} className={`${video.status===1?'ni ni-check-bold text-green':'ni ni-fat-remove text-red'}`}/></td>
                         <td className="text-right">
-                          <Button color="info" onClick={()=>handleDeleteVideo(video._id)}>Delete</Button>
+                          <Button color="danger" onClick={()=>handleDeleteVideo(video._id)}>Delete</Button>
                         </td>
                       </tr>
                     );

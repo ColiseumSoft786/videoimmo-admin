@@ -50,7 +50,7 @@ const Header = () => {
   },[totalvideos])
   return (
     <>
-      <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
+      <div className="header bg-gradient-danger pb-8 pt-5 pt-md-8">
         {window.location.pathname==='/index'&&
         <Container fluid>
           <div className="header-body">

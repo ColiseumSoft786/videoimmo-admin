@@ -20,6 +20,7 @@ import { GetAllAdmins } from "Api/Admins";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
+import './Modals/enhancements.css'
 import {
   Badge,
   Card,
@@ -126,7 +127,7 @@ const Admins = () => {
             <Card className="shadow">
               <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
                 <h3 className="mb-0">Admins</h3>
-                <Button color="info" onClick={()=>setisadding(true)}>Add Admin</Button>
+                <Button color="danger" onClick={()=>setisadding(true)}>Add Admin</Button>
               </CardHeader>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
@@ -156,7 +157,7 @@ const Admins = () => {
                           href="#pablo"
                           role="button"
                           size="sm"
-                          color=""
+                          color="danger"
                           onClick={(e) => e.preventDefault()}
                         >
                           <i className="fas fa-ellipsis-v" />

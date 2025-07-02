@@ -28,7 +28,7 @@ const ViewAdminModal = ({ handleclose, admintoedit }) => {
         <Card className="bg-secondary shadow border-0">
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Details</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Details</span>
             </div>
             <Form role="form" onSubmit={(e) => handleclosemodal(e)}>
               <FormGroup className="mb-3">
@@ -56,7 +56,7 @@ const ViewAdminModal = ({ handleclose, admintoedit }) => {
                 </InputGroup>
               </FormGroup>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="submit">
+                <Button className="my-4" color="danger" type="submit">
                   Close
                 </Button>
               </div>

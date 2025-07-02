@@ -97,7 +97,7 @@ const Teams = () => {
     <>
       <Header />
       {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="mt--7" style={{marginBottom:'5vh'}} fluid>
         {/* Table */}
         <Row>
           <div className="col">
@@ -137,8 +137,8 @@ const Teams = () => {
                         })}
                       </Input>
                     </div>
-                    <Button color="info">Add</Button>
-                    <Button color="info">Edit</Button>
+                    <Button color="danger">Add</Button>
+                    <Button color="danger">Edit</Button>
                   </div>
                   <div
                     style={{
@@ -147,9 +147,9 @@ const Teams = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Button color="info">Add Member</Button>
-                    <Button color="info">Add Existing Member</Button>
-                    <Button color="info">Add Manager</Button>
+                    <Button color="danger">Add Member</Button>
+                    <Button color="danger">Add Existing Member</Button>
+                    <Button color="danger">Add Manager</Button>
                   </div>
                 </div>
               </CardHeader>
@@ -159,9 +159,9 @@ const Teams = () => {
               {isloading ? (
                 <div
                   style={{
-                    height: "250px",
+                    height: "100px",
                     width: "100%",
-                    marginTop: "20vh",
+                    marginTop: "2vh",
                     display: "flex",
                     justifyContent: "center",
                   }}
@@ -255,9 +255,9 @@ const Teams = () => {
               {isloading ? (
                 <div
                   style={{
-                    height: "250px",
+                    height: "100px",
                     width: "100%",
-                    marginTop: "20vh",
+                    marginTop: "2vh",
                     display: "flex",
                     justifyContent: "center",
                   }}
@@ -310,7 +310,7 @@ const Teams = () => {
                           </td>
                           <td className="text-right">
                             <Button
-                              color="info"
+                              color="danger"
                               onClick={() => handleUserDeleteClick()}
                             >
                               Delete

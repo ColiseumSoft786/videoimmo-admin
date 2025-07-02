@@ -20,6 +20,7 @@ import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Modals/enhancements.css'
 import {
   Badge,
   Card,
@@ -127,7 +128,7 @@ const Users = () => {
             <Card className="shadow">
               <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
                 <h3 className="mb-0">Users</h3>
-                <Button color="info" onClick={()=>setisaddingUser(true)}>
+                <Button color="danger" onClick={()=>setisaddingUser(true)}>
                   Add User
                 </Button>
               </CardHeader>
@@ -137,7 +138,7 @@ const Users = () => {
                   <tr>
                     <th scope="col">Sr.#</th>
                     <th scope="col">Image</th>
-                    <th scope="col">First Name</th>
+                    <th scope="col">Full Name</th>
                     <th scope="col">Mobile #</th>
                     <th scope="col">House</th>
                     <th scope="col">Members</th>
@@ -176,7 +177,7 @@ const Users = () => {
                         </td>
                         <td>
                           <Button
-                            color="info"
+                            color="danger"
                             onClick={()=>handlelisthousesclick(user.user._id,user.user.fname)}
                           >
                             List Houses
@@ -184,14 +185,14 @@ const Users = () => {
                         </td>
                         <td>
                           <Button
-                            color="info"
+                            color="danger"
                             onClick={()=>handleaddtoteamclick(user.user._id)}
                           >
                             +
                           </Button>
                           {user.user.team && (
                             <Button
-                              color="info"
+                              color="danger"
                               onClick={()=>handleTeamsClick(user.user._id)}
                             >
                               Teams
@@ -202,10 +203,9 @@ const Users = () => {
                           <UncontrolledDropdown>
                             <DropdownToggle
                               className="btn-icon-only text-light"
-                              href="#pablo"
                               role="button"
                               size="sm"
-                              color=""
+                              color="danger"
                               onClick={(e) => e.preventDefault()}
                             >
                               <i className="fas fa-ellipsis-v" />
@@ -239,7 +239,7 @@ const Users = () => {
         </Row>
       </Container>
       {(isadding||isviewing||isediting||isaddingUser)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isediting||isaddingUser?'5vh':'10vh',zIndex:20}}>
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
           {isadding&&<AddtoTeamModal handleclose={()=>setisadding(false)} userid={usertoaddteam}/>}
           {isviewing&&<ViewUserModal handleclose={()=>setisviewing(false)} userdetails={usertoview}/>}
           {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}

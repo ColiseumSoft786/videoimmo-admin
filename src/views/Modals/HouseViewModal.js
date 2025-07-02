@@ -42,7 +42,7 @@ const HouseViewModal = ({ handleclose, houseDetails }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Details</small>
+              <span style={{fontSize:'20px',fontWeight:'bold'}}>Details</span>
             </div>
             <Form
               role="form"
