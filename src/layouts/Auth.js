@@ -51,9 +51,9 @@ const Auth = (props) => {
 
   return (
     <>
-      <div className="main-content" ref={mainContent}>
+      <div className="main-content bg-danger" ref={mainContent}>
         <AuthNavbar />
-        <div className="header bg-gradient-info py-7 py-lg-8">
+        <div className="header bg-gradient-danger py-7 py-lg-8">
           <Container>
             <div className="header-body text-center mb-7">
               <Row className="justify-content-center">
@@ -77,14 +77,14 @@ const Auth = (props) => {
               y="0"
             >
               <polygon
-                className="fill-default"
+                className="fill-danger"
                 points="2560 0 2560 100 0 100"
               />
             </svg>
           </div>
         </div>
         {/* Page content */}
-        <Container className="mt--8 pb-5">
+        <Container className="mt--8 pb-5 bg-danger">
           <Row className="justify-content-center">
             <Login/>
           </Row>
