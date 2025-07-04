@@ -37,6 +37,9 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
+  Form,
+  InputGroup,
+  Input,
 } from "reactstrap";
 import Loader from "Loader/Loader";
 import { deleteVideoById } from "Api/Videos";
@@ -46,6 +49,15 @@ import toastService from "Toaster/toaster";
 const Videos = () => {
   const [videos, setVideos] = useState([]);
   const [isloading,setisloading] = useState(true)
+   const [selectedAgency, setSelectedAgency] = useState("");
+  const [selectedGEI, setSelectedGEI] = useState("");
+  const [allAgencies, setAllAgencies] = useState([
+    "agency1",
+    "agency2",
+    "agency3",
+    "agency4",
+  ]);
+  const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
   const handlegetallVideos = async () => {
     try {
       setisloading(true)
@@ -72,6 +84,9 @@ const Videos = () => {
       handlegetallVideos()
     }
   }
+  const handleFilterVideos = (e)=>{
+      e.preventDefault()
+  }
   return (
     <>
       <Header />
@@ -81,8 +96,51 @@ const Videos = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0">
+              <CardHeader className="border-0"
+               style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
                 <h3 className="mb-0">Videos</h3>
+                <Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'50%',alignItems:"center"}} onSubmit={(e) => handleFilterVideos(e)}>
+                    <InputGroup className="input-group-alternative">
+                      <Input
+                        type="select"
+                        value={selectedGEI}
+                        onChange={(e) => setSelectedGEI(e.target.value)}
+                      >
+                        <option value="">Select GEI</option>
+                        {allGEI.map((gei, index) => {
+                          return (
+                              <option value={gei} key={index}>
+                                {gei}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                    <InputGroup className="input-group-alternative" >
+                      <Input
+                        type="select"
+                        value={selectedAgency}
+                        onChange={(e) => setSelectedAgency(e.target.value)}
+                        disabled={selectedGEI.trim()===''}
+                      >
+                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
+                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
+                        {allAgencies.map((agency, index) => {
+                          return (
+                              <option value={agency} key={index}>
+                                {agency}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                  <div className="text-center">
+                    <Button className="my-4" color="danger" type="submit" disabled={selectedAgency.trim()===''||selectedGEI.trim()===''}>
+                      Filter
+                    </Button>
+                  </div>
+                </Form>
               </CardHeader>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>

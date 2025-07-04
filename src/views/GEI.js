@@ -47,75 +47,51 @@ import { deleteAdmin } from "Api/Admins";
 import toastService from "Toaster/toaster";
 import AddAdminModal from "./Modals/AddAdminModal";
 import { useAsyncError } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import AddGeiModal from "./Modals/AddGeiModal";
+import ViewGeiModal from "./Modals/ViewGeiModal";
+import EditGeiModal from "./Modals/EditGeiModal";
+import { getAllGEI } from "Api/gei";
+import { deleteGEI } from "Api/gei";
 // core components
 
-const Admins = () => {
+const GEI = () => {
   const searchtext = useSelector((state)=>state.admin.searchText)
+  const dispatch = useDispatch()
     const [admins,setadmins]=useState([])
     const [isloading,setisloading] = useState(true)
     const [isediting,setisediting] = useState(false)
     const [isviewing,setisviewing] = useState(false)
     const [isadding,setisadding] = useState(false)
-    const [filteredAdmins,setFilteredAdmins] = useState([])
-    const [main,setmain] = useState(null)
-    const handleeditclick = (e,id,firstname,lastname)=>{
-      e.preventDefault()
-      console.log('main id',id)
-      const admintoedit = {
-        id:id,
-        firstname:firstname,
-        lastname:lastname
-      }
-      console.log('in admin ',admintoedit)
-      setmain(admintoedit)
-      setisediting(true)
-    }
-    const handleviewclick = (e,id,firstname,lastname)=>{
-      e.preventDefault()
-      console.log('main id',id)
-      const admintoedit = {
-        id:id,
-        firstname:firstname,
-        lastname:lastname
-      }
-      console.log('in admin ',admintoedit)
-      setmain(admintoedit)
-      setisviewing(true)
-    }
-    const handlegetalladmins = async()=>{
-      setisloading(true)
-        try {
-            const response = await GetAllAdmins()
-            console.log('admins',response)
-            if(response.data.length>0){
-                setadmins(response.data)
-                setFilteredAdmins(response.data)
-                setisloading(false)
-            }
-        } catch (error) {
-            console.log(error)
+    const [geitoshow,setgeitoshow] = useState(null)
+    const [allGEIs,setAllGEIs] = useState([])
+    const handlegetallGeis= async()=>{
+        setisloading(true)
+        const response = await getAllGEI()
+        if(!response.error){
+            setAllGEIs(response.data)
+            setisloading(false)
         }
     }
-    const handleDeleteAdmin=async(e,id)=>{
-      e.preventDefault()
-      const response = await deleteAdmin(id)
-      if(!response.error){
-        toastService.success('Admin Deleted Successfully')
-        handlegetalladmins()
-      }
+    const handleViewClick = (gei)=>{
+        console.log('gei to show',gei)
+        setgeitoshow(gei)
+        setisviewing(true)
     }
-    useEffect(()=>{
-        handlegetalladmins()
-    },[])
-    const handlefilter =()=>{
-      if(admins.length>0){
-        setFilteredAdmins(admins.filter((admin)=>admin.fname.toLowerCase().includes(searchtext.toLowerCase())))
-      }
+    const handledeleteClick = async(id,name)=>{
+        const response = await deleteGEI(id)
+        if(!response.error){
+            toastService.success(`${name} Deleted Successfully`)
+            handlegetallGeis()
+        }
     }
-    useEffect(()=>{
-      handlefilter()
-    },[searchtext])
+  const handleEditClick = (gei)=>{
+    setgeitoshow(gei)
+    setisediting(true)
+  }
+  useEffect(()=>{
+    handlegetallGeis()
+  },[])
   return (
     <>
       <Header />
@@ -126,30 +102,30 @@ const Admins = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
-                <h3 className="mb-0">Admins</h3>
-                <Button color="danger" onClick={()=>setisadding(true)}>Add Admin</Button>
+                <h3 className="mb-0">GIEs</h3>
+                <Button color="danger" onClick={()=>setisadding(true)}>Add GIE</Button>
               </CardHeader>
               {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Sr.#</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone#</th>
+                    <th scope="col">No. of Tokens</th>
+                    <th scope="col">Expiry Date</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {filteredAdmins.map((admin,index)=>{
+                    {allGEIs.map((gei,index)=>{
                         return(
                             <tr>
                     <td>{index+1}</td>
-                    <td>{admin.fname}</td>
-                    <td>{admin.lname}</td>
-                    <td>{admin.email}</td>
-                    <td>{admin.status}</td>
+                    <td>{gei.name}</td>
+                    <td>{gei.countryCode}-{gei.phone}</td>
+                    <td>{gei.tokens}</td>
+                    <td>{gei.expiresOn.slice(0,10)}</td>
                     <td className="text-right">
                       <UncontrolledDropdown>
                         <DropdownToggle
@@ -163,17 +139,17 @@ const Admins = () => {
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
-                            onClick={(e) => handleviewclick(e,admin._id,admin.fname,admin.lname)}
+                            onClick={()=>handleViewClick(gei)}
                           >
                             View
                           </DropdownItem>
                           <DropdownItem
-                            onClick={(e) => handleeditclick(e,admin._id,admin.fname,admin.lname)}
+                           onClick={()=>handleEditClick(gei)}
                           >
                             Edit
                           </DropdownItem>
                           <DropdownItem
-                            onClick={(e) => handleDeleteAdmin(e,admin._id)}
+                           onClick={()=>handledeleteClick(gei._id,gei.name)}
                           >
                             Delete
                           </DropdownItem>
@@ -192,13 +168,13 @@ const Admins = () => {
       </Container>
       {(isediting||isviewing||isadding)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
-          {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} fetchusers={handlegetalladmins} admintoedit={main}/>}
-          {isviewing&&<ViewAdminModal handleclose={()=>setisviewing(false)} admintoedit={main}/>}
-          {isadding&&<AddAdminModal handleclose={()=>setisadding(false)} fetchusers={handlegetalladmins}/>}
+          {isediting&&<EditGeiModal handleclose={()=>setisediting(false)} GeitoEdit={geitoshow} fetchGeis={handlegetallGeis}/>}
+          {isviewing&&<ViewGeiModal handleclose={()=>setisviewing(false)} Geitoshow={geitoshow}/>}
+          {isadding&&<AddGeiModal handleclose={()=>setisadding(false)} fetchGEIS={handlegetallGeis}/>}
         </div>
         )}
     </>
   );
 };
 
-export default Admins;
+export default GEI;

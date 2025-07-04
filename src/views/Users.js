@@ -20,7 +20,7 @@ import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './Modals/enhancements.css'
+import "./Modals/enhancements.css";
 import {
   Badge,
   Card,
@@ -40,6 +40,10 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
+  Form,
+  FormGroup,
+  InputGroup,
+  Input,
 } from "reactstrap";
 import AddtoTeamModal from "./Modals/AddtoTeamModal";
 import ViewUserModal from "./Modals/ViewUserModal";
@@ -51,26 +55,35 @@ import { useSelector } from "react-redux";
 // core components
 
 const Users = () => {
-  const searchtext = useSelector((state)=>state.admin.searchText)
+  const searchtext = useSelector((state) => state.admin.searchText);
   const [users, setusers] = useState([]);
-  const [isloading,setisloading] = useState(true)
-  const [usertoaddteam,setusertoaddteam]=useState(null)
-  const [isadding,setisadding] = useState(false)
-  const [isaddingUser,setisaddingUser] = useState(false)
-  const [usertoview,setusertoview] = useState(null)
-  const [isviewing,setisviewing] = useState(false)
-  const [isediting,setisediting] = useState(false)
-  const [filteredusers,setfilteredusers]= useState([])
-  const navigate = useNavigate()
+  const [isloading, setisloading] = useState(true);
+  const [usertoaddteam, setusertoaddteam] = useState(null);
+  const [isadding, setisadding] = useState(false);
+  const [isaddingUser, setisaddingUser] = useState(false);
+  const [usertoview, setusertoview] = useState(null);
+  const [isviewing, setisviewing] = useState(false);
+  const [isediting, setisediting] = useState(false);
+  const [filteredusers, setfilteredusers] = useState([]);
+  const [selectedAgency, setSelectedAgency] = useState("");
+  const [selectedGEI, setSelectedGEI] = useState("");
+  const [allAgencies, setAllAgencies] = useState([
+    "agency1",
+    "agency2",
+    "agency3",
+    "agency4",
+  ]);
+  const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
+  const navigate = useNavigate();
   const handlegetallUsers = async () => {
-    setisloading(true)
+    setisloading(true);
     try {
       const response = await getAllUsers();
       console.log("Users", response);
       if (response.data.length > 0) {
         setusers(response.data);
-        setfilteredusers(response.data)
-        setisloading(false)
+        setfilteredusers(response.data);
+        setisloading(false);
       }
     } catch (error) {
       console.log(error);
@@ -82,40 +95,47 @@ const Users = () => {
   useEffect(() => {
     console.log("all Users", users);
   }, [users]);
-  const handlelisthousesclick = (id,username)=>{
-    navigate(`/houses/${id}/${username}`)
-  }
-  const handleaddtoteamclick = (id)=>{
-    setusertoaddteam(id)
-    setisadding(true)
-  }
-  const handleviewClick = (user)=>{
-    setusertoview(user)
-    setisviewing(true)
-  }
-  const handleEditClick = (user)=>{
-    setusertoview(user)
-    setisediting(true)
-  }
-  const handleDeleteClick = async(id,name)=>{
-    const response = await deleteUser(id)
-    if(!response.error){
-      toastService.success(`${name} Deleted Successfully`)
-      handlegetallUsers()
-    }else{
-      toastService.warn('Something went wrong')
+  const handlelisthousesclick = (id, username) => {
+    navigate(`/houses/${id}/${username}`);
+  };
+  const handleaddtoteamclick = (id) => {
+    setusertoaddteam(id);
+    setisadding(true);
+  };
+  const handleviewClick = (user) => {
+    setusertoview(user);
+    setisviewing(true);
+  };
+  const handleEditClick = (user) => {
+    setusertoview(user);
+    setisediting(true);
+  };
+  const handleDeleteClick = async (id, name) => {
+    const response = await deleteUser(id);
+    if (!response.error) {
+      toastService.success(`${name} Deleted Successfully`);
+      handlegetallUsers();
+    } else {
+      toastService.warn("Something went wrong");
     }
-  }
-  const handlefilter=()=>{
-    if(users?.length>0){
-      setfilteredusers(users?.filter((user)=>user.user.fname.toLowerCase().includes(searchtext.toLowerCase())))
+  };
+  const handlefilter = () => {
+    if (users?.length > 0) {
+      setfilteredusers(
+        users?.filter((user) =>
+          user.user.fname.toLowerCase().includes(searchtext.toLowerCase())
+        )
+      );
     }
-  }
-  useEffect(()=>{
-    handlefilter()
-  },[searchtext])
-  const handleTeamsClick = async(id)=>{
-    navigate(`/users/team/${id}`)
+  };
+  useEffect(() => {
+    handlefilter();
+  }, [searchtext]);
+  const handleTeamsClick = async (id) => {
+    navigate(`/users/team/${id}`);
+  };
+  const handleFilterUsers = (e)=>{
+      e.preventDefault()
   }
   return (
     <>
@@ -126,126 +146,224 @@ const Users = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0" style={{display:'flex',justifyContent:'space-between'}}>
+              <CardHeader
+                className="border-0"
+                style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
                 <h3 className="mb-0">Users</h3>
-                <Button color="danger" onClick={()=>setisaddingUser(true)}>
+                <Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'50%',alignItems:"center"}} onSubmit={(e) => handleFilterUsers(e)}>
+                    <InputGroup className="input-group-alternative">
+                      <Input
+                        type="select"
+                        value={selectedGEI}
+                        onChange={(e) => setSelectedGEI(e.target.value)}
+                      >
+                        <option value="">Select GEI</option>
+                        {allGEI.map((gei, index) => {
+                          return (
+                              <option value={gei} key={index}>
+                                {gei}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                    <InputGroup className="input-group-alternative" >
+                      <Input
+                        type="select"
+                        value={selectedAgency}
+                        onChange={(e) => setSelectedAgency(e.target.value)}
+                        disabled={selectedGEI.trim()===''}
+                      >
+                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
+                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
+                        {allAgencies.map((agency, index) => {
+                          return (
+                              <option value={agency} key={index}>
+                                {agency}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                  <div className="text-center">
+                    <Button className="my-4" color="danger" type="submit" disabled={selectedAgency.trim()===''||selectedGEI.trim()===''}>
+                      Filter
+                    </Button>
+                  </div>
+                </Form>
+                {/* <Button color="danger" onClick={()=>setisaddingUser(true)}>
                   Add User
-                </Button>
+                </Button> */}
               </CardHeader>
-              {isloading?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Sr.#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Full Name</th>
-                    <th scope="col">Mobile #</th>
-                    <th scope="col">House</th>
-                    <th scope="col">Members</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredusers.map((user, index) => {
-                    return (
-                      <tr>
-                        <td>{index + 1}</td>
-                        <td>
-                          {user.user.image === "" ? (
-                            <i style={{fontSize:'25px'}} className="ni ni-circle-08"></i>
-                          ) : (
-                            <div
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                alignItems:'center',
-                                alignContent:"center"
-                              }}
-                            >
-                              <img
-                                style={{ height: "100%", width: "100%", }}
-                                src={`https://api.videorpi.com/${user.user.image}`}
-                              />
-                            </div>
-                          )}
-                        </td>
-                        <td>{user.user.fname}</td>
-                        <td>
-                          {user.user.country_Code}-{user.user.mobile_no}
-                        </td>
-                        <td>
-                          <Button
-                            color="danger"
-                            onClick={()=>handlelisthousesclick(user.user._id,user.user.fname)}
-                          >
-                            List Houses
-                          </Button>
-                        </td>
-                        <td>
-                          <Button
-                            color="danger"
-                            onClick={()=>handleaddtoteamclick(user.user._id)}
-                          >
-                            +
-                          </Button>
-                          {user.user.team && (
+              {isloading ? (
+                <div
+                  style={{
+                    height: "250px",
+                    width: "100%",
+                    marginTop: "20vh",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Loader />
+                </div>
+              ) : (
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Sr.#</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">Full Name</th>
+                      <th scope="col">Mobile #</th>
+                      <th scope="col">House</th>
+                      <th scope="col">Members</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredusers.map((user, index) => {
+                      return (
+                        <tr>
+                          <td>{index + 1}</td>
+                          <td>
+                            {user.user.image === "" ? (
+                              <i
+                                style={{ fontSize: "25px" }}
+                                className="ni ni-circle-08"
+                              ></i>
+                            ) : (
+                              <div
+                                style={{
+                                  height: "25px",
+                                  width: "25px",
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  alignItems: "center",
+                                  alignContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ height: "100%", width: "100%" }}
+                                  src={`https://api.videorpi.com/${user.user.image}`}
+                                />
+                              </div>
+                            )}
+                          </td>
+                          <td>{user.user.fname}</td>
+                          <td>
+                            {user.user.country_Code}-{user.user.mobile_no}
+                          </td>
+                          <td>
                             <Button
                               color="danger"
-                              onClick={()=>handleTeamsClick(user.user._id)}
+                              onClick={() =>
+                                handlelisthousesclick(
+                                  user.user._id,
+                                  user.user.fname
+                                )
+                              }
                             >
-                              Teams
+                              List Houses
                             </Button>
-                          )}
-                        </td>
-                        <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              role="button"
-                              size="sm"
+                          </td>
+                          <td>
+                            <Button
                               color="danger"
-                              onClick={(e) => e.preventDefault()}
+                              onClick={() =>
+                                handleaddtoteamclick(user.user._id)
+                              }
                             >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem
-                                onClick={()=>handleviewClick(user.user)}
+                              +
+                            </Button>
+                            {user.user.team && (
+                              <Button
+                                color="danger"
+                                onClick={() => handleTeamsClick(user.user._id)}
                               >
-                                View
-                              </DropdownItem>
-                              <DropdownItem
+                                Teams
+                              </Button>
+                            )}
+                          </td>
+                          <td className="text-right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                role="button"
+                                size="sm"
+                                color="danger"
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                <i className="fas fa-ellipsis-v" />
+                              </DropdownToggle>
+                              <DropdownMenu
+                                className="dropdown-menu-arrow"
+                                right
+                              >
+                                <DropdownItem
+                                  onClick={() => handleviewClick(user.user)}
+                                >
+                                  View
+                                </DropdownItem>
+                                {/* <DropdownItem
                                 onClick={() => handleEditClick(user.user)}
                               >
                                 Edit
-                              </DropdownItem>
-                              <DropdownItem
-                                onClick={()=>handleDeleteClick(user.user._id,user.user.fname)}
-                              >
-                                Delete
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>)}
+                              </DropdownItem> */}
+                                <DropdownItem
+                                  onClick={() =>
+                                    handleDeleteClick(
+                                      user.user._id,
+                                      user.user.fname
+                                    )
+                                  }
+                                >
+                                  Delete
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
             </Card>
           </div>
         </Row>
       </Container>
-      {(isadding||isviewing||isediting||isaddingUser)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
-          {isadding&&<AddtoTeamModal handleclose={()=>setisadding(false)} userid={usertoaddteam}/>}
-          {isviewing&&<ViewUserModal handleclose={()=>setisviewing(false)} userdetails={usertoview}/>}
-          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}
-          {isaddingUser&&<AddUserModal handleclose={()=>setisaddingUser(false)} fetchusers = {handlegetallUsers}/>}
+      {(isadding || isviewing || isediting || isaddingUser) && (
+        <div
+          style={{
+            height: "100vh",
+            width: "100vw",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "10vh",
+            zIndex: 20,
+          }}
+        >
+          {isadding && (
+            <AddtoTeamModal
+              handleclose={() => setisadding(false)}
+              userid={usertoaddteam}
+            />
+          )}
+          {isviewing && (
+            <ViewUserModal
+              handleclose={() => setisviewing(false)}
+              userdetails={usertoview}
+            />
+          )}
+          {/* {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>} */}
+          {/* {isaddingUser&&<AddUserModal handleclose={()=>setisaddingUser(false)} fetchusers = {handlegetallUsers}/>} */}
         </div>
-        )}
+      )}
     </>
   );
 };

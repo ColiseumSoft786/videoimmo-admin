@@ -5,7 +5,7 @@ import { USER_GET_LENGTH } from "Api/apiurls"
 
 export const getUserLength = async()=>{
     try {
-        const response = getAPI(USER_GET_LENGTH,true)
+        const response = await getAPI(USER_GET_LENGTH,true)
         console.log('this is the response from user get length api ', response)
         return response
     } catch (error) {
@@ -14,7 +14,7 @@ export const getUserLength = async()=>{
 }
 export const getVideosLength = async()=>{
     try {
-        const response = getAPI(VIDEOES_GET_LENGTH,true)
+        const response = await getAPI(VIDEOES_GET_LENGTH,true)
         console.log('this is the response from videos get length api',response)
         return response
     } catch (error) {
@@ -23,7 +23,7 @@ export const getVideosLength = async()=>{
 }
 export const getHouseslength = async()=>{
     try {
-        const response = getAPI(HOUSES_GET_LENGTH,true)
+        const response = await getAPI(HOUSES_GET_LENGTH,true)
         console.log('response from get house length',response)
         return response
     } catch (error) {

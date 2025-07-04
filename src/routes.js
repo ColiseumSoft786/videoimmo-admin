@@ -27,6 +27,8 @@ import Users from "views/Users";
 import Videos from "views/Videos";
 import Houses from "views/Houses";
 import Settings from "views/Settings";
+import GEI from "views/GEI";
+import Agencies from "views/Agencies";
 
 var routes = [
   {
@@ -69,6 +71,20 @@ var routes = [
     name: "Icons",
     icon: "ni ni-planet text-blue",
     component: <Icons />,
+    layout: "/",
+  },
+  {
+    path: "/gies",
+    name: "GIEs",
+    icon: "ni ni-shop text-green",
+    component: <GEI/>,
+    layout: "/",
+  },
+  {
+    path: "/agencies",
+    name: "Agencies",
+    icon: "ni ni-paper-diploma text-orange",
+    component: <Agencies/>,
     layout: "/",
   },
   {

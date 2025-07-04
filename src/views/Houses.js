@@ -41,6 +41,9 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
+  Form,
+  InputGroup,
+  Input,
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 import HouseViewModal from "./Modals/HouseViewModal";
@@ -54,6 +57,15 @@ const Houses = () => {
   const [isviewing,setisviewing] = useState(false)
   const [housetoview,sethousetoview] = useState(null)
   const location = useLocation()
+   const [selectedAgency, setSelectedAgency] = useState("");
+  const [selectedGEI, setSelectedGEI] = useState("");
+  const [allAgencies, setAllAgencies] = useState([
+    "agency1",
+    "agency2",
+    "agency3",
+    "agency4",
+  ]);
+  const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
   console.log(userid);
   const getHouseTimestamp = (createdAt) => {
     return new Date(createdAt).getTime(); // or .valueOf()
@@ -96,6 +108,9 @@ const Houses = () => {
     sethousetoview(house)
     setisviewing(true)
   }
+  const handleFilterHouses = (e)=>{
+      e.preventDefault()
+  }
   return (
     <>
       <Header />
@@ -105,8 +120,51 @@ const Houses = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0">
+              <CardHeader className="border-0"
+               style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
                 <h3 className="mb-0">{username?`Houses of ${username}`:'Houses'}</h3>
+                {!username&&<Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'50%',alignItems:"center"}} onSubmit={(e) => handleFilterHouses(e)}>
+                    <InputGroup className="input-group-alternative">
+                      <Input
+                        type="select"
+                        value={selectedGEI}
+                        onChange={(e) => setSelectedGEI(e.target.value)}
+                      >
+                        <option value="">Select GEI</option>
+                        {allGEI.map((gei, index) => {
+                          return (
+                              <option value={gei} key={index}>
+                                {gei}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                    <InputGroup className="input-group-alternative" >
+                      <Input
+                        type="select"
+                        value={selectedAgency}
+                        onChange={(e) => setSelectedAgency(e.target.value)}
+                        disabled={selectedGEI.trim()===''}
+                      >
+                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
+                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
+                        {allAgencies.map((agency, index) => {
+                          return (
+                              <option value={agency} key={index}>
+                                {agency}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
+                  <div className="text-center">
+                    <Button className="my-4" color="danger" type="submit" disabled={selectedAgency.trim()===''||selectedGEI.trim()===''}>
+                      Filter
+                    </Button>
+                  </div>
+                </Form>}
               </CardHeader>
               {isloading ? (
                 <div
