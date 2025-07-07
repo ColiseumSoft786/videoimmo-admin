@@ -62,6 +62,9 @@ import { deleteAgency } from "Api/agency";
 import ViewAgencyModal from "./Modals/ViewAgencyModal";
 import AddAgencyModal from "./Modals/AddAgencyModal";
 import EditAgency from "./Modals/EditAgency";
+import { getAllTeams } from "Api/teams";
+import { getAllGIESNames } from "Api/gei";
+import { getAllAgenciesNames } from "Api/agency";
 // core components
 
 const AllTeams = () => {
@@ -71,45 +74,26 @@ const AllTeams = () => {
     const [agencytoshow,setagencytoshow] = useState(null)
     const [allGEIs,setAllGEIs] = useState([])
     const [allAgencies,setAllAgencies] = useState([])
+    const [selectedAgency,setSelectedAgency] = useState('')
+    const [allteams,setallteams]= useState('')
     const [selectedGEI,setSelectedGEI] = useState('')
     const [isediting,setisediting] = useState(false)
     const [isadding,setisadding]= useState(false)
-    const handlegetallagencies= async()=>{
+    const handlegetallteams= async()=>{
         setisloading(true)
-        const gei = await getAllGEI()
-        const agencies = await getallAgencies()
-        if(!gei.error&&!agencies.error){
+        const gei = await getAllGIESNames()
+        const agencies = await getAllAgenciesNames()
+        const teams = await getAllTeams()
+        if(!gei.error&&!agencies.error&&!teams.error){
             setAllGEIs(gei.data)
             setAllAgencies(agencies.data)
+            setallteams(teams.data)
             setisloading(false)
         }
     }
-    const handleViewClick = (agency)=>{
-        console.log('gei to show',agency)
-        setagencytoshow(agency)
-        setisviewing(true)
-    }
-    const handledeleteClick = async(id,name)=>{
-        const response = await deleteAgency(id)
-        if(!response.error){
-            toastService.success(`${name} Deleted Successfully`)
-            handlegetallagencies()
-        }
-    }
-    const handlegetGeiAgencies=async()=>{
-        setisloading(true)
-        const response = await getGEIAgencies(selectedGEI)
-        if(!response.error){
-            setAllAgencies(response.data)
-            setisloading(false)
-        }
-    }
-    const handleeditclick = (agency)=>{
-        setagencytoshow(agency)
-        setisediting(true)
-    }
+    
   useEffect(()=>{
-    handlegetallagencies()
+    handlegetallteams()
   },[])
   return (
     <>
@@ -123,15 +107,15 @@ const AllTeams = () => {
               <CardHeader className="border-0" 
               style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
               >
-                <h3 className="mb-0">GEIs</h3>
+                <h3 className="mb-0">Teams</h3>
                 <Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'70%',alignItems:"center"}} onSubmit={(e) => {e.preventDefault()}}>
-                    <InputGroup className="input-group-alternative" style={{width:'40%'}}>
+                    <InputGroup className="input-group-alternative" style={{width:'20%'}}>
                       <Input
                         type="select"
                         value={selectedGEI}
                         onChange={(e) => setSelectedGEI(e.target.value)}
                       >
-                        <option value="">Select GEI</option>
+                        <option value="">Select GIE</option>
                         {allGEIs.map((gei, index) => {
                           return (
                               <option value={gei._id} key={index}>
@@ -141,19 +125,37 @@ const AllTeams = () => {
                         })}
                       </Input>
                     </InputGroup>
+                     <InputGroup className="input-group-alternative" style={{width:'20%'}} >
+                      <Input
+                        type="select"
+                        value={selectedAgency}
+                        onChange={(e) => setSelectedAgency(e.target.value)}
+                        disabled={selectedGEI.trim()===''}
+                      >
+                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
+                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
+                        {allAgencies.map((agency, index) => {
+                          return (
+                              <option value={agency._id} key={index}>
+                                {agency.name}
+                              </option>
+                          );
+                        })}
+                      </Input>
+                    </InputGroup>
                   <div className="text-center">
-                    <Button className="my-4" color="danger"  disabled={selectedGEI.trim()===''} onClick={handlegetGeiAgencies}>
+                    <Button className="my-4" color="danger"  disabled={selectedGEI.trim()===''||selectedAgency.trim()===''}>
                       Filter
                     </Button>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" onClick={handlegetallagencies}>
+                    <Button className="my-4" color="danger" >
                       Clear Filter
                     </Button>
                   </div>
                   <div className="text-center">
                     <Button className="my-4" color="danger" onClick={()=>setisadding(true)}>
-                      Add Agency
+                      Add Team
                     </Button>
                   </div>
                 </Form>
@@ -163,43 +165,28 @@ const AllTeams = () => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Sr.#</th>
-                    <th scope="col">image</th>
-                    <th scope="col">name</th>
-                    <th scope="col">Phone#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Manager</th>
                     <th scope="col">GEI</th>
+                    <th scope="col">Agency</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {allAgencies.map((agency,index)=>{
+                    {allteams.map((team,index)=>{
                         return(
                             <tr>
                     <td>{index+1}</td>
-                    <td>{agency.image === "" ? (
-                              <i
-                                style={{ fontSize: "25px" }}
-                                className="ni ni-circle-08"
-                              ></i>
-                            ) : (
-                              <div
-                                style={{
-                                  height: "25px",
-                                  width: "25px",
-                                  borderRadius: "50%",
-                                  overflow: "hidden",
-                                  alignItems: "center",
-                                  alignContent: "center",
-                                }}
-                              >
-                                <img
-                                  style={{ height: "100%", width: "100%" }}
-                                  src={`https://api.videorpi.com/${agency.image}`}
-                                />
-                              </div>
-                            )}</td>
-                    <td>{agency.name}</td>
-                    <td>{agency.countryCode}-{agency.phone}</td>
-                    <td>{agency.gie.name}</td>
+                    <td>{team.name}</td>
+                    <td>{team.managers.map((manager,index)=>{
+                      return(
+                        <span>({manager.fname})</span>
+                      )
+                    })}</td>
+                    <td></td>
+                    <td></td>
+                    <td className="text-center"><i style={{fontSize:'20px'}} className={`${team.status==='1'?'ni ni-check-bold text-green':'ni ni-fat-remove text-red'}`}/></td>
                     <td className="text-right">
                       <UncontrolledDropdown>
                         <DropdownToggle
@@ -213,17 +200,17 @@ const AllTeams = () => {
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
-                            onClick={()=>handleViewClick(agency)}
+                            
                           >
                             View
                           </DropdownItem>
                           <DropdownItem
-                            onClick={()=>handleeditclick(agency)}
+                            
                           >
                             Edit
                           </DropdownItem>
                           <DropdownItem
-                           onClick={()=>handledeleteClick(agency._id,agency.name)}
+                           
                           >
                             Delete
                           </DropdownItem>
@@ -242,9 +229,7 @@ const AllTeams = () => {
       </Container>
       {(isviewing||isediting||isadding)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
-          {isviewing&&<ViewAgencyModal handleclose={()=>setisviewing(false)} agencyDetails={agencytoshow}/>}
-          {isadding&&<AddAgencyModal handleclose={()=>setisadding(false)} fetchagencies={handlegetallagencies} GEIs={allGEIs}/>}
-          {isediting&&<EditAgency handleclose={()=>setisediting(false)} fetchagencies={handlegetallagencies} GEIs={allGEIs} agencyToedit={agencytoshow}/>}
+          
         </div>
         )}
     </>

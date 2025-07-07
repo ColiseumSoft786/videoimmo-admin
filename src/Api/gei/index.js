@@ -3,6 +3,7 @@ import { deleteAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
 import { UPDATE_GEI } from "Api/apiurls"
+import { GET_ALL_GIES_NAMES } from "Api/apiurls"
 import { DELETE_GEI } from "Api/apiurls"
 import { ADD_GEI } from "Api/apiurls"
 import { GET_ALL_GEIS } from "Api/apiurls"
@@ -43,5 +44,14 @@ export const deleteGEI = async(id)=>{
         return response
     } catch (error) {
         console.log('error in delete gei',error)
+    }
+}
+export const getAllGIESNames = async()=>{
+    try {
+        const response = await getAPI(GET_ALL_GIES_NAMES,true)
+        console.log('response from get all gie names',response)
+        return response
+    } catch (error) {
+        console.log('error in get all gies names',error)
     }
 }

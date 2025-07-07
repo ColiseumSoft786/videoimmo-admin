@@ -48,6 +48,8 @@ import {
 import toastService from "Toaster/toaster";
 import HouseViewModal from "./Modals/HouseViewModal";
 import './Modals/enhancements.css'
+import { getAllGIESNames } from "Api/gei";
+import { getAllAgenciesNames } from "Api/agency";
 // core components
 
 const Houses = () => {
@@ -77,11 +79,19 @@ const Houses = () => {
     try {
       if(userid){
         response = await getUserHouses(userid)
+        if (response){
+        setHouses(response.data)
+      }
       }else{
        response = await getAllHouses();
-      }
-      if (response){
+       const gie = await getAllGIESNames()
+       const agencies = await getAllAgenciesNames()
+       if(response&&!gie.error&&!agencies.error){
         setHouses(response.data)
+        setAllGEI(gie.data)
+        setAllAgencies(agencies.data)
+        setisloading(false)
+       }
       }
     } catch (error) {
       console.log(error);
@@ -134,8 +144,8 @@ const Houses = () => {
                         <option value="">Select GEI</option>
                         {allGEI.map((gei, index) => {
                           return (
-                              <option value={gei} key={index}>
-                                {gei}
+                              <option value={gei._id} key={index}>
+                                {gei.name}
                               </option>
                           );
                         })}
@@ -152,8 +162,8 @@ const Houses = () => {
                               {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
                         {allAgencies.map((agency, index) => {
                           return (
-                              <option value={agency} key={index}>
-                                {agency}
+                              <option value={agency._id} key={index}>
+                                {agency.name}
                               </option>
                           );
                         })}

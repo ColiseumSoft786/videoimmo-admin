@@ -52,6 +52,8 @@ import { deleteUser } from "Api/Users";
 import toastService from "Toaster/toaster";
 import AddUserModal from "./Modals/AddUserModal";
 import { useSelector } from "react-redux";
+import { getAllGIESNames } from "Api/gei";
+import { getAllAgenciesNames } from "Api/agency";
 // core components
 
 const Users = () => {
@@ -67,20 +69,19 @@ const Users = () => {
   const [filteredusers, setfilteredusers] = useState([]);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [selectedGEI, setSelectedGEI] = useState("");
-  const [allAgencies, setAllAgencies] = useState([
-    "agency1",
-    "agency2",
-    "agency3",
-    "agency4",
-  ]);
-  const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
+  const [allAgencies, setAllAgencies] = useState([]);
+  const [allGEI, setAllGEI] = useState([]);
   const navigate = useNavigate();
   const handlegetallUsers = async () => {
     setisloading(true);
     try {
+      const gie = await getAllGIESNames()
+      const agencies = await getAllAgenciesNames()
       const response = await getAllUsers();
       console.log("Users", response);
-      if (response.data.length > 0) {
+      if (response.data.length > 0&&!gie.error&&!agencies.error) {
+        setAllGEI(gie.data)
+        setAllAgencies(agencies.data)
         setusers(response.data);
         setfilteredusers(response.data);
         setisloading(false);
@@ -161,8 +162,8 @@ const Users = () => {
                         <option value="">Select GEI</option>
                         {allGEI.map((gei, index) => {
                           return (
-                              <option value={gei} key={index}>
-                                {gei}
+                              <option value={gei._id} key={index}>
+                                {gei.name}
                               </option>
                           );
                         })}
@@ -179,8 +180,8 @@ const Users = () => {
                               {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
                         {allAgencies.map((agency, index) => {
                           return (
-                              <option value={agency} key={index}>
-                                {agency}
+                              <option value={agency._id} key={index}>
+                                {agency.name}
                               </option>
                           );
                         })}

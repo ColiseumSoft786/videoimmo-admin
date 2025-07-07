@@ -2,6 +2,7 @@ import { postAPI } from "Api"
 import { putAPI } from "Api"
 import { deleteAPI } from "Api"
 import { getAPI } from "Api"
+import { GET_ALL_AGENCIES_NAMES } from "Api/apiurls"
 import { Update_Agency } from "Api/apiurls"
 import { DELETE_AGENCY } from "Api/apiurls"
 import { ADD_AGENCY } from "Api/apiurls"
@@ -54,5 +55,14 @@ export const updateAgency = async(body,id)=>{
         return response
     } catch (error) {
         console.log('error in update agency',error)
+    }
+}
+export const getAllAgenciesNames = async()=>{
+    try {
+        const response = await getAPI(GET_ALL_AGENCIES_NAMES,true)
+        console.log('response from get all agencies names ',response)
+        return response
+    } catch (error) {
+        console.log('error in get all agencies names',error)
     }
 }

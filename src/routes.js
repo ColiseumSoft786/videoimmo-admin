@@ -29,6 +29,7 @@ import Houses from "views/Houses";
 import Settings from "views/Settings";
 import GEI from "views/GEI";
 import Agencies from "views/Agencies";
+import AllTeams from "views/AllTeams";
 
 var routes = [
   {
@@ -71,6 +72,13 @@ var routes = [
     name: "Icons",
     icon: "ni ni-planet text-blue",
     component: <Icons />,
+    layout: "/",
+  },
+  {
+    path: "/teams",
+    name: "Teams",
+    icon: "ni ni-planet text-blue",
+    component: <AllTeams />,
     layout: "/",
   },
   {

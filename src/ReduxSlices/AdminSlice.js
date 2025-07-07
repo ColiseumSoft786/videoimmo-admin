@@ -8,42 +8,48 @@ const initialState = {
         Phone: '10239402394',
         country_Code: '+33',
         Tokens: 20,
-        expiryDate: '2026-04-20'
+        expiryDate: '2026-04-20',
+        agencies:30,
     },
     {
         name: 'GEI2',
         Phone: '10239402395',
         country_Code: '+33',
         Tokens: 25,
-        expiryDate: '2026-04-21'
+        expiryDate: '2026-04-21',
+        agencies:30
     },
     {
         name: 'GEI3',
         Phone: '10239402396',
         country_Code: '+33',
         Tokens: 15,
-        expiryDate: '2026-04-22'
+        expiryDate: '2026-04-22',
+        agencies:30
     },
     {
         name: 'GEI4',
         Phone: '10239402397',
         country_Code: '+33',
         Tokens: 30,
-        expiryDate: '2026-04-23'
+        expiryDate: '2026-04-23',
+        agencies:30
     },
     {
         name: 'GEI5',
         Phone: '10239402398',
         country_Code: '+33',
         Tokens: 18,
-        expiryDate: '2026-04-24'
+        expiryDate: '2026-04-24',
+        agencies:34
     },
     {
         name: 'GEI6',
         Phone: '10239402399',
         country_Code: '+33',
         Tokens: 22,
-        expiryDate: '2026-04-25'
+        expiryDate: '2026-04-25',
+        agencies:30,
     },
     {
         name: 'GEI7',
