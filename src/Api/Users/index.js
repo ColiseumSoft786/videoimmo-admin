@@ -4,6 +4,8 @@ import { putAPI } from "Api";
 import { getUserHouseAPI } from "Api";
 import { getAPI } from "Api";
 import { GET_MANAGER_TEAM } from "Api/apiurls";
+import { GET_ALL_AGENCY_USERS } from "Api/apiurls";
+import { GET_ALL_GIE_USERS } from "Api/apiurls";
 import { UPDATE_MEMBERS_OF_TEAM } from "Api/apiurls";
 import { ADD_USER } from "Api/apiurls";
 import { DELETE_USER } from "Api/apiurls";
@@ -101,4 +103,24 @@ export const updateTeamMembers = async (id,body)=>{
     } catch (error) {
         console.log('this is the error in the update team members',error)
     }
+}
+export const getAllAgencyUsers = async(id)=>{
+  try {
+    const path = GET_ALL_AGENCY_USERS+id
+    const response = await getAPI(path,true)
+    console.log('response from get all user of agency',response)
+    return response
+  } catch (error) {
+    console.log('error in get all agency users',error)
+  }
+}
+export const getAllGieUsers = async(id)=>{
+  try {
+    const path = GET_ALL_GIE_USERS+id
+    const response = await getAPI(path,true)
+    console.log('response from get all gie users',response)
+    return response
+  } catch (error) {
+    console.log('error in get all gie users',error)
+  }
 }

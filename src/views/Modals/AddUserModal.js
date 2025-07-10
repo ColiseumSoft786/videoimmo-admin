@@ -114,6 +114,46 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
                 />
                 {/* </InputGroup> */}
               </FormGroup>
+              <FormGroup className="mb-3">
+                <label>GIE</label>
+                <InputGroup
+                    className="input-group-alternative"
+                  >
+                    <Input
+                      type="select"
+                      value={selectedGEI}
+                      onChange={(e) => setSelectedGEI(e.target.value)}
+                    >
+                      <option value="">Select GIE</option>
+                      {allGEI.map((gei, index) => {
+                        return (
+                          <option value={gei._id} key={index}>
+                            {gei.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </InputGroup>
+              </FormGroup>
+              <FormGroup className="mb-3">
+                <label>Agency</label>
+                {/* <InputGroup className="input-group-alternative"> */}
+                <PhoneInput
+                  country={"fr"} // France by default
+                  value={contact}
+                  onChange={(value, data) => {
+                    setcontact(value);
+                    setCountryCode("+" + data.dialCode); // Sets +33
+                  }}
+                  inputStyle={{
+                    width: "100%",
+                    height: "45px",
+                  }}
+                  countryCodeEditable={false}
+                  enableLongNumbers={true}
+                />
+                {/* </InputGroup> */}
+              </FormGroup>
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">
                   ADD

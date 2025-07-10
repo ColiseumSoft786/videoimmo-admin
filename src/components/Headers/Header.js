@@ -45,7 +45,9 @@ const Header = () => {
     console.log(totalhouses,totalusers,totalvideos)
   }
   useEffect(()=>{
+    if(window.location.pathname==='/index'){
    getallstats()
+    }
   },[])
   useEffect(()=>{
     console.log('total videos',totalvideos)

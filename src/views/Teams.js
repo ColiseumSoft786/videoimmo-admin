@@ -226,17 +226,17 @@ const Teams = () => {
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               <DropdownItem
-                                onClick={()=>handleviewClick(user.user)}
+                                onClick={()=>handleviewClick(user)}
                               >
                                 View
                               </DropdownItem>
                               <DropdownItem
-                                onClick={() => handleEditClick(user.user)}
+                                onClick={() => handleEditClick(user)}
                               >
                                 Edit
                               </DropdownItem>
                               <DropdownItem
-                                onClick={()=>handleDeleteClick(user.user._id,user.user.fname)}
+                                onClick={()=>handleDeleteClick(user._id,user.fname)}
                               >
                                 Delete
                               </DropdownItem>

@@ -19,7 +19,7 @@ import { getAllUsers } from "Api/Users";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./Modals/enhancements.css";
 import {
   Badge,
@@ -54,15 +54,17 @@ import AddUserModal from "./Modals/AddUserModal";
 import { useSelector } from "react-redux";
 import { getAllGIESNames } from "Api/gei";
 import { getAllAgenciesNames } from "Api/agency";
+import { getAllAgenciesNamesByGie } from "Api/agency";
+import { getAllAgencyUsers } from "Api/Users";
+import { getAllGieUsers } from "Api/Users";
 // core components
 
 const Users = () => {
+  const { gieId, agencyId } = useParams();
   const searchtext = useSelector((state) => state.admin.searchText);
   const [users, setusers] = useState([]);
   const [isloading, setisloading] = useState(true);
-  const [usertoaddteam, setusertoaddteam] = useState(null);
   const [isadding, setisadding] = useState(false);
-  const [isaddingUser, setisaddingUser] = useState(false);
   const [usertoview, setusertoview] = useState(null);
   const [isviewing, setisviewing] = useState(false);
   const [isediting, setisediting] = useState(false);
@@ -70,18 +72,28 @@ const Users = () => {
   const [selectedAgency, setSelectedAgency] = useState("");
   const [selectedGEI, setSelectedGEI] = useState("");
   const [allAgencies, setAllAgencies] = useState([]);
+  const [isfetchingag, setisfetchingag] = useState(false);
   const [allGEI, setAllGEI] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
   const handlegetallUsers = async () => {
     setisloading(true);
     try {
-      const gie = await getAllGIESNames()
-      const agencies = await getAllAgenciesNames()
-      const response = await getAllUsers();
+      let gie = {};
+      let response = {};
+      gie = await getAllGIESNames();
+      if (agencyId !== "null") {
+        response = await getAllAgencyUsers(agencyId);
+      }
+      if (agencyId === "null") {
+        response = await getAllGieUsers(gieId);
+      }
+      if (!gieId && !agencyId) {
+        response = await getAllUsers();
+      }
       console.log("Users", response);
-      if (response.data.length > 0&&!gie.error&&!agencies.error) {
-        setAllGEI(gie.data)
-        setAllAgencies(agencies.data)
+      if (!response.error && !gie.error) {
+        setAllGEI(gie.data);
         setusers(response.data);
         setfilteredusers(response.data);
         setisloading(false);
@@ -91,17 +103,21 @@ const Users = () => {
     }
   };
   useEffect(() => {
-    handlegetallUsers();
-  }, []);
+    if (window.location.pathname.includes("users")) {
+      handlegetallUsers();
+    }
+    if (gieId) {
+      setSelectedGEI(gieId);
+    }
+    if (agencyId && agencyId !== "null") {
+      setSelectedAgency(agencyId);
+    }
+  }, [location]);
   useEffect(() => {
     console.log("all Users", users);
   }, [users]);
   const handlelisthousesclick = (id, username) => {
     navigate(`/houses/${id}/${username}`);
-  };
-  const handleaddtoteamclick = (id) => {
-    setusertoaddteam(id);
-    setisadding(true);
   };
   const handleviewClick = (user) => {
     setusertoview(user);
@@ -111,6 +127,22 @@ const Users = () => {
     setusertoview(user);
     setisediting(true);
   };
+  const handlegetAgenciesnames = async () => {
+    setisfetchingag(true);
+    const response = await getAllAgenciesNamesByGie(selectedGEI);
+    if (!response.error) {
+      setAllAgencies(response.data);
+      setisfetchingag(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedGEI !== "") {
+      handlegetAgenciesnames();
+    }
+    if (selectedAgency === "") {
+      setAllAgencies([]);
+    }
+  }, [selectedGEI]);
   const handleDeleteClick = async (id, name) => {
     const response = await deleteUser(id);
     if (!response.error) {
@@ -124,7 +156,7 @@ const Users = () => {
     if (users?.length > 0) {
       setfilteredusers(
         users?.filter((user) =>
-          user.user.fname.toLowerCase().includes(searchtext.toLowerCase())
+          user.fname.toLowerCase().includes(searchtext.toLowerCase())
         )
       );
     }
@@ -132,12 +164,16 @@ const Users = () => {
   useEffect(() => {
     handlefilter();
   }, [searchtext]);
-  const handleTeamsClick = async (id) => {
-    navigate(`/users/team/${id}`);
+  const handleFilterUsers = (e) => {
+    e.preventDefault();
   };
-  const handleFilterUsers = (e)=>{
-      e.preventDefault()
-  }
+  const handlefilterbyids = () => {
+    if (selectedAgency === "") {
+      navigate(`/users/${selectedGEI}/null`);
+    } else {
+      navigate(`/users/${selectedGEI}/${selectedAgency}`);
+    }
+  };
   return (
     <>
       <Header />
@@ -149,47 +185,98 @@ const Users = () => {
             <Card className="shadow">
               <CardHeader
                 className="border-0"
-                style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  alignContent: "center",
+                }}
               >
                 <h3 className="mb-0">Users</h3>
-                <Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'50%',alignItems:"center"}} onSubmit={(e) => handleFilterUsers(e)}>
-                    <InputGroup className="input-group-alternative">
-                      <Input
-                        type="select"
-                        value={selectedGEI}
-                        onChange={(e) => setSelectedGEI(e.target.value)}
-                      >
-                        <option value="">Select GEI</option>
-                        {allGEI.map((gei, index) => {
-                          return (
-                              <option value={gei._id} key={index}>
-                                {gei.name}
-                              </option>
-                          );
-                        })}
-                      </Input>
-                    </InputGroup>
-                    <InputGroup className="input-group-alternative" >
-                      <Input
-                        type="select"
-                        value={selectedAgency}
-                        onChange={(e) => setSelectedAgency(e.target.value)}
-                        disabled={selectedGEI.trim()===''}
-                      >
-                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
-                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
-                        {allAgencies.map((agency, index) => {
-                          return (
-                              <option value={agency._id} key={index}>
-                                {agency.name}
-                              </option>
-                          );
-                        })}
-                      </Input>
-                    </InputGroup>
+                <Form
+                  role="form"
+                  style={{
+                    display: "flex",
+                    gap: "20px",
+                    maxHeight: "50px",
+                    width: "85%",
+                    alignItems: "center",
+                  }}
+                  onSubmit={(e) => handleFilterUsers(e)}
+                >
+                  <InputGroup
+                    className="input-group-alternative"
+                    style={{ width: "25%" }}
+                  >
+                    <Input
+                      type="select"
+                      value={selectedGEI}
+                      onChange={(e) => setSelectedGEI(e.target.value)}
+                    >
+                      <option value="">Select GIE</option>
+                      {allGEI.map((gei, index) => {
+                        return (
+                          <option value={gei._id} key={index}>
+                            {gei.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </InputGroup>
+                  <InputGroup
+                    className="input-group-alternative"
+                    style={{ width: "25%" }}
+                  >
+                    <Input
+                      type="select"
+                      value={selectedAgency}
+                      onChange={(e) => setSelectedAgency(e.target.value)}
+                      disabled={selectedGEI.trim() === "" || isfetchingag}
+                    >
+                      {selectedGEI.trim() === "" && (
+                        <option value="">Select GIE First</option>
+                      )}
+                      {isfetchingag && <option value="">Fetching...</option>}
+                      {selectedGEI.trim() !== "" && !isfetchingag && (
+                        <option value="">Select Agency</option>
+                      )}
+                      {allAgencies.map((agency, index) => {
+                        return (
+                          <option value={agency._id} key={index}>
+                            {agency.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </InputGroup>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" type="submit" disabled={selectedAgency.trim()===''||selectedGEI.trim()===''}>
+                    <Button
+                      onClick={handlefilterbyids}
+                      className="my-4"
+                      color="danger"
+                      type="submit"
+                      disabled={selectedGEI.trim() === ""}
+                    >
                       Filter
+                    </Button>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      onClick={() => {
+                        navigate("/users");
+                        setSelectedAgency("");
+                        setSelectedGEI("");
+                      }}
+                      className="my-4"
+                      color="danger"
+                      type="submit"
+                    >
+                      Clear Filter
+                    </Button>
+                  </div>
+                  <div className="text-center">
+                    <Button className="my-4" color="danger" type="button" onClick={()=>setisadding(true)}>
+                      Add User
                     </Button>
                   </div>
                 </Form>
@@ -218,7 +305,8 @@ const Users = () => {
                       <th scope="col">Full Name</th>
                       <th scope="col">Mobile #</th>
                       <th scope="col">House</th>
-                      <th scope="col">Members</th>
+                      <th scope="col">Agency</th>
+
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
@@ -228,7 +316,7 @@ const Users = () => {
                         <tr>
                           <td>{index + 1}</td>
                           <td>
-                            {user.user.image === "" ? (
+                            {user.image === "" ? (
                               <i
                                 style={{ fontSize: "25px" }}
                                 className="ni ni-circle-08"
@@ -246,46 +334,26 @@ const Users = () => {
                               >
                                 <img
                                   style={{ height: "100%", width: "100%" }}
-                                  src={`https://api.videorpi.com/${user.user.image}`}
+                                  src={`https://api.videorpi.com/${user.image}`}
                                 />
                               </div>
                             )}
                           </td>
-                          <td>{user.user.fname}</td>
+                          <td>{user.fname}</td>
                           <td>
-                            {user.user.country_Code}-{user.user.mobile_no}
+                            {user.country_Code}-{user.mobile_no}
                           </td>
                           <td>
                             <Button
                               color="danger"
                               onClick={() =>
-                                handlelisthousesclick(
-                                  user.user._id,
-                                  user.user.fname
-                                )
+                                handlelisthousesclick(user._id, user.fname)
                               }
                             >
                               List Houses
                             </Button>
                           </td>
-                          <td>
-                            <Button
-                              color="danger"
-                              onClick={() =>
-                                handleaddtoteamclick(user.user._id)
-                              }
-                            >
-                              +
-                            </Button>
-                            {user.user.team && (
-                              <Button
-                                color="danger"
-                                onClick={() => handleTeamsClick(user.user._id)}
-                              >
-                                Teams
-                              </Button>
-                            )}
-                          </td>
+                          <td>{user?.agency?.name}</td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -302,21 +370,18 @@ const Users = () => {
                                 right
                               >
                                 <DropdownItem
-                                  onClick={() => handleviewClick(user.user)}
+                                  onClick={() => handleviewClick(user)}
                                 >
                                   View
                                 </DropdownItem>
                                 {/* <DropdownItem
-                                onClick={() => handleEditClick(user.user)}
+                                onClick={() => handleEditClick(user)}
                               >
                                 Edit
                               </DropdownItem> */}
                                 <DropdownItem
                                   onClick={() =>
-                                    handleDeleteClick(
-                                      user.user._id,
-                                      user.user.fname
-                                    )
+                                    handleDeleteClick(user._id, user.fname)
                                   }
                                 >
                                   Delete
@@ -334,7 +399,7 @@ const Users = () => {
           </div>
         </Row>
       </Container>
-      {(isadding || isviewing || isediting || isaddingUser) && (
+      {(isadding || isviewing || isediting) && (
         <div
           style={{
             height: "100vh",
@@ -349,20 +414,14 @@ const Users = () => {
             zIndex: 20,
           }}
         >
-          {isadding && (
-            <AddtoTeamModal
-              handleclose={() => setisadding(false)}
-              userid={usertoaddteam}
-            />
-          )}
           {isviewing && (
             <ViewUserModal
               handleclose={() => setisviewing(false)}
               userdetails={usertoview}
             />
           )}
-          {/* {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>} */}
-          {/* {isaddingUser&&<AddUserModal handleclose={()=>setisaddingUser(false)} fetchusers = {handlegetallUsers}/>} */}
+          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}
+          {isadding&&<AddUserModal handleclose={()=>setisadding(false)} fetchusers = {handlegetallUsers}/>}
         </div>
       )}
     </>
