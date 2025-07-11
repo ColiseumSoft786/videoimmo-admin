@@ -21,7 +21,7 @@ import { getUserHouses } from "Api/Users";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
   Card,
@@ -47,52 +47,69 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 import HouseViewModal from "./Modals/HouseViewModal";
-import './Modals/enhancements.css'
+import "./Modals/enhancements.css";
 import { getAllGIESNames } from "Api/gei";
-import { getAllAgenciesNames } from "Api/agency";
+import { getAllAgenciesNamesByGie } from "Api/agency";
+import { getHousesByGie } from "Api/Houses";
+import { getHouseByAgencies } from "Api/Houses";
 // core components
-
 const Houses = () => {
+  const navigate = useNavigate()
   const [houses, setHouses] = useState([]);
   const [isloading, setisloading] = useState(true);
-  const { userid,username } = useParams();
-  const [isviewing,setisviewing] = useState(false)
-  const [housetoview,sethousetoview] = useState(null)
-  const location = useLocation()
-   const [selectedAgency, setSelectedAgency] = useState("");
+  const { userid, username ,gieId,agencyId} = useParams();
+  const [isviewing, setisviewing] = useState(false);
+  const [housetoview, sethousetoview] = useState(null);
+  const location = useLocation();
+  const [selectedAgency, setSelectedAgency] = useState("");
+  const [isfetchingag, setisfetchingag] = useState(false);
   const [selectedGEI, setSelectedGEI] = useState("");
-  const [allAgencies, setAllAgencies] = useState([
-    "agency1",
-    "agency2",
-    "agency3",
-    "agency4",
-  ]);
-  const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
+  const [allAgencies, setAllAgencies] = useState([]);
+  const [allGEI, setAllGEI] = useState([]);
   console.log(userid);
   const getHouseTimestamp = (createdAt) => {
     return new Date(createdAt).getTime(); // or .valueOf()
   };
-
+  const handlegetAgenciesnames = async () => {
+    setisfetchingag(true);
+    const response = await getAllAgenciesNamesByGie(selectedGEI);
+    if (!response.error) {
+      setAllAgencies(response.data);
+      setisfetchingag(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedGEI !== "") {
+      handlegetAgenciesnames();
+    }
+    if (selectedGEI === "") {
+      setAllAgencies([]);
+    }
+  }, [selectedGEI]);
   const handlegetallHouses = async () => {
-    let response = null
-    setisloading(true)
+    let response = null;
+    const gie = await getAllGIESNames();
+    if (!gie.error) {
+      setAllGEI(gie.data);
+    }
+    setisloading(true);
     try {
-      if(userid){
-        response = await getUserHouses(userid)
-        if (response){
-        setHouses(response.data)
+      if (userid) {
+        response = await getUserHouses(userid);
+      } else {
+        if(gieId&&agencyId==='null'){
+          response = await  getHousesByGie(gieId)
+        }
+        if(agencyId&&agencyId!=='null'){
+          response = await getHouseByAgencies(agencyId)
+        }
+        if(!agencyId&&!gieId){
+                  response = await getAllHouses();
+        }
       }
-      }else{
-       response = await getAllHouses();
-       const gie = await getAllGIESNames()
-       const agencies = await getAllAgenciesNames()
-       if(response&&!gie.error&&!agencies.error){
-        setHouses(response.data)
-        setAllGEI(gie.data)
-        setAllAgencies(agencies.data)
-        setisloading(false)
-       }
-      }
+      if (!response.error) {
+          setHouses(response.data);
+        }
     } catch (error) {
       console.log(error);
     } finally {
@@ -100,27 +117,32 @@ const Houses = () => {
     }
   };
   useEffect(() => {
-    handlegetallHouses();
-  }, [userid,username,location.pathname]);
+    if(window.location.pathname.includes('houses')){
+    handlegetallHouses();}
+  }, [userid, username, location.pathname]);
   useEffect(() => {
     console.log("all houses", houses);
   }, [houses]);
-  const handleDeleteHouse = async(id)=>{
-    const response = await deleteHouseById(id)
-    if(!response.error){
-      toastService.success('House Deleted Successfully')
-      handlegetallHouses()
-    }else{
-      toastService.warn('Something Went Wrong')
+  const handleDeleteHouse = async (id) => {
+    const response = await deleteHouseById(id);
+    if (!response.error) {
+      toastService.success("House Deleted Successfully");
+      handlegetallHouses();
+    } else {
+      toastService.warn("Something Went Wrong");
     }
-  }
-  const handleViewClick = (house)=>{
-    sethousetoview(house)
-    setisviewing(true)
-  }
-  const handleFilterHouses = (e)=>{
-      e.preventDefault()
-  }
+  };
+  const handleViewClick = (house) => {
+    sethousetoview(house);
+    setisviewing(true);
+  };
+  const handlefilterbyids = () => {
+    if (selectedAgency === "") {
+      navigate(`/houses/filtered/${selectedGEI}/null`);
+    } else {
+      navigate(`/houses/filtered/${selectedGEI}/${selectedAgency}`);
+    }
+  };
   return (
     <>
       <Header />
@@ -130,51 +152,101 @@ const Houses = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-              <CardHeader className="border-0"
-               style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              <CardHeader
+                className="border-0"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  alignContent: "center",
+                }}
               >
-                <h3 className="mb-0">{username?`Houses of ${username}`:'Houses'}</h3>
-                {!username&&<Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'50%',alignItems:"center"}} onSubmit={(e) => handleFilterHouses(e)}>
-                    <InputGroup className="input-group-alternative">
+                <h3 className="mb-0">
+                  {username ? `Houses of ${username}` : "Houses"}
+                </h3>
+                {!username && (
+                  <Form
+                    role="form"
+                    style={{
+                      display: "flex",
+                      maxHeight: "50px",
+                      width: "73%",
+                      alignItems: "center",
+                      gap:'20px'
+                    }}
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <InputGroup
+                      className="input-group-alternative"
+                      style={{ width: "31%" }}
+                    >
                       <Input
                         type="select"
                         value={selectedGEI}
                         onChange={(e) => setSelectedGEI(e.target.value)}
                       >
-                        <option value="">Select GEI</option>
+                        <option value="">Select GIE</option>
                         {allGEI.map((gei, index) => {
                           return (
-                              <option value={gei._id} key={index}>
-                                {gei.name}
-                              </option>
+                            <option value={gei._id} key={index}>
+                              {gei.name}
+                            </option>
                           );
                         })}
                       </Input>
                     </InputGroup>
-                    <InputGroup className="input-group-alternative" >
+                    <InputGroup
+                      className="input-group-alternative"
+                      style={{ width: "31%" }}
+                    >
                       <Input
                         type="select"
                         value={selectedAgency}
                         onChange={(e) => setSelectedAgency(e.target.value)}
-                        disabled={selectedGEI.trim()===''}
+                        disabled={selectedGEI.trim() === "" || isfetchingag}
                       >
-                        {selectedGEI.trim()===''&&<option value="">Select GEI First</option>}
-                              {selectedGEI.trim()!==''&&<option value="">Select Agency</option>}
+                        {selectedGEI.trim() === "" && (
+                          <option value="">Select GIE First</option>
+                        )}
+                        {isfetchingag && <option value="">Fetching...</option>}
+                        {selectedGEI.trim() !== "" && !isfetchingag && (
+                          <option value="">Select Agency</option>
+                        )}
                         {allAgencies.map((agency, index) => {
                           return (
-                              <option value={agency._id} key={index}>
-                                {agency.name}
-                              </option>
+                            <option value={agency._id} key={index}>
+                              {agency.name}
+                            </option>
                           );
                         })}
                       </Input>
                     </InputGroup>
-                  <div className="text-center">
-                    <Button className="my-4" color="danger" type="submit" disabled={selectedAgency.trim()===''||selectedGEI.trim()===''}>
-                      Filter
-                    </Button>
-                  </div>
-                </Form>}
+                    <div className="text-center">
+                      <Button
+                        onClick={handlefilterbyids}
+                        className="my-4"
+                        color="danger"
+                        disabled={selectedGEI.trim() === ""}
+                      >
+                        Filter
+                      </Button>
+                    </div>
+                    <div className="text-center">
+                      <Button
+                        onClick={() => {
+                          navigate("/houses");
+                          setSelectedAgency("");
+                          setSelectedGEI("");
+                        }}
+                        className="my-4"
+                        color="danger"
+                        disabled={window.location.pathname==='/houses'}
+                      >
+                        Clear Filter
+                      </Button>
+                    </div>
+                  </Form>
+                )}
               </CardHeader>
               {isloading ? (
                 <div
@@ -244,7 +316,18 @@ const Houses = () => {
                               Visit
                             </Button>
                           </td>
-                          <td className="text-center"><i style={{fontSize:house.status===1?'20px':''}} className={`${house.status===1?'ni ni-check-bold text-green':'ni ni-fat-remove text-red'}`}/></td>
+                          <td className="text-center">
+                            <i
+                              style={{
+                                fontSize: house.status === 1 ? "20px" : "",
+                              }}
+                              className={`${
+                                house.status === 1
+                                  ? "ni ni-check-bold text-green"
+                                  : "ni ni-fat-remove text-red"
+                              }`}
+                            />
+                          </td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -262,13 +345,12 @@ const Houses = () => {
                                 right
                               >
                                 <DropdownItem
-                                  onClick={()=>handleViewClick(house)}
-                                  
+                                  onClick={() => handleViewClick(house)}
                                 >
                                   View
                                 </DropdownItem>
                                 <DropdownItem
-                                  onClick={()=>handleDeleteHouse(house._id)}
+                                  onClick={() => handleDeleteHouse(house._id)}
                                 >
                                   Delete
                                 </DropdownItem>
@@ -285,10 +367,29 @@ const Houses = () => {
           </div>
         </Row>
       </Container>
-      {(isviewing)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
-          {isviewing&&<HouseViewModal handleclose={()=>setisviewing(false)} houseDetails={housetoview} />}
-        </div>)}
+      {isviewing && (
+        <div
+          style={{
+            height: "100vh",
+            width: "100vw",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "10vh",
+            zIndex: 20,
+          }}
+        >
+          {isviewing && (
+            <HouseViewModal
+              handleclose={() => setisviewing(false)}
+              houseDetails={housetoview}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 };

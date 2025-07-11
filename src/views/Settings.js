@@ -45,7 +45,6 @@ import {
   Input,
   CardBody,
 } from "reactstrap";
-import AddtoTeamModal from "./Modals/AddtoTeamModal";
 import ViewUserModal from "./Modals/ViewUserModal";
 import EditUserModal from "./Modals/EditUserModal";
 import { deleteUser } from "Api/Users";

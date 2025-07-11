@@ -45,7 +45,6 @@ import {
   InputGroup,
   Input,
 } from "reactstrap";
-import AddtoTeamModal from "./Modals/AddtoTeamModal";
 import ViewUserModal from "./Modals/ViewUserModal";
 import EditUserModal from "./Modals/EditUserModal";
 import { deleteUser } from "Api/Users";
@@ -139,7 +138,7 @@ const Users = () => {
     if (selectedGEI !== "") {
       handlegetAgenciesnames();
     }
-    if (selectedAgency === "") {
+    if (selectedGEI=== "") {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
@@ -270,12 +269,13 @@ const Users = () => {
                       className="my-4"
                       color="danger"
                       type="submit"
+                      disabled={window.location.pathname==='/users'}
                     >
                       Clear Filter
                     </Button>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" type="button" onClick={()=>setisadding(true)}>
+                    <Button className="my-4" color="danger" onClick={()=>setisadding(true)}>
                       Add User
                     </Button>
                   </div>
@@ -374,11 +374,11 @@ const Users = () => {
                                 >
                                   View
                                 </DropdownItem>
-                                {/* <DropdownItem
+                                <DropdownItem
                                 onClick={() => handleEditClick(user)}
                               >
                                 Edit
-                              </DropdownItem> */}
+                              </DropdownItem>
                                 <DropdownItem
                                   onClick={() =>
                                     handleDeleteClick(user._id, user.fname)
@@ -410,7 +410,7 @@ const Users = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop: "10vh",
+            paddingTop: isadding?'':"5vh",
             zIndex: 20,
           }}
         >

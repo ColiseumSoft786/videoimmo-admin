@@ -49,7 +49,7 @@ import ViewAdminModal from "./Modals/ViewAdminModal";
 import { deleteAdmin } from "Api/Admins";
 import toastService from "Toaster/toaster";
 import AddAdminModal from "./Modals/AddAdminModal";
-import { useAsyncError } from "react-router-dom";
+import { useAsyncError, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AddGeiModal from "./Modals/AddGeiModal";
 import ViewGeiModal from "./Modals/ViewGeiModal";
@@ -66,6 +66,9 @@ import EditAgency from "./Modals/EditAgency";
 
 const Agencies = () => {
   const searchtext = useSelector((state)=>state.admin.searchText)
+  const location = useLocation()
+  const {gieId} = useParams()
+  const navigate = useNavigate()
     const [isloading,setisloading] = useState(true)
     const [isviewing,setisviewing] = useState(false)
     const [agencytoshow,setagencytoshow] = useState(null)
@@ -77,9 +80,17 @@ const Agencies = () => {
     const handlegetallagencies= async()=>{
         setisloading(true)
         const gei = await getAllGEI()
-        const agencies = await getallAgencies()
-        if(!gei.error&&!agencies.error){
-            setAllGEIs(gei.data)
+        let agencies = []
+        if(!gei.error){
+           setAllGEIs(gei.data)
+        }
+        if(gieId){
+          agencies = await getGEIAgencies(gieId)
+        }else{
+          agencies = await getallAgencies()
+        }
+        
+        if(!agencies.error){
             setAllAgencies(agencies.data)
             setisloading(false)
         }
@@ -97,20 +108,16 @@ const Agencies = () => {
         }
     }
     const handlegetGeiAgencies=async()=>{
-        setisloading(true)
-        const response = await getGEIAgencies(selectedGEI)
-        if(!response.error){
-            setAllAgencies(response.data)
-            setisloading(false)
-        }
+        navigate(`/agencies/${selectedGEI}`)
     }
     const handleeditclick = (agency)=>{
         setagencytoshow(agency)
         setisediting(true)
     }
   useEffect(()=>{
-    handlegetallagencies()
-  },[])
+    if(window.location.pathname.includes('agencies')){
+    handlegetallagencies()}
+  },[location])
   return (
     <>
       <Header />
@@ -147,7 +154,10 @@ const Agencies = () => {
                     </Button>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" onClick={handlegetallagencies}>
+                    <Button className="my-4" color="danger" disabled={window.location.pathname==='/agencies'} onClick={()=>{
+                      navigate('/agencies')
+                      setSelectedGEI('')
+                      }}>
                       Clear Filter
                     </Button>
                   </div>

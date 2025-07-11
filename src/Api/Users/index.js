@@ -5,6 +5,8 @@ import { getUserHouseAPI } from "Api";
 import { getAPI } from "Api";
 import { GET_MANAGER_TEAM } from "Api/apiurls";
 import { GET_ALL_AGENCY_USERS } from "Api/apiurls";
+import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
+import { GET_OTHER_USERS_NAMES } from "Api/apiurls";
 import { GET_ALL_GIE_USERS } from "Api/apiurls";
 import { UPDATE_MEMBERS_OF_TEAM } from "Api/apiurls";
 import { ADD_USER } from "Api/apiurls";
@@ -94,16 +96,6 @@ export const getManagerTeam = async (id)=>{
         console.log('error in get manager team',error)
     }
 }
-export const updateTeamMembers = async (id,body)=>{
-    try {
-        const path = UPDATE_MEMBERS_OF_TEAM + id
-        const response = await putAPI(path,body,true)
-        console.log('this is the response from update team members',response)
-        return response
-    } catch (error) {
-        console.log('this is the error in the update team members',error)
-    }
-}
 export const getAllAgencyUsers = async(id)=>{
   try {
     const path = GET_ALL_AGENCY_USERS+id
@@ -123,4 +115,24 @@ export const getAllGieUsers = async(id)=>{
   } catch (error) {
     console.log('error in get all gie users',error)
   }
+}
+export const getAllUserNamesByAgency = async(id)=>{
+  try {
+    const path = GET_ALL_USERS_NAMES_BY_AGENCY+id
+    const response = await getAPI(path,true)
+    console.log('response from get all user names by agency',response)
+    return response
+  } catch (error) {
+    console.log('error in get all user names by agency',error)
+  }
+}
+export const getOtherUserNames = async(id,agency)=>{
+    try {
+        const path = GET_OTHER_USERS_NAMES+id+`/${agency}`
+        const response = await getAPIa(path,true)
+        console.log('response from get other user names ',response)
+        return response
+    } catch (error) {
+        console.log('error in get other user name ',error)
+    }
 }

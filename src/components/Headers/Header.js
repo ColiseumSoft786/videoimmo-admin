@@ -19,6 +19,8 @@
 // reactstrap components
 import { getVideosLength } from "Api/dashboard";
 import { getHouseslength } from "Api/dashboard";
+import { getAgenciesLength } from "Api/dashboard";
+import { getGieslength } from "Api/dashboard";
 import { getUserLength } from "Api/dashboard";
 import { useEffect, useState } from "react";
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
@@ -27,20 +29,28 @@ const Header = () => {
   const [totalusers,settotalusers] = useState(0)
   const [totalvideos,settotalvideos] = useState(0)
   const [totalhouses,settotalhouses] = useState(0)
-  const [totalagencies,settotalagencies] = useState(0)
+  const [totalAgencies,settotalagencies] = useState(0)
   const [totalGEI,settotalGEI] = useState(0)
   const getallstats = async()=>{
     const totalusers = await getUserLength()
     const totalvideos = await getVideosLength()
     const totalhouses = await getHouseslength()
-    if(totalusers?.data){
+    const totalgies = await getGieslength()
+    const totalagencies = await getAgenciesLength()
+    if(!totalusers.error){
       settotalusers(totalusers?.data)
     }
-    if(totalhouses?.data){
+    if(!totalhouses.error){
       settotalhouses(totalhouses?.data)
     }
-    if(totalvideos?.data){
+    if(!totalvideos.error){
       settotalvideos(totalvideos?.data)
+    }
+    if(!totalgies.error){
+      settotalGEI(totalgies?.data)
+    }
+    if(!totalagencies.error){
+      settotalagencies(totalagencies.data)
     }
     console.log(totalhouses,totalusers,totalvideos)
   }
@@ -139,7 +149,7 @@ const Header = () => {
                         >
                           Total Agencies
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">{totalagencies}</span>
+                        <span className="h2 font-weight-bold mb-0">{totalAgencies}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-blue text-white rounded-circle shadow">
@@ -159,7 +169,7 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          Total GEIs
+                          Total GIEs
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">{totalGEI}</span>
                       </div>

@@ -41,7 +41,9 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
           seconds: '',
           type: usertoedit.type,
           mobile_no: contact.slice(countryCode.length-1),
-          country_Code: countryCode
+          country_Code: countryCode,
+          gie:usertoedit.gie._id,
+          agency:usertoedit.agency._id
     }
     const response = await updateUserInfo(usertoedit._id,requestbody)
     if(!response.error){

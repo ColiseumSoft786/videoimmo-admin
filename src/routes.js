@@ -54,24 +54,10 @@ var routes = [
     layout: "/",
   },
   {
-    path: "/videos",
-    name: "Videos List",
-    icon: "ni ni-button-play text-info",
-    component: <Videos/>,
-    layout: "/",
-  },
-  {
     path: "/houses",
     name: "Houses",
     icon: "ni ni-building text-pink",
     component: <Houses/>,
-    layout: "/",
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "ni ni-planet text-blue",
-    component: <Icons />,
     layout: "/",
   },
   {

@@ -106,7 +106,8 @@ const Admins = () => {
       }
     }
     useEffect(()=>{
-        handlegetalladmins()
+      if(window.location.pathname.includes('admins')){
+        handlegetalladmins()}
     },[])
     const handlefilter =()=>{
       if(admins.length>0){

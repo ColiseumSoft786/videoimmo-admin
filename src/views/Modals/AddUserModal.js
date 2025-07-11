@@ -1,4 +1,6 @@
 import { updateAdminName } from "Api/Admins";
+import { getAllAgenciesNamesByGie } from "Api/agency";
+import { getAllGIESNames } from "Api/gei";
 import { addUser } from "Api/Users";
 import { updateUserInfo } from "Api/Users";
 import React, { useEffect, useState } from "react";
@@ -23,12 +25,41 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
   const [contact, setcontact] = useState("");
   const [useremail, setuseremail] = useState("");
   const [countryCode, setCountryCode] = useState("+33");
+  const [selectedGEI,setSelectedGEI] = useState('')
+  const [selectedAgency,setSelectedAgency] = useState('')
+  const [allGEI,setAllGEI] = useState([])
+  const [allAgencies,setAllAgencies] = useState([])
+  const [isfetchingag,setisfetchingag] = useState(false)
+  const handleGetAllGie = async()=>{
+    const response = await getAllGIESNames();
+    if(!response.error){
+      setAllGEI(response.data)
+    }
+  }
+  const handlegetAgenciesnames = async () => {
+    setisfetchingag(true);
+    const response = await getAllAgenciesNamesByGie(selectedGEI);
+    if (!response.error) {
+      setAllAgencies(response.data);
+      setisfetchingag(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedGEI !== "") {
+      handlegetAgenciesnames();
+    }
+    if (selectedAgency === "") {
+      setAllAgencies([]);
+    }
+  }, [selectedGEI]);
   const handleAddUser = async (e) => {
     e.preventDefault();
     if (
       fullname.trim() === "" ||
       contact.trim() === "" ||
-      useremail.trim() === ""
+      useremail.trim() === ""||
+      selectedGEI===''||
+      selectedAgency===''
     ) {
       toastService.warn("All fields must be filled");
       return;
@@ -41,6 +72,8 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
       email: useremail,
       mobile_no: contact.slice(countryCode.length-1),
       type: "user",
+      gie: selectedGEI,
+      agency:selectedAgency
     };
     const response = await addUser(requestbody);
     if (!response.error) {
@@ -52,6 +85,9 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
   useEffect(()=>{
     console.log('this country code',countryCode,'and',contact)
   },[countryCode,contact])
+  useEffect(()=>{
+    handleGetAllGie()
+  },[])
   return (
     <>
       <Col lg="5" md="7">
@@ -138,20 +174,31 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
               <FormGroup className="mb-3">
                 <label>Agency</label>
                 {/* <InputGroup className="input-group-alternative"> */}
-                <PhoneInput
-                  country={"fr"} // France by default
-                  value={contact}
-                  onChange={(value, data) => {
-                    setcontact(value);
-                    setCountryCode("+" + data.dialCode); // Sets +33
-                  }}
-                  inputStyle={{
-                    width: "100%",
-                    height: "45px",
-                  }}
-                  countryCodeEditable={false}
-                  enableLongNumbers={true}
-                />
+                <InputGroup
+                    className="input-group-alternative"
+                  >
+                    <Input
+                      type="select"
+                      value={selectedAgency}
+                      onChange={(e) => setSelectedAgency(e.target.value)}
+                      disabled={selectedGEI.trim() === "" || isfetchingag}
+                    >
+                      {selectedGEI.trim() === "" && (
+                        <option value="">Select GIE First</option>
+                      )}
+                      {isfetchingag && <option value="">Fetching...</option>}
+                      {selectedGEI.trim() !== "" && !isfetchingag && (
+                        <option value="">Select Agency</option>
+                      )}
+                      {allAgencies.map((agency, index) => {
+                        return (
+                          <option value={agency._id} key={index}>
+                            {agency.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </InputGroup>
                 {/* </InputGroup> */}
               </FormGroup>
               <div className="text-center">

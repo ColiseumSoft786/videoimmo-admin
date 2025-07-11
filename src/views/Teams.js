@@ -41,36 +41,33 @@ import {
   Button,
   Input,
 } from "reactstrap";
-import AddtoTeamModal from "./Modals/AddtoTeamModal";
 import ViewUserModal from "./Modals/ViewUserModal";
 import EditUserModal from "./Modals/EditUserModal";
 import { deleteUser } from "Api/Users";
 import toastService from "Toaster/toaster";
 import AddUserModal from "./Modals/AddUserModal";
 import { getManagerTeam } from "Api/Users";
+import EditTeamNameModal from "./Modals/EditTeamNameModal";
+import AddManagerModal from "./Modals/AddManagerModal";
+import AddMemberModal from "./Modals/AddMemberModal";
+import { updateTeamMembers } from "Api/teams";
+import { updateTeamManagers } from "Api/teams";
 // core components
 
 const Teams = () => {
   const { managerid } = useParams();
   const [teams, setteams] = useState([]);
-  const [selectedteam, setselectedteam] = useState("");
-  const [managers, setmanagers] = useState([]);
-  const [memebers, setmembers] = useState([]);
+  const [iseditingName,setIsEditingName] = useState(false)
+  const [isaddingmanager,setisaddingmanager] = useState(false)
+  const [isaddingmember,setisaddingmember]= useState(false)
   const [isloading, setisloading] = useState(true);
+  console.log('this is teamt id ',managerid)
   const handlegetteam = async () => {
     try {
       setisloading(true);
       const response = await getManagerTeam(managerid);
       if (!response.error) {
-        const teamsarray = response.data.data;
-        if (teamsarray) {
-          const selectedteamname = teamsarray[0].name;
-          const managersarray = teamsarray[0].managers;
-          const membersarray = teamsarray[0].members;
-          setteams(teamsarray);
-          setmanagers(managersarray);
-          setmembers(membersarray);
-        }
+       setteams(response.data.data)
       }
     } catch (error) {
       console.log(error);
@@ -83,16 +80,24 @@ const Teams = () => {
       handlegetteam();
     }
   }, []);
-  useEffect(() => {
-    if (teams.length > 0) {
-      setselectedteam(teams[0].name);
+  const handleRemoveMember = async(memberid)=>{
+          const requestbody = teams.members.filter((member)=>member._id!==memberid)
+          console.log("this is request body",requestbody)
+          const response = await updateTeamMembers(requestbody,teams._id)
+          if(!response.error){
+              toastService.success('Member Removed Successfully')
+              handlegetteam()
+          }
     }
-  }, [teams]);
-  const handleUserDeleteClick = async (memberid) => {
-    const requestbody = {
-        
+  const handleRemoveManager = async(managerid)=>{
+    const requestbody = teams.managers.filter((manager)=>manager._id!==managerid)
+    const response = await updateTeamManagers(requestbody,teams._id)
+    if(!response.error){
+        toastService.success('Manager Removed Successfully')
+        handlegetteam()
     }
-  };
+  }
+
   return (
     <>
       <Header />
@@ -106,55 +111,12 @@ const Teams = () => {
                 className="border-0"
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
-                <h3 className="mb-0">Team</h3>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "50%",
-                    gap: "20px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ width: "66%", marginRight: "4%" }}>
-                      <Input
-                        type="select"
-                        value={selectedteam}
-                        onChange={(e) => setselectedteam(e.target.value)}
-                      >
-                        {teams?.map((team, index) => {
-                          return (
-                            <option value={team.name} key={index}>
-                              {team.name}
-                            </option>
-                          );
-                        })}
-                      </Input>
-                    </div>
-                    <Button color="danger">Add</Button>
-                    <Button color="danger">Edit</Button>
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Button color="danger">Add Member</Button>
-                    <Button color="danger">Add Existing Member</Button>
-                    <Button color="danger">Add Manager</Button>
-                  </div>
-                </div>
+                <h3 className="mb-0">Team : {teams.name}</h3>
+                    <Button color="danger" onClick={()=>setIsEditingName(true)}>Edit</Button>
               </CardHeader>
-              <div style={{ width: "100%", padding: "0 20px" }}>
+              <div style={{display:'flex', width: "100%", padding: " 20px" , justifyContent:'space-between'}}>
                 <h3 className="mb-0">Managers</h3>
+                <Button color="danger" onClick={()=>setisaddingmanager(true)}>Add manager</Button>
               </div>
               {isloading ? (
                 <div
@@ -180,7 +142,7 @@ const Teams = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {managers?.map((manager, index) => {
+                    {teams.managers?.map((manager, index) => {
                       return (
                         <tr>
                           <td>{index + 1}</td>
@@ -212,45 +174,23 @@ const Teams = () => {
                           <td>
                             {manager.country_Code}-{manager.mobile_no}
                           </td>
-                          {/* <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              href="#pablo"
-                              role="button"
-                              size="sm"
-                              color=""
-                              onClick={(e) => e.preventDefault()}
+                        <td className="text-right">
+                          <Button
+                              color="danger"
+                              onClick={() => handleRemoveManager(manager._id)}
                             >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem
-                                onClick={()=>handleviewClick(user)}
-                              >
-                                View
-                              </DropdownItem>
-                              <DropdownItem
-                                onClick={() => handleEditClick(user)}
-                              >
-                                Edit
-                              </DropdownItem>
-                              <DropdownItem
-                                onClick={()=>handleDeleteClick(user._id,user.fname)}
-                              >
-                                Delete
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
-                        </td> */}
+                              Delete
+                            </Button>
+                        </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </Table>
               )}
-              <div style={{ width: "100%", padding: "0 20px" }}>
+              <div style={{display:'flex', width: "100%", padding: " 20px" ,justifyContent:'space-between'}}>
                 <h3>Members</h3>
+                <Button color="danger" onClick={()=>setisaddingmember(truet)}>Add Member</Button>
               </div>
               {isloading ? (
                 <div
@@ -276,7 +216,7 @@ const Teams = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {memebers?.map((memeber, index) => {
+                    {teams.members?.map((memeber, index) => {
                       return (
                         <tr>
                           <td>{index + 1}</td>
@@ -311,7 +251,7 @@ const Teams = () => {
                           <td className="text-right">
                             <Button
                               color="danger"
-                              onClick={() => handleUserDeleteClick()}
+                              onClick={() => handleRemoveMember(memeber._id)}
                             >
                               Delete
                             </Button>
@@ -326,10 +266,13 @@ const Teams = () => {
           </div>
         </Row>
       </Container>
-      {/* {(isadding||isviewing||isediting||isaddingUser)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isediting||isaddingUser?'5vh':'10vh',zIndex:20}}>
+      {(iseditingName||isaddingmanager||isaddingmember)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
+          {iseditingName&&<EditTeamNameModal handleclose={()=>setIsEditingName(false)} teamtoEdit={teams} fetchteam={handlegetteam}/>}
+          {isaddingmanager&&<AddManagerModal handleclose={()=>setisaddingmanager(false)} fetchteam={handlegetteam} team={teams}/>}
+          {isaddingmember&&<AddMemberModal handleclose={()=>setisaddingmember(false)} fetchteam={handlegetteam} team={teams}/>}
         </div>
-        )} */}
+        )}
     </>
   );
 };

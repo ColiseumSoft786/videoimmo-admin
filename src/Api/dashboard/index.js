@@ -1,4 +1,6 @@
 import { getAPI } from "Api"
+import { GET_TOTAL_AGENCIES_LENGTH } from "Api/apiurls"
+import { GET_TOTAL_GIE_LENGTH } from "Api/apiurls"
 import { HOUSES_GET_LENGTH } from "Api/apiurls"
 import { VIDEOES_GET_LENGTH } from "Api/apiurls"
 import { USER_GET_LENGTH } from "Api/apiurls"
@@ -28,5 +30,23 @@ export const getHouseslength = async()=>{
         return response
     } catch (error) {
         console.log('error in get houses length',error)
+    }
+}
+export const getAgenciesLength = async()=>{
+    try {
+        const response = await getAPI(GET_TOTAL_AGENCIES_LENGTH,true)
+        console.log('response from get agencies length',response)
+        return response
+    } catch (error) {
+        console.log('error in get agencies length',error)
+    }
+}
+export const getGieslength = async()=>{
+    try {
+        const response = await getAPI(GET_TOTAL_GIE_LENGTH,true)
+        console.log('response from get gies length',response)
+        return response
+    } catch (error) {
+        console.log('error in get gies length',error)
     }
 }

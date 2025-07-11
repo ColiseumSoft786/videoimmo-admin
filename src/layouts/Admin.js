@@ -28,6 +28,8 @@ import routes from "routes.js";
 import Houses from "views/Houses";
 import Teams from "views/Teams";
 import Users from "views/Users";
+import AllTeams from "views/AllTeams";
+import Agencies from "views/Agencies";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -83,8 +85,11 @@ const Admin = (props) => {
           {isloggedin && (
             <>
               <Route path="/houses/:userid/:username" element={<Houses />} />
+              <Route path="/houses/filtered/:gieId/:agencyId" element={<Houses />} />
+              <Route path="/teams/:gieId/:agencyId" element={<AllTeams />} />
               <Route path="/users/:gieId/:agencyId" element={<Users/>}/>
-              <Route path="/users/team/:managerid" element={<Teams/>}/>
+              <Route path="/team/:managerid" element={<Teams/>}/>
+              <Route path="/agencies/:gieId" element={<Agencies/>}/>
             </>
           )}
         </Routes>

@@ -53,13 +53,24 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                   />
                 </InputGroup>
               </FormGroup>
-              <FormGroup className="mb-3">
-                <label>Status</label>
+               <FormGroup className="mb-3">
+                <label>GIE</label>
                 <InputGroup className="input-group-alternative">
                   <Input
                     placeholder="Last name"
                     type="text"
-                    value={userdetails.status}
+                    value={userdetails.gie.name}
+                    readOnly
+                  />
+                </InputGroup>
+              </FormGroup>
+               <FormGroup className="mb-3">
+                <label>Agency</label>
+                <InputGroup className="input-group-alternative">
+                  <Input
+                    placeholder="Last name"
+                    type="text"
+                    value={userdetails.agency.name}
                     readOnly
                   />
                 </InputGroup>
