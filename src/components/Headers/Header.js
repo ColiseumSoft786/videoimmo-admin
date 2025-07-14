@@ -32,25 +32,25 @@ const Header = () => {
   const [totalAgencies,settotalagencies] = useState(0)
   const [totalGEI,settotalGEI] = useState(0)
   const getallstats = async()=>{
-    const totalusers = await getUserLength()
-    const totalvideos = await getVideosLength()
-    const totalhouses = await getHouseslength()
-    const totalgies = await getGieslength()
-    const totalagencies = await getAgenciesLength()
-    if(!totalusers.error){
-      settotalusers(totalusers?.data)
+    const resusers = await getUserLength()
+    const resvideos = await getVideosLength()
+    const reshouses = await getHouseslength()
+    const resgies = await getGieslength()
+    const resagencies = await getAgenciesLength()
+    if(!resusers.error){
+      settotalusers(resusers.data)
     }
-    if(!totalhouses.error){
-      settotalhouses(totalhouses?.data)
+    if(!reshouses.error){
+      settotalhouses(reshouses.data)
     }
-    if(!totalvideos.error){
-      settotalvideos(totalvideos?.data)
+    if(!resvideos.error){
+      settotalvideos(resvideos.data)
     }
-    if(!totalgies.error){
-      settotalGEI(totalgies?.data)
+    if(!resgies.error){
+      settotalGEI(resgies.data)
     }
-    if(!totalagencies.error){
-      settotalagencies(totalagencies.data)
+    if(!resagencies.error){
+      settotalagencies(resagencies.data)
     }
     console.log(totalhouses,totalusers,totalvideos)
   }

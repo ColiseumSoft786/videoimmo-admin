@@ -6,6 +6,8 @@ import { getAPI } from "Api";
 import { GET_MANAGER_TEAM } from "Api/apiurls";
 import { GET_ALL_AGENCY_USERS } from "Api/apiurls";
 import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
+import { GET_GIE_USER_LENGTH } from "Api/apiurls";
+import { GET_AGENCY_USER_LENGTH } from "Api/apiurls";
 import { GET_OTHER_USERS_NAMES } from "Api/apiurls";
 import { GET_ALL_GIE_USERS } from "Api/apiurls";
 import { UPDATE_MEMBERS_OF_TEAM } from "Api/apiurls";
@@ -17,9 +19,10 @@ import { ADD_MEMBERS_IN_TEAM } from "Api/apiurls";
 import { GET_USER_HOUSES } from "Api/apiurls";
 import { GET_ALL_USERS } from "Api/apiurls";
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (page) => {
   try {
-    const response = await getAPI(GET_ALL_USERS, true);
+    const path = GET_ALL_USERS+page
+    const response = await getAPI(path, true);
     console.log("response from get all users api", response);
     return response;
   } catch (error) {
@@ -96,9 +99,9 @@ export const getManagerTeam = async (id)=>{
         console.log('error in get manager team',error)
     }
 }
-export const getAllAgencyUsers = async(id)=>{
+export const getAllAgencyUsers = async(id,page)=>{
   try {
-    const path = GET_ALL_AGENCY_USERS+id
+    const path = GET_ALL_AGENCY_USERS+id+`/${page}`
     const response = await getAPI(path,true)
     console.log('response from get all user of agency',response)
     return response
@@ -106,9 +109,9 @@ export const getAllAgencyUsers = async(id)=>{
     console.log('error in get all agency users',error)
   }
 }
-export const getAllGieUsers = async(id)=>{
+export const getAllGieUsers = async(id,page)=>{
   try {
-    const path = GET_ALL_GIE_USERS+id
+    const path = GET_ALL_GIE_USERS+id+`/${page}`
     const response = await getAPI(path,true)
     console.log('response from get all gie users',response)
     return response
@@ -135,4 +138,24 @@ export const getOtherUserNames = async(id,agency)=>{
     } catch (error) {
         console.log('error in get other user name ',error)
     }
+}
+export const getGieUserLength = async(id)=>{
+  try {
+    const path = GET_GIE_USER_LENGTH+id
+    const response = await getAPI(path,true)
+    console.log('response from get gie user length',response)
+    return response
+  } catch (error) {
+    console.log('error in gie user length',error)
+  }
+}
+export const getAgencyUserLength = async(id)=>{
+  try {
+    const path = GET_AGENCY_USER_LENGTH+id
+    const response = getAPI(path,true)
+    console.log('response from get agency user length',response)
+    return response
+  } catch (error) {
+    console.log('error in agency user length',error)
+  }
 }

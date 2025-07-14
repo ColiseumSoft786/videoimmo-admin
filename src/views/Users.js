@@ -56,10 +56,13 @@ import { getAllAgenciesNames } from "Api/agency";
 import { getAllAgenciesNamesByGie } from "Api/agency";
 import { getAllAgencyUsers } from "Api/Users";
 import { getAllGieUsers } from "Api/Users";
+import { getUserLength } from "Api/dashboard";
+import { getGieUserLength } from "Api/Users";
+import { getAgencyUserLength } from "Api/Users";
 // core components
 
 const Users = () => {
-  const { gieId, agencyId } = useParams();
+  const { page,gieId, agencyId } = useParams();
   const searchtext = useSelector((state) => state.admin.searchText);
   const [users, setusers] = useState([]);
   const [isloading, setisloading] = useState(true);
@@ -72,9 +75,41 @@ const Users = () => {
   const [selectedGEI, setSelectedGEI] = useState("");
   const [allAgencies, setAllAgencies] = useState([]);
   const [isfetchingag, setisfetchingag] = useState(false);
+  const [currentpage,setcurrentpage] = useState(Number(page))
   const [allGEI, setAllGEI] = useState([]);
+  const [totalpages,settotalpages] = useState(0)
   const location = useLocation();
   const navigate = useNavigate();
+  const getpages = async()=>{
+    let pages = null
+    if (agencyId !== "null") {
+        pages = await getAgencyUserLength(agencyId);
+      }
+      if (agencyId === "null") {
+        pages = await getGieUserLength(gieId);
+      }
+      if (!gieId && !agencyId) {
+        pages = await getUserLength();
+      }
+    if(!pages.error){
+      settotalpages(Math.ceil(pages.data/20))
+    }
+  }
+  const handleprev=()=>{
+    if(currentpage>1){
+      const prev = currentpage-1
+      navigate(`/users/${prev}`)
+    }
+  }
+  const handlenext=()=>{
+    if(currentpage<totalpages){
+      const next = currentpage+1
+      navigate(`/users/${next}`)
+    }
+  }
+  useEffect(()=>{
+    setcurrentpage(Number(page))
+  },[page])
   const handlegetallUsers = async () => {
     setisloading(true);
     try {
@@ -82,13 +117,13 @@ const Users = () => {
       let response = {};
       gie = await getAllGIESNames();
       if (agencyId !== "null") {
-        response = await getAllAgencyUsers(agencyId);
+        response = await getAllAgencyUsers(agencyId,page);
       }
       if (agencyId === "null") {
-        response = await getAllGieUsers(gieId);
+        response = await getAllGieUsers(gieId,page);
       }
       if (!gieId && !agencyId) {
-        response = await getAllUsers();
+        response = await getAllUsers(page);
       }
       console.log("Users", response);
       if (!response.error && !gie.error) {
@@ -102,7 +137,9 @@ const Users = () => {
     }
   };
   useEffect(() => {
+    
     if (window.location.pathname.includes("users")) {
+      getpages()
       handlegetallUsers();
     }
     if (gieId) {
@@ -168,9 +205,9 @@ const Users = () => {
   };
   const handlefilterbyids = () => {
     if (selectedAgency === "") {
-      navigate(`/users/${selectedGEI}/null`);
+      navigate(`/users/${selectedGEI}/null/1`);
     } else {
-      navigate(`/users/${selectedGEI}/${selectedAgency}`);
+      navigate(`/users/${selectedGEI}/${selectedAgency}/1`);
     }
   };
   return (
@@ -262,14 +299,14 @@ const Users = () => {
                   <div className="text-center">
                     <Button
                       onClick={() => {
-                        navigate("/users");
                         setSelectedAgency("");
                         setSelectedGEI("");
+                        navigate("/users/1");
                       }}
                       className="my-4"
                       color="danger"
                       type="submit"
-                      disabled={window.location.pathname==='/users'}
+                      disabled={!agencyId&&!gieId}
                     >
                       Clear Filter
                     </Button>
@@ -300,7 +337,6 @@ const Users = () => {
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                     <tr>
-                      <th scope="col">Sr.#</th>
                       <th scope="col">Image</th>
                       <th scope="col">Full Name</th>
                       <th scope="col">Mobile #</th>
@@ -314,7 +350,6 @@ const Users = () => {
                     {filteredusers.map((user, index) => {
                       return (
                         <tr>
-                          <td>{index + 1}</td>
                           <td>
                             {user.image === "" ? (
                               <i
@@ -396,6 +431,29 @@ const Users = () => {
                 </Table>
               )}
             </Card>
+            {!isloading&&<div style={{width:'100%',alignContent:'center',display:'flex',justifyContent:'center',marginTop:'20px'}}> 
+              <div>
+              <Button
+                              color="danger"
+                              onClick={handleprev}
+                              disabled={currentpage===1}
+                            >
+                              Prev
+                            </Button>
+                            <Button
+                              color="danger"
+                            >
+                              {currentpage}
+                            </Button>
+                            <Button
+                              color="danger"
+                              onClick={handlenext}
+                              disabled={currentpage===totalpages}
+                            >
+                              Next
+                            </Button>
+                            </div>
+              </div>}
           </div>
         </Row>
       </Container>

@@ -87,7 +87,7 @@ const Admin = (props) => {
               <Route path="/houses/:userid/:username" element={<Houses />} />
               <Route path="/houses/filtered/:gieId/:agencyId" element={<Houses />} />
               <Route path="/teams/:gieId/:agencyId" element={<AllTeams />} />
-              <Route path="/users/:gieId/:agencyId" element={<Users/>}/>
+              <Route path="/users/:gieId/:agencyId/:page" element={<Users/>}/>
               <Route path="/team/:managerid" element={<Teams/>}/>
               <Route path="/agencies/:gieId" element={<Agencies/>}/>
             </>
