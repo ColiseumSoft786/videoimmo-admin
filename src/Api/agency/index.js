@@ -3,6 +3,8 @@ import { putAPI } from "Api"
 import { deleteAPI } from "Api"
 import { getAPI } from "Api"
 import { GET_ALL_AGENCIES_NAMES_BY_GIE } from "Api/apiurls"
+import { GET_SINGLE_AGENCY } from "Api/apiurls"
+import { GET_GIE_AGENCY_LENGTH } from "Api/apiurls"
 import { GET_ALL_AGENCIES_NAMES } from "Api/apiurls"
 import { Update_Agency } from "Api/apiurls"
 import { DELETE_AGENCY } from "Api/apiurls"
@@ -10,18 +12,19 @@ import { ADD_AGENCY } from "Api/apiurls"
 import { GET_GEI_AGENCIES } from "Api/apiurls"
 import { GET_ALL_AGENCIES } from "Api/apiurls"
 
-export const getallAgencies= async()=>{
+export const getallAgencies= async(page)=>{
     try {
-        const response = await getAPI(GET_ALL_AGENCIES,true)
+        const path = GET_ALL_AGENCIES+page
+        const response = await getAPI(path,true)
         console.log('response from get all agency',response)
         return response
     } catch (error) {
         console.log('error in the get all agencies',error)
     }
 }
-export const getGEIAgencies = async(id)=>{
+export const getGEIAgencies = async(id,page)=>{
     try {
-        const path = GET_GEI_AGENCIES+id
+        const path = GET_GEI_AGENCIES+id+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get gei agencies',response)
         return response
@@ -76,5 +79,25 @@ export const getAllAgenciesNamesByGie = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get all agencies names by', error)
+    }
+}
+export const getAllGieAgenciesLength = async(id)=>{
+    try {
+        const path = GET_GIE_AGENCY_LENGTH+id
+        const response = await getAPI(path,true)
+        console.log('response from get all gie agencies length',response)
+        return response
+    } catch (error) {
+        console.log('error in get all gie agencies length',error)
+    }
+}
+export const getSingleAgency = async(id)=>{
+    try {
+        const path = GET_SINGLE_AGENCY+id
+        const response = await getAPI(path,true)
+        console.log('response from get single agency',response)
+        return response
+    } catch (error) {
+        console.log('error in get single agency',error)
     }
 }

@@ -7,6 +7,8 @@ import { GET_MANAGER_TEAM } from "Api/apiurls";
 import { GET_ALL_AGENCY_USERS } from "Api/apiurls";
 import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
 import { GET_GIE_USER_LENGTH } from "Api/apiurls";
+import { GET_ALL_USER_NAMES } from "Api/apiurls";
+import { GET_SINGLE_USER } from "Api/apiurls";
 import { GET_AGENCY_USER_LENGTH } from "Api/apiurls";
 import { GET_OTHER_USERS_NAMES } from "Api/apiurls";
 import { GET_ALL_GIE_USERS } from "Api/apiurls";
@@ -152,10 +154,29 @@ export const getGieUserLength = async(id)=>{
 export const getAgencyUserLength = async(id)=>{
   try {
     const path = GET_AGENCY_USER_LENGTH+id
-    const response = getAPI(path,true)
+    const response = await getAPI(path,true)
     console.log('response from get agency user length',response)
     return response
   } catch (error) {
     console.log('error in agency user length',error)
+  }
+}
+export const getAllUserNames = async()=>{
+  try {
+    const response = await getAPI(GET_ALL_USER_NAMES,true)
+    console.log('response from get all usernames',response)
+    return response
+  } catch (error) {
+    console.log('error in get all user names',error)
+  }
+}
+export const getSingleUser = async(id)=>{
+  try {
+    const path = GET_SINGLE_USER+id
+    const response = await getAPI(path,true)
+    console.log('response from get single user',response)
+    return response
+  } catch (error) {
+    console.log('error in get single user',error)
   }
 }

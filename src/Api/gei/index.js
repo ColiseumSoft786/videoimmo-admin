@@ -2,15 +2,17 @@ import { putAPI } from "Api"
 import { deleteAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
+import { GET_SINGLE_GIE } from "Api/apiurls"
 import { UPDATE_GEI } from "Api/apiurls"
 import { GET_ALL_GIES_NAMES } from "Api/apiurls"
 import { DELETE_GEI } from "Api/apiurls"
 import { ADD_GEI } from "Api/apiurls"
 import { GET_ALL_GEIS } from "Api/apiurls"
 
-export const getAllGEI = async()=>{
+export const getAllGEI = async(page)=>{
     try {
-        const response = await getAPI(GET_ALL_GEIS,true)
+        const path = GET_ALL_GEIS+page
+        const response = await getAPI(path,true)
         console.log('response from get all geis',response)
         return response
     } catch (error) {
@@ -53,5 +55,15 @@ export const getAllGIESNames = async()=>{
         return response
     } catch (error) {
         console.log('error in get all gies names',error)
+    }
+}
+export const getSingleGie = async(id)=>{
+    try {
+        const path = GET_SINGLE_GIE+id
+        const response = await getAPI(path,true)
+        console.log('response from get singe gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get single gie ',error)
     }
 }

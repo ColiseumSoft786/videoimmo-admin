@@ -46,30 +46,76 @@ import ViewAdminModal from "./Modals/ViewAdminModal";
 import { deleteAdmin } from "Api/Admins";
 import toastService from "Toaster/toaster";
 import AddAdminModal from "./Modals/AddAdminModal";
-import { useAsyncError } from "react-router-dom";
+import { useAsyncError, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AddGeiModal from "./Modals/AddGeiModal";
 import ViewGeiModal from "./Modals/ViewGeiModal";
 import EditGeiModal from "./Modals/EditGeiModal";
 import { getAllGEI } from "Api/gei";
 import { deleteGEI } from "Api/gei";
+import { getGieslength } from "Api/dashboard";
+import { getSingleGie } from "Api/gei";
 // core components
 
 const GEI = () => {
   const searchtext = useSelector((state)=>state.admin.searchText)
   const dispatch = useDispatch()
+  const location = useLocation()
     const [admins,setadmins]=useState([])
+    const {gieId} = useParams()
+    const {page} = useParams()
     const [isloading,setisloading] = useState(true)
     const [isediting,setisediting] = useState(false)
     const [isviewing,setisviewing] = useState(false)
     const [isadding,setisadding] = useState(false)
     const [geitoshow,setgeitoshow] = useState(null)
     const [allGEIs,setAllGEIs] = useState([])
+     const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems,settotalitems] = useState(0)
+  const getpages = async () => {
+    const pages = await getGieslength()
+    if (!pages.error) {
+      settotalitems(Number(pages.data))
+      settotalpages(Math.ceil(pages.data / 20));
+    } else {
+      settotalitems(0)
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+       
+          navigate(`/gies/${prev}`);
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+      
+          navigate(`/gies/${next}`);
+
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
     const handlegetallGeis= async()=>{
         setisloading(true)
-        const response = await getAllGEI()
+        const issearched = window.location.pathname.includes('searched')
+        let response = {}
+        if(issearched){
+          response = await getSingleGie(gieId)
+        }
+        if(!issearched){
+         response = await getAllGEI(page)
+        }
         if(!response.error){
-            setAllGEIs(response.data)
+          if(issearched){
+            setAllGEIs([response.data])
+          }else{
+            setAllGEIs(response.data)}
             setisloading(false)
         }
     }
@@ -90,8 +136,10 @@ const GEI = () => {
     setisediting(true)
   }
   useEffect(()=>{
+    if(window.location.pathname.includes('gies')){
     handlegetallGeis()
-  },[])
+    getpages()}
+  },[location])
   return (
     <>
       <Header />
@@ -163,6 +211,35 @@ const GEI = () => {
               </Table>
               )}
             </Card>
+            {!isloading && totalpages !== 1 && totalitems>20&&!gieId && (
+              <div
+                style={{
+                  width: "100%",
+                  alignContent: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <div>
+                  <Button
+                    color="danger"
+                    onClick={handleprev}
+                    disabled={currentpage === 1}
+                  >
+                    Prev
+                  </Button>
+                  <Button color="danger">{currentpage}</Button>
+                  <Button
+                    color="danger"
+                    onClick={handlenext}
+                    disabled={currentpage === totalpages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Row>
       </Container>

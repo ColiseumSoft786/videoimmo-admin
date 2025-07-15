@@ -30,6 +30,7 @@ import Teams from "views/Teams";
 import Users from "views/Users";
 import AllTeams from "views/AllTeams";
 import Agencies from "views/Agencies";
+import GEI from "views/GEI";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -84,12 +85,16 @@ const Admin = (props) => {
           {getRoutes(routes)}
           {isloggedin && (
             <>
-              <Route path="/houses/:userid/:username" element={<Houses />} />
-              <Route path="/houses/filtered/:gieId/:agencyId" element={<Houses />} />
-              <Route path="/teams/:gieId/:agencyId" element={<AllTeams />} />
+              <Route path="/houses/:userid/:username/:page" element={<Houses />} />
+              <Route path="/houses/filtered/:gieId/:agencyId/:page" element={<Houses />} />
+              <Route path="/teams/:gieId/:agencyId/:page" element={<AllTeams />} />
+              <Route path="/gies/searched/:gieId" element={<GEI/>}/>
+              <Route path="/teams/searched/:teamid" element={<AllTeams />} />
               <Route path="/users/:gieId/:agencyId/:page" element={<Users/>}/>
+              <Route path="/users/searched/:userId" element={<Users/>}/>
               <Route path="/team/:managerid" element={<Teams/>}/>
-              <Route path="/agencies/:gieId" element={<Agencies/>}/>
+              <Route path="/agencies/:gieId/:page" element={<Agencies/>}/>
+              <Route path="/agencies/searched/:agencyId" element={<Agencies/>}/>
             </>
           )}
         </Routes>

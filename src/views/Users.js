@@ -59,10 +59,11 @@ import { getAllGieUsers } from "Api/Users";
 import { getUserLength } from "Api/dashboard";
 import { getGieUserLength } from "Api/Users";
 import { getAgencyUserLength } from "Api/Users";
+import { getSingleUser } from "Api/Users";
 // core components
 
 const Users = () => {
-  const { page,gieId, agencyId } = useParams();
+  const { page,gieId, agencyId ,userId} = useParams();
   const searchtext = useSelector((state) => state.admin.searchText);
   const [users, setusers] = useState([]);
   const [isloading, setisloading] = useState(true);
@@ -78,6 +79,7 @@ const Users = () => {
   const [currentpage,setcurrentpage] = useState(Number(page))
   const [allGEI, setAllGEI] = useState([]);
   const [totalpages,settotalpages] = useState(0)
+  const [totalitems,settotalitems] = useState(0)
   const location = useLocation();
   const navigate = useNavigate();
   const getpages = async()=>{
@@ -92,19 +94,39 @@ const Users = () => {
         pages = await getUserLength();
       }
     if(!pages.error){
+      settotalitems(Number(pages.data))
       settotalpages(Math.ceil(pages.data/20))
+    }else{
+      settotalitems(0)
+      settotalpages(1)
     }
   }
   const handleprev=()=>{
     if(currentpage>1){
       const prev = currentpage-1
-      navigate(`/users/${prev}`)
+      if (agencyId !== "null") {
+        navigate(`users/${gieId}/${agencyId}/${prev}`)
+      }
+      if (agencyId === "null") {
+        navigate(`users/${gieId}/null/${prev}`)
+      }
+      if (!gieId && !agencyId) {
+        navigate(`users/${prev}`)
+      }
     }
   }
   const handlenext=()=>{
     if(currentpage<totalpages){
       const next = currentpage+1
-      navigate(`/users/${next}`)
+      if (agencyId !== "null") {
+        navigate(`users/${gieId}/${agencyId}/${next}`)
+      }
+      if (agencyId === "null") {
+        navigate(`users/${gieId}/null/${next}`)
+      }
+      if (!gieId && !agencyId) {
+        navigate(`users/${next}`)
+      }
     }
   }
   useEffect(()=>{
@@ -116,20 +138,26 @@ const Users = () => {
       let gie = {};
       let response = {};
       gie = await getAllGIESNames();
-      if (agencyId !== "null") {
+      const issearched = window.location.pathname.includes('searched')
+      if(userId){
+        response = await getSingleUser(userId)
+      }
+      if (agencyId !== "null"&&!issearched) {
         response = await getAllAgencyUsers(agencyId,page);
       }
-      if (agencyId === "null") {
+      if (agencyId === "null"&&!issearched) {
         response = await getAllGieUsers(gieId,page);
       }
-      if (!gieId && !agencyId) {
+      if (!gieId && !agencyId && !userId && !issearched) {
         response = await getAllUsers(page);
       }
       console.log("Users", response);
       if (!response.error && !gie.error) {
         setAllGEI(gie.data);
-        setusers(response.data);
-        setfilteredusers(response.data);
+        if(issearched){
+          setusers([response.data])
+        }else{
+        setusers(response.data);}
         setisloading(false);
       }
     } catch (error) {
@@ -188,18 +216,6 @@ const Users = () => {
       toastService.warn("Something went wrong");
     }
   };
-  const handlefilter = () => {
-    if (users?.length > 0) {
-      setfilteredusers(
-        users?.filter((user) =>
-          user.fname.toLowerCase().includes(searchtext.toLowerCase())
-        )
-      );
-    }
-  };
-  useEffect(() => {
-    handlefilter();
-  }, [searchtext]);
   const handleFilterUsers = (e) => {
     e.preventDefault();
   };
@@ -347,7 +363,7 @@ const Users = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredusers.map((user, index) => {
+                    {users.map((user, index) => {
                       return (
                         <tr>
                           <td>
@@ -431,7 +447,7 @@ const Users = () => {
                 </Table>
               )}
             </Card>
-            {!isloading&&<div style={{width:'100%',alignContent:'center',display:'flex',justifyContent:'center',marginTop:'20px'}}> 
+            {!isloading && totalpages !== 1&&totalitems>20&&!userId&&<div style={{width:'100%',alignContent:'center',display:'flex',justifyContent:'center',marginTop:'20px'}}> 
               <div>
               <Button
                               color="danger"

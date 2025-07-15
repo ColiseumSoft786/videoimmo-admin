@@ -16,7 +16,7 @@
 
 */
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
@@ -38,12 +38,20 @@ import { setSearchText } from "ReduxSlices/AdminSlice";
 import { setisLoggedIn } from "ReduxSlices/AdminSlice";
 import './enhancements.css'
 import { FaArrowLeft } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { getAllUserNames } from "Api/Users";
+import { getAllTeamsNames } from "Api/teams";
+import { getAllGIESNames } from "Api/gei";
+import { getAllAgenciesNames } from "Api/agency";
 
 
 const AdminNavbar = (props) => {
   const dispatch = useDispatch()
+  const location = useLocation()
   const adminName = localStorage.getItem("username")
-  const searchtext = useSelector((state)=>state.admin.searchText)
+  const [listitems,setlistitems] = useState([])
+  const [listitemstoshow,setlistitemstoshow] = useState([])
+  const [searchText,setSearchText] = useState('')
   const navigate = useNavigate()
   const handleLogOut = (e) =>{
     e.preventDefault()
@@ -51,8 +59,50 @@ const AdminNavbar = (props) => {
     dispatch(setisLoggedIn(false))
     navigate("/auth/login",{replace:true})
   }
-  const handlesearch = (value)=>{
-    dispatch(setSearchText(value))
+  const handlegetlistitems = async()=>{
+    let items = []
+    if(window.location.pathname.includes('users')){
+      items = await getAllUserNames()
+    }
+    if(window.location.pathname.includes('teams')){
+      items = await getAllTeamsNames()
+    }
+    if(window.location.pathname.includes('gies')){
+      items = await getAllGIESNames()
+    }
+    if(window.location.pathname.includes('agencies')){
+      items = await getAllAgenciesNames()
+    }
+    if(!items.error){
+      setlistitems(items.data)
+      setlistitemstoshow(items.data)
+    }
+  }
+  useEffect(()=>{
+    handlegetlistitems()
+    setSearchText('')
+  },[location])
+  useEffect(()=>{
+    if(window.location.pathname.includes('users')){
+      setlistitemstoshow(listitems.filter((item)=>item.fname.toLowerCase().includes(searchText.toLowerCase())))
+    }else{
+      setlistitemstoshow(listitems.filter((item)=>item.name.toLowerCase().includes(searchText.toLowerCase())))
+    }
+  },[searchText])
+  const handlesuggestionclick = (id)=>{
+    if(window.location.pathname.includes('users')){
+      navigate(`users/searched/${id}`)
+    }
+    if(window.location.pathname.includes('teams')){
+      navigate(`teams/searched/${id}`)
+    }
+    if(window.location.pathname.includes('gies')){
+      navigate(`gies/searched/${id}`)
+    }
+    if(window.location.pathname.includes('agencies')){
+      navigate(`agencies/searched/${id}`)
+    }
+    setSearchText('')
   }
   return (
     <>
@@ -66,15 +116,22 @@ const AdminNavbar = (props) => {
               <FaArrowLeft/> <span> {props.brandText}</span>
           </Link>
           <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-            {(window.location.pathname==='/users'||window.location.pathname==='/admins')&&<FormGroup className="mb-0">
+            {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('admins')&&!window.location.pathname.includes('index'))&&<FormGroup className="mb-0" style={{position:'relative'}}>
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" value={searchtext} onChange={(e)=>handlesearch(e.target.value)}/>
+                <Input placeholder="Search" type="text" value={searchText} onChange={(e)=>setSearchText(e.target.value)}/>
               </InputGroup>
+              {searchText.trim()!==''&&<div style={{backgroundColor:'white',position:'absolute',top:'50px',left:'0',width:'315px',maxHeight:'40vw',overflowY:'scroll'}}>
+                {listitemstoshow.map((item,index)=>{
+                  return(
+                    <div onClick={()=>handlesuggestionclick(item._id)} style={{padding:'10px',textAlign:'left',cursor:'pointer'}} key={index}>{window.location.pathname.includes('users')?item.fname:item.name}</div>
+                  )
+                })}
+              </div>}
             </FormGroup>}
           </Form>
           <Nav className="align-items-center d-none d-md-flex" navbar>

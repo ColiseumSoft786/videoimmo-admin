@@ -62,12 +62,16 @@ import { deleteAgency } from "Api/agency";
 import ViewAgencyModal from "./Modals/ViewAgencyModal";
 import AddAgencyModal from "./Modals/AddAgencyModal";
 import EditAgency from "./Modals/EditAgency";
+import { getAllGieAgenciesLength } from "Api/agency";
+import { getAgenciesLength } from "Api/dashboard";
+import { getAllGIESNames } from "Api/gei";
+import { getSingleAgency } from "Api/agency";
 // core components
 
 const Agencies = () => {
   const searchtext = useSelector((state)=>state.admin.searchText)
   const location = useLocation()
-  const {gieId} = useParams()
+  const {gieId,page,agencyId} = useParams()
   const navigate = useNavigate()
     const [isloading,setisloading] = useState(true)
     const [isviewing,setisviewing] = useState(false)
@@ -77,21 +81,73 @@ const Agencies = () => {
     const [selectedGEI,setSelectedGEI] = useState('')
     const [isediting,setisediting] = useState(false)
     const [isadding,setisadding]= useState(false)
+      const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems,settotalitems] = useState(0)
+  const getpages = async () => {
+    let pages = null;
+      if (gieId) {
+        pages = await getAllGieAgenciesLength(gieId);
+      }
+      if (!gieId) {
+        pages = await getAgenciesLength();
+      }
+    if (!pages.error) {
+      settotalitems(Number(pages.data))
+      settotalpages(Math.ceil(pages.data / 20));
+    } else {
+      settotalitems(0)
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+        if (gieId) {
+          navigate(`/agencies/${gieId}/${prev}`);
+        }
+        if (!gieId) {
+          navigate(`/agencies/${prev}`);
+        }
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+        if (gieId) {
+          navigate(`/agencies/${gieId}/${next}`);
+        }
+        if (!gieId) {
+          navigate(`/agencies/${next}`);
+        }
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
     const handlegetallagencies= async()=>{
         setisloading(true)
-        const gei = await getAllGEI()
+        const gei = await getAllGIESNames()
+        const issearched = window.location.pathname.includes('searched')
         let agencies = []
         if(!gei.error){
            setAllGEIs(gei.data)
         }
-        if(gieId){
-          agencies = await getGEIAgencies(gieId)
-        }else{
-          agencies = await getallAgencies()
+        if(agencyId&&issearched){
+          agencies = await getSingleAgency(agencyId)
+        }
+        if(gieId &&!issearched){
+          agencies = await getGEIAgencies(gieId,page)
+        }
+        if(!gieId&&!issearched){
+          agencies = await getallAgencies(page)
         }
         
         if(!agencies.error){
-            setAllAgencies(agencies.data)
+          if(issearched){
+            setAllAgencies([agencies.data])
+          }else{
+            setAllAgencies(agencies.data)}
             setisloading(false)
         }
     }
@@ -108,7 +164,7 @@ const Agencies = () => {
         }
     }
     const handlegetGeiAgencies=async()=>{
-        navigate(`/agencies/${selectedGEI}`)
+        navigate(`/agencies/${selectedGEI}/1`)
     }
     const handleeditclick = (agency)=>{
         setagencytoshow(agency)
@@ -116,7 +172,12 @@ const Agencies = () => {
     }
   useEffect(()=>{
     if(window.location.pathname.includes('agencies')){
-    handlegetallagencies()}
+    handlegetallagencies()
+    getpages()
+    if (gieId) {
+        setSelectedGEI(gieId);
+      }
+  }
   },[location])
   return (
     <>
@@ -130,7 +191,7 @@ const Agencies = () => {
               <CardHeader className="border-0" 
               style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
               >
-                <h3 className="mb-0">GEIs</h3>
+                <h3 className="mb-0">Agencies</h3>
                 <Form role="form" style={{display:'flex',gap:'20px',maxHeight:'50px',width:'70%',alignItems:"center"}} onSubmit={(e) => {e.preventDefault()}}>
                     <InputGroup className="input-group-alternative" style={{width:'40%'}}>
                       <Input
@@ -154,10 +215,12 @@ const Agencies = () => {
                     </Button>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" disabled={window.location.pathname==='/agencies'} onClick={()=>{
-                      navigate('/agencies')
+                    <Button className="my-4" color="danger" onClick={()=>{
+                      navigate('/agencies/1')
                       setSelectedGEI('')
-                      }}>
+                      }}
+                      disabled={!gieId}
+                      >
                       Clear Filter
                     </Button>
                   </div>
@@ -247,6 +310,35 @@ const Agencies = () => {
               </Table>
               )}
             </Card>
+            {!isloading && totalpages !== 1 && totalitems>20&&!agencyId && (
+                          <div
+                            style={{
+                              width: "100%",
+                              alignContent: "center",
+                              display: "flex",
+                              justifyContent: "center",
+                              marginTop: "20px",
+                            }}
+                          >
+                            <div>
+                              <Button
+                                color="danger"
+                                onClick={handleprev}
+                                disabled={currentpage === 1}
+                              >
+                                Prev
+                              </Button>
+                              <Button color="danger">{currentpage}</Button>
+                              <Button
+                                color="danger"
+                                onClick={handlenext}
+                                disabled={currentpage === totalpages}
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          </div>
+                        )}
           </div>
         </Row>
       </Container>

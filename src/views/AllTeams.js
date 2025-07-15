@@ -70,13 +70,18 @@ import { getAllTeamsByGie } from "Api/teams";
 import { getAllTeamsByAgency } from "Api/teams";
 import AddTeamModal from "./Modals/AddTeamModal";
 import { deleteTeam } from "Api/teams";
+import { getGieTeamsLength } from "Api/teams";
+import { getAgencyTeamsLength } from "Api/teams";
+import { getAllTeamsLength } from "Api/teams";
+import Teams from "./Teams";
+import { getManagerTeam } from "Api/Users";
 // core components
 
 const AllTeams = () => {
   const searchtext = useSelector((state) => state.admin.searchText);
   const location = useLocation()
   const navigate = useNavigate()
-  const { gieId, agencyId } = useParams();
+  const { page,gieId, agencyId ,teamid} = useParams();
   const [isloading, setisloading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [isfetchingag, setisfetchingag] = useState(false);
@@ -84,26 +89,84 @@ const AllTeams = () => {
   const [allAgencies, setAllAgencies] = useState([]);
   const [allGEI, setAllGEI] = useState([]);
   const [allteams, setallteams] = useState("");
-  const [teamsToList, setTeamsToList] = useState([]);
   const [isediting, setisediting] = useState(false);
   const [isadding, setisadding] = useState(false);
+  const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems,settotalitems] = useState(0)
+  const getpages = async () => {
+    let pages = null;
+      if (gieId && agencyId === "null") {
+        pages = await getGieTeamsLength(gieId);
+      }
+      if (agencyId && agencyId !== "null") {
+        pages = await getAgencyTeamsLength(agencyId);
+      }
+      if (!agencyId && !gieId) {
+        pages = await getAllTeamsLength();
+      }
+    if (!pages.error) {
+      settotalitems(Number(pages.data))
+      settotalpages(Math.ceil(pages.data / 20));
+    } else {
+      settotalitems(0)
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+        if (agencyId !== "null") {
+          navigate(`/teams/${gieId}/${agencyId}/${prev}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/teams/${gieId}/null/${prev}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/teams/${prev}`);
+        }
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+        if (agencyId !== "null") {
+          navigate(`/teams/${gieId}/${agencyId}/${next}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/teams/${gieId}/null/${next}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/teams/${next}`);
+        }
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
   const handlegetallteams = async () => {
     setisloading(true);
     let teams = [];
     const gei = await getAllGIESNames();
-    if (gieId && agencyId === "null") {
-      teams = await getAllTeamsByGie(gieId);
+    const issearched = window.location.pathname.includes('searched')
+    if(teamid&&issearched){
+      teams = await getManagerTeam(teamid)
     }
-    if (agencyId && agencyId !== "null") {
-      teams = await getAllTeamsByAgency(agencyId);
+    if (gieId && agencyId === "null"&&!issearched) {
+      teams = await getAllTeamsByGie(gieId,page);
     }
-    if (!gieId && !agencyId) {
-      teams = await getAllTeams();
+    if (agencyId && agencyId !== "null"&&!issearched) {
+      teams = await getAllTeamsByAgency(agencyId,page);
+    }
+    if (!gieId && !agencyId && !issearched) {
+      teams = await getAllTeams(page);
     }
     if (!gei.error && !teams.error) {
       setAllGEI(gei.data);
-      setallteams(teams.data);
-      setTeamsToList(teams.data);
+      if(issearched){
+        setallteams([teams.data.data])
+      }else{
+      setallteams(teams.data);}
       setisloading(false);
     }
   };
@@ -114,13 +177,20 @@ const AllTeams = () => {
       !window.location.pathname.includes("users")
     ) {
       handlegetallteams();
+      getpages()
+      if (gieId) {
+        setSelectedGEI(gieId);
+      }
+      if (agencyId && agencyId !== "null") {
+        setSelectedAgency(agencyId);
+      }
     }
   }, [location]);
   const handlefilterbyids = () => {
     if (selectedAgency === "") {
-      navigate(`/teams/${selectedGEI}/null`);
+      navigate(`/teams/${selectedGEI}/null/1`);
     } else {
-      navigate(`/teams/${selectedGEI}/${selectedAgency}`);
+      navigate(`/teams/${selectedGEI}/${selectedAgency}/1`);
     }
   };
   const handlegetAgenciesnames = async () => {
@@ -234,13 +304,13 @@ const AllTeams = () => {
                   <div className="text-center">
                     <Button
                       onClick={() => {
-                        navigate("/teams");
+                        navigate("/teams/1");
                         setSelectedAgency("");
                         setSelectedGEI("");
                       }}
                       className="my-4"
                       color="danger"
-                      disabled={window.location.pathname==='/teams'}
+                      disabled={!gieId&&!agencyId}
                     >
                       Clear Filter
                     </Button>
@@ -282,7 +352,7 @@ const AllTeams = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {teamsToList.map((team, index) => {
+                    {allteams.map((team, index) => {
                       return (
                         <tr>
                           <td>{index + 1}</td>
@@ -331,6 +401,35 @@ const AllTeams = () => {
                 </Table>
               )}
             </Card>
+            {!isloading && totalpages !== 1 && totalitems>20&&!teamid && (
+              <div
+                style={{
+                  width: "100%",
+                  alignContent: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <div>
+                  <Button
+                    color="danger"
+                    onClick={handleprev}
+                    disabled={currentpage === 1}
+                  >
+                    Prev
+                  </Button>
+                  <Button color="danger">{currentpage}</Button>
+                  <Button
+                    color="danger"
+                    onClick={handlenext}
+                    disabled={currentpage === totalpages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Row>
       </Container>

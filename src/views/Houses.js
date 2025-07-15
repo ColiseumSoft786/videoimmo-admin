@@ -52,12 +52,16 @@ import { getAllGIESNames } from "Api/gei";
 import { getAllAgenciesNamesByGie } from "Api/agency";
 import { getHousesByGie } from "Api/Houses";
 import { getHouseByAgencies } from "Api/Houses";
+import { getUserHousesLength } from "Api/Houses";
+import { getGieHousesLength } from "Api/Houses";
+import { getAgencyHousesLength } from "Api/Houses";
+import { getHouseslength } from "Api/dashboard";
 // core components
 const Houses = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [houses, setHouses] = useState([]);
   const [isloading, setisloading] = useState(true);
-  const { userid, username ,gieId,agencyId} = useParams();
+  const { userid, username, page, gieId, agencyId } = useParams();
   const [isviewing, setisviewing] = useState(false);
   const [housetoview, sethousetoview] = useState(null);
   const location = useLocation();
@@ -66,6 +70,71 @@ const Houses = () => {
   const [selectedGEI, setSelectedGEI] = useState("");
   const [allAgencies, setAllAgencies] = useState([]);
   const [allGEI, setAllGEI] = useState([]);
+  const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems,settotalitems] = useState(0)
+  const getpages = async () => {
+    let pages = null;
+    if (userid) {
+      pages = await getUserHousesLength(userid);
+    } else {
+      if (gieId && agencyId === "null") {
+        pages = await getGieHousesLength(gieId);
+      }
+      if (agencyId && agencyId !== "null") {
+        pages = await getAgencyHousesLength(agencyId);
+      }
+      if (!agencyId && !gieId) {
+        pages = await getHouseslength();
+      }
+    }
+    if (!pages.error) {
+      settotalitems(Number(pages.data))
+      settotalpages(Math.ceil(pages.data / 20));
+    } else {
+      settotalitems(0)
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+      if (userid) {
+        navigate(`/houses/${userid}/${username}/${prev}`);
+      } else {
+        if (agencyId !== "null") {
+          navigate(`/houses/${gieId}/${agencyId}/${prev}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/houses/${gieId}/null/${prev}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/houses/${prev}`);
+        }
+      }
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+      if (userid) {
+        navigate(`/houses/${userid}/${username}/${next}`);
+      } else {
+        if (agencyId !== "null") {
+          navigate(`/houses/${gieId}/${agencyId}/${next}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/houses/${gieId}/null/${next}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/houses/${next}`);
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
   console.log(userid);
   const getHouseTimestamp = (createdAt) => {
     return new Date(createdAt).getTime(); // or .valueOf()
@@ -95,21 +164,21 @@ const Houses = () => {
     setisloading(true);
     try {
       if (userid) {
-        response = await getUserHouses(userid);
+        response = await getUserHouses(userid, page);
       } else {
-        if(gieId&&agencyId==='null'){
-          response = await  getHousesByGie(gieId)
+        if (gieId && agencyId === "null") {
+          response = await getHousesByGie(gieId, page);
         }
-        if(agencyId&&agencyId!=='null'){
-          response = await getHouseByAgencies(agencyId)
+        if (agencyId && agencyId !== "null") {
+          response = await getHouseByAgencies(agencyId, page);
         }
-        if(!agencyId&&!gieId){
-                  response = await getAllHouses();
+        if (!agencyId && !gieId) {
+          response = await getAllHouses(page);
         }
       }
       if (!response.error) {
-          setHouses(response.data);
-        }
+        setHouses(response.data);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -117,9 +186,17 @@ const Houses = () => {
     }
   };
   useEffect(() => {
-    if(window.location.pathname.includes('houses')){
-    handlegetallHouses();}
-  }, [userid, username, location.pathname]);
+    if (window.location.pathname.includes("houses")) {
+      handlegetallHouses();
+      getpages();
+      if (gieId) {
+        setSelectedGEI(gieId);
+      }
+      if (agencyId && agencyId !== "null") {
+        setSelectedAgency(agencyId);
+      }
+    }
+  }, [location]);
   useEffect(() => {
     console.log("all houses", houses);
   }, [houses]);
@@ -138,9 +215,9 @@ const Houses = () => {
   };
   const handlefilterbyids = () => {
     if (selectedAgency === "") {
-      navigate(`/houses/filtered/${selectedGEI}/null`);
+      navigate(`/houses/filtered/${selectedGEI}/null/1`);
     } else {
-      navigate(`/houses/filtered/${selectedGEI}/${selectedAgency}`);
+      navigate(`/houses/filtered/${selectedGEI}/${selectedAgency}/1`);
     }
   };
   return (
@@ -172,7 +249,7 @@ const Houses = () => {
                       maxHeight: "50px",
                       width: "73%",
                       alignItems: "center",
-                      gap:'20px'
+                      gap: "20px",
                     }}
                     onSubmit={(e) => e.preventDefault()}
                   >
@@ -234,13 +311,13 @@ const Houses = () => {
                     <div className="text-center">
                       <Button
                         onClick={() => {
-                          navigate("/houses");
+                          navigate("/houses/1");
                           setSelectedAgency("");
                           setSelectedGEI("");
                         }}
                         className="my-4"
                         color="danger"
-                        disabled={window.location.pathname==='/houses'}
+                        disabled={!gieId && !agencyId}
                       >
                         Clear Filter
                       </Button>
@@ -364,6 +441,35 @@ const Houses = () => {
                 </Table>
               )}
             </Card>
+            {!isloading && totalpages !== 1 && totalitems>20 && (
+              <div
+                style={{
+                  width: "100%",
+                  alignContent: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <div>
+                  <Button
+                    color="danger"
+                    onClick={handleprev}
+                    disabled={currentpage === 1}
+                  >
+                    Prev
+                  </Button>
+                  <Button color="danger">{currentpage}</Button>
+                  <Button
+                    color="danger"
+                    onClick={handlenext}
+                    disabled={currentpage === totalpages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Row>
       </Container>
