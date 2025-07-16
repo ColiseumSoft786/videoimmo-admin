@@ -109,7 +109,6 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
                                       height: "45px",
                                     }}
                                     countryCodeEditable={false}
-                                    enableLongNumbers={true}
                                   />
               </FormGroup>
               <div className="text-center">

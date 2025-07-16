@@ -131,7 +131,6 @@ const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
                     height: "45px",
                   }}
                   countryCodeEditable={false}
-                  enableLongNumbers={true}
                 />
                 {/* </InputGroup> */}
               </FormGroup>

@@ -190,7 +190,7 @@ const Teams = () => {
               )}
               <div style={{display:'flex', width: "100%", padding: " 20px" ,justifyContent:'space-between'}}>
                 <h3>Members</h3>
-                <Button color="danger" onClick={()=>setisaddingmember(truet)}>Add Member</Button>
+                <Button color="danger" onClick={()=>setisaddingmember(true)}>Add Member</Button>
               </div>
               {isloading ? (
                 <div

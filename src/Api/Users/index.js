@@ -8,6 +8,7 @@ import { GET_ALL_AGENCY_USERS } from "Api/apiurls";
 import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
 import { GET_GIE_USER_LENGTH } from "Api/apiurls";
 import { GET_ALL_USER_NAMES } from "Api/apiurls";
+import { GET_OTHER_USER_NAMES_FORTEAM } from "Api/apiurls";
 import { GET_SINGLE_USER } from "Api/apiurls";
 import { GET_AGENCY_USER_LENGTH } from "Api/apiurls";
 import { GET_OTHER_USERS_NAMES } from "Api/apiurls";
@@ -178,5 +179,14 @@ export const getSingleUser = async(id)=>{
     return response
   } catch (error) {
     console.log('error in get single user',error)
+  }
+}
+export const getotherusernamesforteam = async(id,agencyid)=>{
+  try {
+    const path = GET_OTHER_USER_NAMES_FORTEAM+id+`/${agencyid}`
+    const response = await getAPI(path,true)
+    return response
+  } catch (error) {
+    console.log('error in get other usernames for team',error)
   }
 }

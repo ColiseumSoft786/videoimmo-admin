@@ -4,6 +4,7 @@ import { getAllGIESNames } from "Api/gei";
 import { updateTeamMembers } from "Api/teams";
 import { updateTeamManagers } from "Api/teams";
 import { addUser } from "Api/Users";
+import { getotherusernamesforteam } from "Api/Users";
 import { getOtherUserNames } from "Api/Users";
 import { updateUserInfo } from "Api/Users";
 import React, { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
     const [selectedMember,setselectedMember]=useState('')
     const handleGetAllUserNames = async()=>{
     try {
-        const response = await getOtherUserNames(team._id,team.agency._id)
+        const response = await getotherusernamesforteam(team._id,team.agency._id)
         if(!response.error){
             setAllUsers(response.data.data)
         }

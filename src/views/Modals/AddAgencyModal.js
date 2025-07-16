@@ -121,7 +121,6 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
                     height: "45px",
                   }}
                   countryCodeEditable={false}
-                  enableLongNumbers={true}
                 />
                 {/* </InputGroup> */}
               </FormGroup>

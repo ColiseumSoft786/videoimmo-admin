@@ -33,7 +33,7 @@ import AllTeams from "views/AllTeams";
 
 var routes = [
   {
-    path: "/index",
+    path: "/dashboard",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
     component: <Index />,

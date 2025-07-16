@@ -143,7 +143,6 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
                     height: "45px",
                   }}
                   countryCodeEditable={false}
-                  enableLongNumbers={true}
                 />
                 {/* </InputGroup> */}
               </FormGroup>

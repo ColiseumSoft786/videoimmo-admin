@@ -65,7 +65,7 @@ const Header = () => {
   return (
     <>
       <div className="header bg-gradient-danger pb-8 pt-5 pt-md-8">
-        {window.location.pathname==='/index'&&
+        {window.location.pathname==='/dashboard'&&
         <Container fluid>
           <div className="header-body">
             {/* Card stats */}

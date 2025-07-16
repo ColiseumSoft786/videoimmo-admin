@@ -131,7 +131,6 @@ const AddGeiModal = ({ handleclose,fetchGEIS }) => {
                     height: "45px",
                   }}
                   countryCodeEditable={false}
-                  enableLongNumbers={true}
                 />
                 {/* </InputGroup> */}
               </FormGroup>

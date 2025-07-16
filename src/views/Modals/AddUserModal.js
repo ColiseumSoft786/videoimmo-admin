@@ -146,7 +146,6 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
                     height: "45px",
                   }}
                   countryCodeEditable={false}
-                  enableLongNumbers={true}
                 />
                 {/* </InputGroup> */}
               </FormGroup>
