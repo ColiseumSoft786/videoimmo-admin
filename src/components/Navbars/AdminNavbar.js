@@ -91,16 +91,16 @@ const AdminNavbar = (props) => {
   },[searchText])
   const handlesuggestionclick = (id)=>{
     if(window.location.pathname.includes('users')){
-      navigate(`users/searched/${id}`)
+      navigate(`/users/searched/${id}`)
     }
     if(window.location.pathname.includes('teams')){
-      navigate(`teams/searched/${id}`)
+      navigate(`/teams/searched/${id}`)
     }
     if(window.location.pathname.includes('gies')){
-      navigate(`gies/searched/${id}`)
+      navigate(`/gies/searched/${id}`)
     }
     if(window.location.pathname.includes('agencies')){
-      navigate(`agencies/searched/${id}`)
+      navigate(`/agencies/searched/${id}`)
     }
     setSearchText('')
   }
@@ -116,7 +116,7 @@ const AdminNavbar = (props) => {
               <FaArrowLeft/> <span> {props.brandText}</span>
           </Link>
           <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-            {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('admins')&&!window.location.pathname.includes('index'))&&<FormGroup className="mb-0" style={{position:'relative'}}>
+            {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('admins')&&!window.location.pathname.includes('index'))&&!window.location.pathname.includes('settings')&&<FormGroup className="mb-0" style={{position:'relative'}}>
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>

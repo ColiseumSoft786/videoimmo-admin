@@ -71,6 +71,7 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
     countryCode: countryCode,
     tokens: tokens,
     expiresOn: expiryDate,
+    completeNumber:`${countryCode}${contact.slice(countryCode.length-1)}`
   };
 
   const response = await updateGEI(requestbody, GeitoEdit._id);

@@ -105,13 +105,13 @@ const Users = () => {
     if(currentpage>1){
       const prev = currentpage-1
       if (agencyId !== "null") {
-        navigate(`users/${gieId}/${agencyId}/${prev}`)
+        navigate(`/users/${gieId}/${agencyId}/${prev}`)
       }
       if (agencyId === "null") {
-        navigate(`users/${gieId}/null/${prev}`)
+        navigate(`/users/${gieId}/null/${prev}`)
       }
       if (!gieId && !agencyId) {
-        navigate(`users/${prev}`)
+        navigate(`/users/${prev}`)
       }
     }
   }
@@ -119,13 +119,13 @@ const Users = () => {
     if(currentpage<totalpages){
       const next = currentpage+1
       if (agencyId !== "null") {
-        navigate(`users/${gieId}/${agencyId}/${next}`)
+        navigate(`/users/${gieId}/${agencyId}/${next}`)
       }
       if (agencyId === "null") {
-        navigate(`users/${gieId}/null/${next}`)
+        navigate(`/users/${gieId}/null/${next}`)
       }
       if (!gieId && !agencyId) {
-        navigate(`users/${next}`)
+        navigate(`/users/${next}`)
       }
     }
   }

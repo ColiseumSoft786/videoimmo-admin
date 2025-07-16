@@ -52,6 +52,7 @@ const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
       name:name,
       phone:contact.slice(countryCode.length-1),
       countryCode:countryCode,
+      completeNumber:`${countryCode}${contact.slice(countryCode.length-1)}`,
       gie: selectedGIE
     }
     const response = await updateAgency(requestbody,agencyToedit._id)
