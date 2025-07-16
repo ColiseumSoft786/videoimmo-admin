@@ -181,7 +181,7 @@ const Users = () => {
     console.log("all Users", users);
   }, [users]);
   const handlelisthousesclick = (id, username) => {
-    navigate(`/houses/${id}/${username}`);
+    navigate(`/houses/${id}/${username}/1`);
   };
   const handleviewClick = (user) => {
     setusertoview(user);
