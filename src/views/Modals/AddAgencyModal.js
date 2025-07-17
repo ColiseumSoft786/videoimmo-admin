@@ -30,6 +30,11 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
   const [selectedGIE,setSelectedGIE] = useState('')
   const handleAddAgency = async (e) => {
     e.preventDefault();
+    const selectedgietokens = GEIs.find((gie)=>gie._id===selectedGIE).tokens
+    if(selectedgietokens===0){
+      toastService.warn('This Gie Has No Tokens')
+      return
+    }
     if (
       name.trim() === "" ||
       contact.trim() === "" ||

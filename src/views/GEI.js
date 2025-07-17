@@ -55,6 +55,7 @@ import { getAllGEI } from "Api/gei";
 import { deleteGEI } from "Api/gei";
 import { getGieslength } from "Api/dashboard";
 import { getSingleGie } from "Api/gei";
+import GieHistoryModal from "./Modals/GieHistoryModal";
 // core components
 
 const GEI = () => {
@@ -73,6 +74,7 @@ const GEI = () => {
      const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems,settotalitems] = useState(0)
+  const [ishistory,setishistory]=useState(false)
   const getpages = async () => {
     const pages = await getGieslength()
     if (!pages.error) {
@@ -140,6 +142,10 @@ const GEI = () => {
     handlegetallGeis()
     getpages()}
   },[location])
+  const handleHistoryViewClick = (gie)=>{
+    setgeitoshow(gie)
+    setishistory(true)
+  }
   return (
     <>
       <Header />
@@ -190,6 +196,11 @@ const GEI = () => {
                             onClick={()=>handleViewClick(gei)}
                           >
                             View
+                          </DropdownItem>
+                          <DropdownItem
+                           onClick={()=>handleHistoryViewClick(gei)}
+                          >
+                            View History
                           </DropdownItem>
                           <DropdownItem
                            onClick={()=>handleEditClick(gei)}
@@ -243,11 +254,12 @@ const GEI = () => {
           </div>
         </Row>
       </Container>
-      {(isediting||isviewing||isadding)&&(
+      {(isediting||isviewing||isadding||ishistory)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
           {isediting&&<EditGeiModal handleclose={()=>setisediting(false)} GeitoEdit={geitoshow} fetchGeis={handlegetallGeis}/>}
           {isviewing&&<ViewGeiModal handleclose={()=>setisviewing(false)} Geitoshow={geitoshow}/>}
           {isadding&&<AddGeiModal handleclose={()=>setisadding(false)} fetchGEIS={handlegetallGeis}/>}
+          {ishistory&&<GieHistoryModal handleclose={()=>setishistory(false)} Gie={geitoshow}/>}
         </div>
         )}
     </>

@@ -2,6 +2,7 @@ import { putAPI } from "Api"
 import { deleteAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
+import { GET_GIE_TOKENS_TRANSACTION } from "Api/apiurls"
 import { GET_SINGLE_GIE } from "Api/apiurls"
 import { UPDATE_GEI } from "Api/apiurls"
 import { GET_ALL_GIES_NAMES } from "Api/apiurls"
@@ -65,5 +66,15 @@ export const getSingleGie = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get single gie ',error)
+    }
+}
+export const getGieTokenTransactions = async(id)=>{
+    try {
+        const path = GET_GIE_TOKENS_TRANSACTION+id
+        const response = await getAPI(path,true)
+        console.log('response from get gie token transactions',response)
+        return response
+    } catch (error) {
+        console.log('error in get gie token transactions',error)
     }
 }

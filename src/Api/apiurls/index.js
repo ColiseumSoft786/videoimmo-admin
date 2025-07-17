@@ -64,3 +64,4 @@ export const GET_SINGLE_USER = process.env.REACT_APP_ENDPOINT + 'user/getsingleu
 export const GET_SINGLE_GIE = process.env.REACT_APP_ENDPOINT + 'gie/profile/'
 export const GET_SINGLE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/profile/'
 export const GET_OTHER_USER_NAMES_FORTEAM= process.env.REACT_APP_ENDPOINT + 'user/getTeams/otherUsersNames/'
+export const GET_GIE_TOKENS_TRANSACTION = process.env.REACT_APP_ENDPOINT + 'tokentransaction/get/'
