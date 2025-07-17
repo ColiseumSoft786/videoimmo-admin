@@ -113,7 +113,7 @@ const AdminNavbar = (props) => {
             style={{alignContent:"center",alignItems:'center'}}
             to="/"
           >
-              <FaArrowLeft/> <span> {props.brandText}</span>
+              {/* <FaArrowLeft/> <span> {props.brandText}</span> */}
           </Link>
           <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
             {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('admins')&&!window.location.pathname.includes('index'))&&!window.location.pathname.includes('settings')&&<FormGroup className="mb-0" style={{position:'relative'}}>

@@ -71,7 +71,7 @@ const Admin = (props) => {
         {...props}
         routes={routes}
         logo={{
-          innerLink: "/index",
+          innerLink: "/",
           imgSrc: require("../assets/img/brand/pokimmo-applogo.png"),
           imgAlt: "...",
         }}

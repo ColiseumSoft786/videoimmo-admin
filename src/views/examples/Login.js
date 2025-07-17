@@ -65,7 +65,7 @@ const Login = () => {
       localStorage.setItem("isLoggedIn", true);
       toastService.success('LoggedIn Successfuly')
       setTimeout(() => {
-        navigate('/index',{replace:true})
+        navigate('/',{replace:true})
       }, 1000);
     }
   }
