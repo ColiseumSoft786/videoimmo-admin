@@ -52,6 +52,7 @@ import AddManagerModal from "./Modals/AddManagerModal";
 import AddMemberModal from "./Modals/AddMemberModal";
 import { updateTeamMembers } from "Api/teams";
 import { updateTeamManagers } from "Api/teams";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const Teams = () => {
@@ -61,6 +62,9 @@ const Teams = () => {
   const [isaddingmanager,setisaddingmanager] = useState(false)
   const [isaddingmember,setisaddingmember]= useState(false)
   const [isloading, setisloading] = useState(true);
+  const [managerconfirm,setmanagerconfirm] = useState(false)
+  const [memberconfirm,setmemberconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   console.log('this is teamt id ',managerid)
   const handlegetteam = async () => {
     try {
@@ -87,15 +91,25 @@ const Teams = () => {
           if(!response.error){
               toastService.success('Member Removed Successfully')
               handlegetteam()
+              setmemberconfirm(false)
           }
     }
+  const handleremovememberclick = (memberid)=>{
+    setdeleteid(memberid)
+    setmemberconfirm(true)
+  }
   const handleRemoveManager = async(managerid)=>{
     const requestbody = teams.managers.filter((manager)=>manager._id!==managerid)
     const response = await updateTeamManagers(requestbody,teams._id)
     if(!response.error){
         toastService.success('Manager Removed Successfully')
         handlegetteam()
+        setmanagerconfirm(false)
     }
+  }
+  const handleremovemanagerclick=(managerid)=>{
+    setdeleteid(managerid)
+    setmanagerconfirm(true)
   }
 
   return (
@@ -177,7 +191,7 @@ const Teams = () => {
                         <td className="text-right">
                           <Button
                               color="danger"
-                              onClick={() => handleRemoveManager(manager._id)}
+                              onClick={() => handleremovemanagerclick(manager._id)}
                             >
                               Delete
                             </Button>
@@ -251,7 +265,7 @@ const Teams = () => {
                           <td className="text-right">
                             <Button
                               color="danger"
-                              onClick={() => handleRemoveMember(memeber._id)}
+                              onClick={() => handleremovememberclick(memeber._id)}
                             >
                               Delete
                             </Button>
@@ -266,11 +280,13 @@ const Teams = () => {
           </div>
         </Row>
       </Container>
-      {(iseditingName||isaddingmanager||isaddingmember)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
+      {(iseditingName||isaddingmanager||isaddingmember||memberconfirm||managerconfirm)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:managerconfirm||memberconfirm?'15%':'10vh',zIndex:20}}>
           {iseditingName&&<EditTeamNameModal handleclose={()=>setIsEditingName(false)} teamtoEdit={teams} fetchteam={handlegetteam}/>}
           {isaddingmanager&&<AddManagerModal handleclose={()=>setisaddingmanager(false)} fetchteam={handlegetteam} team={teams}/>}
           {isaddingmember&&<AddMemberModal handleclose={()=>setisaddingmember(false)} fetchteam={handlegetteam} team={teams}/>}
+          {managerconfirm&&<ConfirmModal handleclose={()=>setmanagerconfirm(false)} handleaction={()=>handleRemoveManager(deleteid)}/>}
+          {memberconfirm&&<ConfirmModal handleclose={()=>setmemberconfirm(false)} handleaction={()=>handleRemoveMember(deleteid)}/>}
         </div>
         )}
     </>

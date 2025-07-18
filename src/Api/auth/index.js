@@ -3,7 +3,7 @@ import { LOGIN_URL } from "Api/apiurls"
 
 export const loginadmin= async(body)=>{
     try {
-        const response = postAPI(LOGIN_URL,body,false)
+        const response = await postAPI(LOGIN_URL,body,false)
         console.log('response from admin login api',response)
         console.log('and its path',LOGIN_URL)
         return response

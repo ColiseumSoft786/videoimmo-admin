@@ -75,6 +75,7 @@ import { getAgencyTeamsLength } from "Api/teams";
 import { getAllTeamsLength } from "Api/teams";
 import Teams from "./Teams";
 import { getManagerTeam } from "Api/Users";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const AllTeams = () => {
@@ -94,6 +95,8 @@ const AllTeams = () => {
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems,settotalitems] = useState(0)
+  const [isconfirm,setisconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   const getpages = async () => {
     let pages = null;
       if (gieId && agencyId === "null") {
@@ -209,12 +212,17 @@ const AllTeams = () => {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
-   const handledeleteclick = async (id) => {
-    const response = await deleteTeam(id);
+  const handleDeleteTeam = async(id)=>{
+     const response = await deleteTeam(id);
     if (!response.error) {
       toastService.success("Team Deleted Successfully");
       handlegetallteams()
+      setisconfirm(false)
     }
+  }
+   const handledeleteclick = (id) => {
+    setdeleteid(id)
+    setisconfirm(true)
   };
   return (
     <>
@@ -433,7 +441,7 @@ const AllTeams = () => {
           </div>
         </Row>
       </Container>
-      {( isediting || isadding) && (
+      {( isediting || isadding || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -444,11 +452,12 @@ const AllTeams = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop: "5vh",
+            paddingTop:isconfirm?'15%': "5vh",
             zIndex: 20,
           }}
         >
           {isadding&&<AddTeamModal handleclose={()=>setisadding(false)} fetchusers={handlegetallteams}/>}
+          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteTeam(deleteid)}/>}
         </div>
       )}
     </>

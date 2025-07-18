@@ -56,6 +56,7 @@ import { getUserHousesLength } from "Api/Houses";
 import { getGieHousesLength } from "Api/Houses";
 import { getAgencyHousesLength } from "Api/Houses";
 import { getHouseslength } from "Api/dashboard";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 const Houses = () => {
   const navigate = useNavigate();
@@ -73,6 +74,8 @@ const Houses = () => {
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems,settotalitems] = useState(0)
+  const [isconfirm,setisconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   const getpages = async () => {
     let pages = null;
     if (userid) {
@@ -205,11 +208,17 @@ const Houses = () => {
     if (!response.error) {
       toastService.success("House Deleted Successfully");
       handlegetallHouses();
+      setisconfirm(false)
     } else {
       toastService.warn("Something Went Wrong");
     }
   };
+  const handleDeleteClick = (id)=>{
+    setdeleteid(id)
+    setisconfirm(true)
+  }
   const handleViewClick = (house) => {
+    console.log('going to view ',house)
     sethousetoview(house);
     setisviewing(true);
   };
@@ -427,7 +436,7 @@ const Houses = () => {
                                   View
                                 </DropdownItem>
                                 <DropdownItem
-                                  onClick={() => handleDeleteHouse(house._id)}
+                                  onClick={() => handleDeleteClick(house._id)}
                                 >
                                   Delete
                                 </DropdownItem>
@@ -473,7 +482,7 @@ const Houses = () => {
           </div>
         </Row>
       </Container>
-      {isviewing && (
+      {(isviewing || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -484,7 +493,7 @@ const Houses = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop: "10vh",
+            paddingTop: isconfirm?'15%':"10vh",
             zIndex: 20,
           }}
         >
@@ -494,6 +503,11 @@ const Houses = () => {
               houseDetails={housetoview}
             />
           )}
+          {
+            isconfirm&&(
+              <ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteHouse(deleteid)}/>
+            )
+          }
         </div>
       )}
     </>

@@ -46,11 +46,11 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
       };
   const handleUseredit = async(e)=>{
     e.preventDefault()
-    if(fullname.trim()===''||contact.trim()==""||useremail.trim()===''){
+    if(fullname.trim()===''||contact.trim()==""||useremail.trim()===''||selectedAgency===''||selectedGEI===''){
         toastService.warn('All fields must be filled')
         return
     }
-    if(fullname===usertoedit.fname&&contact===usertoedit.mobile_no&&useremail===usertoedit.email){
+    if(fullname===usertoedit.fname&&contact===usertoedit.mobile_no&&useremail===usertoedit.email&&selectedAgency===usertoedit.agency?._id&&selectedGEI===usertoedit.gie?._id){
         toastService.warn("No Changes to save")
         return
     }

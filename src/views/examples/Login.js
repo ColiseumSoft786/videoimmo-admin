@@ -61,6 +61,7 @@ const Login = () => {
     if(response.data.message==='Success'){
       localStorage.setItem("username", response.data.user);
       localStorage.setItem("access_token", response.data.token);
+      localStorage.setItem('adminId',response.data.id)
       dispatch(setisLoggedIn(true))
       localStorage.setItem("isLoggedIn", true);
       toastService.success('LoggedIn Successfuly')

@@ -56,6 +56,7 @@ import { deleteGEI } from "Api/gei";
 import { getGieslength } from "Api/dashboard";
 import { getSingleGie } from "Api/gei";
 import GieHistoryModal from "./Modals/GieHistoryModal";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const GEI = () => {
@@ -68,6 +69,8 @@ const GEI = () => {
     const [isloading,setisloading] = useState(true)
     const [isediting,setisediting] = useState(false)
     const [isviewing,setisviewing] = useState(false)
+    const [isconfirm,setisconfirm] = useState(false)
+    const [deleteId,setDeleteId] = useState('')
     const [isadding,setisadding] = useState(false)
     const [geitoshow,setgeitoshow] = useState(null)
     const [allGEIs,setAllGEIs] = useState([])
@@ -126,12 +129,17 @@ const GEI = () => {
         setgeitoshow(gei)
         setisviewing(true)
     }
-    const handledeleteClick = async(id,name)=>{
-        const response = await deleteGEI(id)
+    const handleDeleteGig= async(id)=>{
+      const response = await deleteGEI(id)
         if(!response.error){
-            toastService.success(`${name} Deleted Successfully`)
+            toastService.success(`Gie Deleted Successfully`)
             handlegetallGeis()
+            setisconfirm(false)
         }
+    }
+    const handledeleteClick = (id)=>{
+        setDeleteId(id)
+        setisconfirm(true)
     }
   const handleEditClick = (gei)=>{
     setgeitoshow(gei)
@@ -208,7 +216,7 @@ const GEI = () => {
                             Edit
                           </DropdownItem>
                           <DropdownItem
-                           onClick={()=>handledeleteClick(gei._id,gei.name)}
+                           onClick={()=>handledeleteClick(gei._id)}
                           >
                             Delete
                           </DropdownItem>
@@ -254,12 +262,13 @@ const GEI = () => {
           </div>
         </Row>
       </Container>
-      {(isediting||isviewing||isadding||ishistory)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
+      {(isediting||isviewing||isadding||ishistory||isconfirm)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':isconfirm?'15%':'10vh',zIndex:20}}>
           {isediting&&<EditGeiModal handleclose={()=>setisediting(false)} GeitoEdit={geitoshow} fetchGeis={handlegetallGeis}/>}
           {isviewing&&<ViewGeiModal handleclose={()=>setisviewing(false)} Geitoshow={geitoshow}/>}
           {isadding&&<AddGeiModal handleclose={()=>setisadding(false)} fetchGEIS={handlegetallGeis}/>}
           {ishistory&&<GieHistoryModal handleclose={()=>setishistory(false)} Gie={geitoshow}/>}
+          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteGig(deleteId)}/>}
         </div>
         )}
     </>

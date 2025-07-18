@@ -60,6 +60,7 @@ import { getUserLength } from "Api/dashboard";
 import { getGieUserLength } from "Api/Users";
 import { getAgencyUserLength } from "Api/Users";
 import { getSingleUser } from "Api/Users";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const Users = () => {
@@ -80,6 +81,8 @@ const Users = () => {
   const [allGEI, setAllGEI] = useState([]);
   const [totalpages,settotalpages] = useState(0)
   const [totalitems,settotalitems] = useState(0)
+  const [isconfirm,setisconfirm] = useState(false)
+  const [deleteid,setdeleteid]= useState('')
   const location = useLocation();
   const navigate = useNavigate();
   const getpages = async()=>{
@@ -207,14 +210,19 @@ const Users = () => {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
-  const handleDeleteClick = async (id, name) => {
+  const handleDeleteUser = async(id)=>{
     const response = await deleteUser(id);
     if (!response.error) {
-      toastService.success(`${name} Deleted Successfully`);
+      toastService.success(`User Deleted Successfully`);
       handlegetallUsers();
+      setisconfirm(false)
     } else {
       toastService.warn("Something went wrong");
     }
+  }
+  const handleDeleteClick = async (id) => {
+    setdeleteid(id)
+    setisconfirm(true)
   };
   const handleFilterUsers = (e) => {
     e.preventDefault();
@@ -432,7 +440,7 @@ const Users = () => {
                               </DropdownItem>
                                 <DropdownItem
                                   onClick={() =>
-                                    handleDeleteClick(user._id, user.fname)
+                                    handleDeleteClick(user._id)
                                   }
                                 >
                                   Delete
@@ -473,7 +481,7 @@ const Users = () => {
           </div>
         </Row>
       </Container>
-      {(isadding || isviewing || isediting) && (
+      {(isadding || isviewing || isediting || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -484,7 +492,7 @@ const Users = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop: isadding?'':"5vh",
+            paddingTop: isadding||isediting?'':isconfirm?'15%':"5vh",
             zIndex: 20,
           }}
         >
@@ -496,6 +504,7 @@ const Users = () => {
           )}
           {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}
           {isadding&&<AddUserModal handleclose={()=>setisadding(false)} fetchusers = {handlegetallUsers}/>}
+          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteUser(deleteid)}/>}
         </div>
       )}
     </>

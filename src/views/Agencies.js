@@ -66,6 +66,7 @@ import { getAllGieAgenciesLength } from "Api/agency";
 import { getAgenciesLength } from "Api/dashboard";
 import { getAllGIESNames } from "Api/gei";
 import { getSingleAgency } from "Api/agency";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const Agencies = () => {
@@ -81,6 +82,8 @@ const Agencies = () => {
     const [selectedGEI,setSelectedGEI] = useState('')
     const [isediting,setisediting] = useState(false)
     const [isadding,setisadding]= useState(false)
+    const [isconfirm,setisconfirm] = useState(false)
+    const [deleteid,setdeleteid] = useState('')
       const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems,settotalitems] = useState(0)
@@ -156,12 +159,17 @@ const Agencies = () => {
         setagencytoshow(agency)
         setisviewing(true)
     }
-    const handledeleteClick = async(id,name)=>{
-        const response = await deleteAgency(id)
+    const handledeleteAgency = async(id)=>{
+       const response = await deleteAgency(id)
         if(!response.error){
-            toastService.success(`${name} Deleted Successfully`)
+            toastService.success(`Agency Deleted Successfully`)
             handlegetallagencies()
+            setisconfirm(false)
         }
+    }
+    const handledeleteClick = async(id)=>{
+       setdeleteid(id)
+       setisconfirm(true)
     }
     const handlegetGeiAgencies=async()=>{
         navigate(`/agencies/${selectedGEI}/1`)
@@ -342,11 +350,12 @@ const Agencies = () => {
           </div>
         </Row>
       </Container>
-      {(isviewing||isediting||isadding)&&(
-        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:'10vh',zIndex:20}}>
+      {(isviewing||isediting||isadding||isconfirm)&&(
+        <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isconfirm?'15%':'10vh',zIndex:20}}>
           {isviewing&&<ViewAgencyModal handleclose={()=>setisviewing(false)} agencyDetails={agencytoshow}/>}
           {isadding&&<AddAgencyModal handleclose={()=>setisadding(false)} fetchagencies={handlegetallagencies} GEIs={allGEIs}/>}
           {isediting&&<EditAgency handleclose={()=>setisediting(false)} fetchagencies={handlegetallagencies} GEIs={allGEIs} agencyToedit={agencytoshow}/>}
+          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handledeleteAgency(deleteid)} />}
         </div>
         )}
     </>

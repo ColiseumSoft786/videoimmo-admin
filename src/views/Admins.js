@@ -48,6 +48,7 @@ import toastService from "Toaster/toaster";
 import AddAdminModal from "./Modals/AddAdminModal";
 import { useAsyncError } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ConfirmModal from "./Modals/ConfirmModals";
 // core components
 
 const Admins = () => {
@@ -59,6 +60,9 @@ const Admins = () => {
     const [isadding,setisadding] = useState(false)
     const [filteredAdmins,setFilteredAdmins] = useState([])
     const [main,setmain] = useState(null)
+    const [isconfirm,setisconfirm] = useState(false)
+    const [deleteid,setdeleteid] = useState('')
+    const adminid = localStorage.getItem('adminId')
     const handleeditclick = (e,id,firstname,lastname)=>{
       e.preventDefault()
       console.log('main id',id)
@@ -97,13 +101,17 @@ const Admins = () => {
             console.log(error)
         }
     }
-    const handleDeleteAdmin=async(e,id)=>{
-      e.preventDefault()
+    const handleDeleteAdmin=async(id)=>{
       const response = await deleteAdmin(id)
       if(!response.error){
         toastService.success('Admin Deleted Successfully')
         handlegetalladmins()
       }
+    }
+    const handleDeleteClick = async(e,id)=>{
+      e.preventDefault()
+      setisconfirm(true)
+      setdeleteid(id)
     }
     useEffect(()=>{
       if(window.location.pathname.includes('admins')){
@@ -173,11 +181,11 @@ const Admins = () => {
                           >
                             Edit
                           </DropdownItem>
-                          <DropdownItem
-                            onClick={(e) => handleDeleteAdmin(e,admin._id)}
+                          {admin._id!==adminid&&<DropdownItem
+                            onClick={(e) => handleDeleteClick(e,admin._id)}
                           >
                             Delete
-                          </DropdownItem>
+                          </DropdownItem>}
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </td>
@@ -191,11 +199,12 @@ const Admins = () => {
           </div>
         </Row>
       </Container>
-      {(isediting||isviewing||isadding)&&(
+      {(isediting||isviewing||isadding||isconfirm)&&(
         <div style={{height:'100vh',width:'100vw',backgroundColor:'rgba(0, 0, 0, 0.3)',position:'fixed',top:0,left:0,display:"flex",justifyContent:"center",paddingTop:isadding?'5vh':'10vh',zIndex:20}}>
           {isediting&&<EditAdminModal handleclose={()=>setisediting(false)} fetchusers={handlegetalladmins} admintoedit={main}/>}
           {isviewing&&<ViewAdminModal handleclose={()=>setisviewing(false)} admintoedit={main}/>}
           {isadding&&<AddAdminModal handleclose={()=>setisadding(false)} fetchusers={handlegetalladmins}/>}
+          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteAdmin(deleteid)}/>}
         </div>
         )}
     </>
