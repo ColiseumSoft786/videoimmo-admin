@@ -33,10 +33,10 @@ export const getAllUsers = async (page) => {
     console.log("error in get all users api", error);
   }
 };
-export const getUserHouses = async (id) => {
+export const getUserHouses = async (id,page) => {
   try {
     console.log("body for user houses", id);
-    const path = GET_USER_HOUSES + id;
+    const path = GET_USER_HOUSES + id +`/${page}`;
     const response = await getAPI(path, true);
     console.log("response from getuserhouses api", response);
     return response;

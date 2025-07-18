@@ -103,10 +103,10 @@ const Houses = () => {
         navigate(`/houses/${userid}/${username}/${prev}`);
       } else {
         if (agencyId !== "null") {
-          navigate(`/houses/${gieId}/${agencyId}/${prev}`);
+          navigate(`/houses/filtered/${gieId}/${agencyId}/${prev}`);
         }
         if (agencyId === "null") {
-          navigate(`/houses/${gieId}/null/${prev}`);
+          navigate(`/houses/filtered/${gieId}/null/${prev}`);
         }
         if (!gieId && !agencyId) {
           navigate(`/houses/${prev}`);
@@ -121,10 +121,10 @@ const Houses = () => {
         navigate(`/houses/${userid}/${username}/${next}`);
       } else {
         if (agencyId !== "null") {
-          navigate(`/houses/${gieId}/${agencyId}/${next}`);
+          navigate(`/houses/filtered/${gieId}/${agencyId}/${next}`);
         }
         if (agencyId === "null") {
-          navigate(`/houses/${gieId}/null/${next}`);
+          navigate(`/houses/filtered/${gieId}/null/${next}`);
         }
         if (!gieId && !agencyId) {
           navigate(`/houses/${next}`);
