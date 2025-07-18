@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -36,6 +36,10 @@ import {
   Container,
   Row,
   Col,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 
 // core components
@@ -47,293 +51,243 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import Loader from "Loader/Loader";
+import { getRecentUsers } from "Api/Users";
+import { getRecentGies } from "Api/gei";
+import { getRecentAgencies } from "Api/agency";
+import { getRecentTeams } from "Api/teams";
 
-const Index = (props) => {
-  const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
+const Dashboard = (props) => {
+  const [recentAgencies,setRecentAgencies]=useState([])
+  const [recentUsers,setRecentUsers] = useState([])
+  const [recentTeams,setRecentTeams] = useState([])
+  const [recentGies,setRecentGies] = useState([])
+  const [isloading,setislaoding] = useState(['gie','agency','user','team'])
+  const getrecentitems = async () => {
+  setislaoding(['gie', 'agency', 'user', 'team']);
 
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
+  const gies = await getRecentGies();
+  const agencies = await getRecentAgencies();
+  const teams = await getRecentTeams();
+  const users = await getRecentUsers();
+
+  if (!gies.error) {
+    setRecentGies(gies.data);
+    setislaoding(prev => prev.filter(item => item !== 'gie'));
   }
+  if (!agencies.error) {
+    setRecentAgencies(agencies.data);
+    setislaoding(prev => prev.filter(item => item !== 'agency'));
+  }
+  if (!teams.error) {
+    setRecentTeams(teams.data);
+    setislaoding(prev => prev.filter(item => item !== 'team'));
+  }
+  if (!users.error) {
+    setRecentUsers(users.data);
+    setislaoding(prev => prev.filter(item => item !== 'user'));
+  }
+};
 
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
+  useEffect(()=>{
+    getrecentitems()
+  },[])
   return (
     <>
-      <Header />
-      {/* Page content */}
-      <Container className="mt--7" fluid>
-        
-        {/* <Row>
-          <Col className="mb-5 mb-xl-0" xl="8">
-            <Card className="bg-gradient-default shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
-                    </h6>
-                    <h2 className="text-white mb-0">Sales value</h2>
-                  </div>
-                  <div className="col">
-                    <Nav className="justify-content-end" pills>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 1,
-                          })}
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 1)}
-                        >
-                          <span className="d-none d-md-block">Month</span>
-                          <span className="d-md-none">M</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 2,
-                          })}
-                          data-toggle="tab"
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 2)}
-                        >
-                          <span className="d-none d-md-block">Week</span>
-                          <span className="d-md-none">W</span>
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-                </Row>
+    <Header/>
+      <div style={{display:'grid',gridTemplateColumns:'50% 50%',gap:'2%',padding:'5%'}}>
+          <Card className="shadow">
+              <CardHeader className="border-0" 
+              style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
+                <h3 className="mb-0">Recent GIES</h3>
               </CardHeader>
-              <CardBody> */}
-                {/* Chart */}
-                {/* <div className="chart">
-                  <Line
-                    data={chartExample1[chartExample1Data]}
-                    options={chartExample1.options}
-                    getDatasetAtEvent={(e) => console.log(e)}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
-                    </h6>
-                    <h2 className="mb-0">Total orders</h2>
-                  </div>
-                </Row>
-              </CardHeader>
-              <CardBody> */}
-                {/* Chart */}
-                {/* <div className="chart">
-                  <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row> */}
-        {/* <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
-              </CardHeader>
+              {isloading.includes('gie')?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
+                    <th scope="col">Sr.#</th>
+                    <th scope="col">name</th>
+                    <th scope="col">Phone#</th>
+                    <th scope="col">Expiry Date</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">/argon/</th>
-                    <td>4,569</td>
-                    <td>340</td>
+                    {recentGies.map((gies,index)=>{
+                        return(
+                            <tr>
+                    <td>{index+1}</td>
                     <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 46,53%
+                      {gies.name}
                     </td>
+                    <td>{gies.countryCode}-{gies.phone}</td>
+                    <td>{gies.expiresOn}</td>
                   </tr>
-                  <tr>
-                    <th scope="row">/argon/index.html</th>
-                    <td>3,985</td>
-                    <td>319</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/charts.html</th>
-                    <td>3,513</td>
-                    <td>294</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/tables.html</th>
-                    <td>2,050</td>
-                    <td>147</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/profile.html</th>
-                    <td>1,795</td>
-                    <td>190</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
+                        )
+                    })}
                 </tbody>
               </Table>
+              )}
             </Card>
-          </Col>
-          <Col xl="4">
             <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
+              <CardHeader className="border-0" 
+              style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
+                <h3 className="mb-0">Recent Agencies</h3>
               </CardHeader>
+              {isloading.includes('agency')?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col" />
+                    <th scope="col">Sr.#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mobile no.</th>
+                    <th scope="col">Gie</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
+                    {recentAgencies.map((agency,index)=>{
+                        return(
+                            <tr>
+                    <td>{index+1}</td>
                     <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">60%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="60"
-                            barClassName="bg-gradient-danger"
-                          />
-                        </div>
-                      </div>
+                    {agency.image === "" ? (
+                              <i
+                                style={{ fontSize: "25px" }}
+                                className="ni ni-circle-08"
+                              ></i>
+                            ) : (
+                              <div
+                                style={{
+                                  height: "25px",
+                                  width: "25px",
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  alignItems: "center",
+                                  alignContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ height: "100%", width: "100%" }}
+                                  src={`https://api.videorpi.com/${agency.image}`}
+                                />
+                              </div>
+                            )}
                     </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
                     <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">70%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="70"
-                            barClassName="bg-gradient-success"
-                          />
-                        </div>
-                      </div>
+                      {agency.name}
                     </td>
+                    <td>{agency.countryCode}-{agency.phone}</td>
+                    <td>{agency.gie.name}</td>
                   </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">80%</span>
-                        <div>
-                          <Progress max="100" value="80" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">75%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="75"
-                            barClassName="bg-gradient-info"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">30%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="30"
-                            barClassName="bg-gradient-warning"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                        )
+                    })}
                 </tbody>
               </Table>
+              )}
             </Card>
-          </Col>
-        </Row> */}
-      </Container>
+            <Card className="shadow">
+              <CardHeader className="border-0" 
+              style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
+                <h3 className="mb-0">Recent Teams</h3>
+              </CardHeader>
+              {isloading.includes('team')?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th scope="col">Sr.#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Managers</th>
+                    <th scope="col">Agency</th>
+                    <th scope="col">Gie</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {recentTeams.map((team,index)=>{
+                        return(
+                            <tr>
+                    <td>{index+1}</td>
+                    
+                    <td>
+                      {team.name}
+                    </td>
+                    <td>
+                            {team.managers.map((manager, index) => {
+                              return <span>({manager.fname})</span>;
+                            })}
+                    </td>
+                    <td>{team.agency?.name}</td>
+                    <td>{team.gie?.name}</td>
+                  </tr>
+                        )
+                    })}
+                </tbody>
+              </Table>
+              )}
+            </Card>
+            <Card className="shadow">
+              <CardHeader className="border-0" 
+              style={{ display: "flex", justifyContent: "space-between",alignItems:"center",alignContent:'center' }}
+              >
+                <h3 className="mb-0">Recent Agencies</h3>
+              </CardHeader>
+              {isloading.includes('user')?(<div style={{height:'250px',width:'100%',marginTop:'20vh',display:'flex',justifyContent:'center'}}><Loader/></div>):(
+              <Table className="align-items-center table-flush" responsive>
+                <thead className="thead-light">
+                  <tr>
+                    <th scope="col">Sr.#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Mobile no.</th>
+                    <th scope="col">Agency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {recentUsers.map((user,index)=>{
+                        return(
+                            <tr>
+                    <td>{index+1}</td>
+                    <td>
+                    {user.image === "" ? (
+                              <i
+                                style={{ fontSize: "25px" }}
+                                className="ni ni-circle-08"
+                              ></i>
+                            ) : (
+                              <div
+                                style={{
+                                  height: "25px",
+                                  width: "25px",
+                                  borderRadius: "50%",
+                                  overflow: "hidden",
+                                  alignItems: "center",
+                                  alignContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ height: "100%", width: "100%" }}
+                                  src={`https://api.videorpi.com/${user.image}`}
+                                />
+                              </div>
+                            )}
+                    </td>
+                    <td>
+                      {user.fname}
+                    </td>
+                    <td>{user.country_Code}-{user.mobile_no}</td>
+                    <td>{user.agency?.name}</td>
+                  </tr>
+                        )
+                    })}
+                </tbody>
+              </Table>
+              )}
+            </Card>
+      </div>
     </>
   );
 };
 
-export default Index;
+export default Dashboard;

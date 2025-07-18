@@ -9,6 +9,7 @@ import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
 import { GET_GIE_USER_LENGTH } from "Api/apiurls";
 import { GET_ALL_USER_NAMES } from "Api/apiurls";
 import { GET_OTHER_USER_NAMES_FORTEAM } from "Api/apiurls";
+import { GET_RECENT_USERS } from "Api/apiurls";
 import { GET_SINGLE_USER } from "Api/apiurls";
 import { GET_AGENCY_USER_LENGTH } from "Api/apiurls";
 import { GET_OTHER_USERS_NAMES } from "Api/apiurls";
@@ -188,5 +189,14 @@ export const getotherusernamesforteam = async(id,agencyid)=>{
     return response
   } catch (error) {
     console.log('error in get other usernames for team',error)
+  }
+}
+export const getRecentUsers = async()=>{
+  try {
+    const response = await getAPI(GET_RECENT_USERS,true)
+    console.log('response from get recent users',response)
+    return response
+  } catch (error) {
+    console.log('error in get recent user ',error)
   }
 }

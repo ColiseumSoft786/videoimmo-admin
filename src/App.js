@@ -5,7 +5,7 @@ import AuthLayout from "layouts/Auth";
 import { ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setisLoggedIn } from "ReduxSlices/AdminSlice";
-
+import './App.css'
 const App = () => {
   const isLoggedIn = useSelector((state)=>state.admin.isloggedin)
   const dispatch = useDispatch()

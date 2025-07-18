@@ -50,7 +50,13 @@ const GieHistoryModal = ({ handleclose, Gie }) => {
           >
             &times;
           </span>
-          <CardBody className="px-5 py-lg-5">
+          <CardBody 
+          style={{
+                  maxHeight: "70vh",
+                  overflowy: "auto",
+                }}
+          className="px-5 py-lg-5"
+          >
             <div className="text-center text-muted mb-4">
               <span style={{ fontSize: "20px", fontWeight: "bold" }}>
                 GIE History
@@ -69,13 +75,6 @@ const GieHistoryModal = ({ handleclose, Gie }) => {
                 <Loader />
               </div>
             ) : (
-              <div
-                style={{
-                  width: "100%",
-                  maxHeight: "50vh",
-                  overflowy: "auto",
-                }}
-              >
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                     <tr>
@@ -98,7 +97,6 @@ const GieHistoryModal = ({ handleclose, Gie }) => {
                     })}
                   </tbody>
                 </Table>
-              </div>
             )}
           </CardBody>
         </Card>

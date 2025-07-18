@@ -3,6 +3,7 @@ import { deleteAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
 import { GET_GIE_TOKENS_TRANSACTION } from "Api/apiurls"
+import { GET_RECENT_GIES } from "Api/apiurls"
 import { GET_SINGLE_GIE } from "Api/apiurls"
 import { UPDATE_GEI } from "Api/apiurls"
 import { GET_ALL_GIES_NAMES } from "Api/apiurls"
@@ -76,5 +77,14 @@ export const getGieTokenTransactions = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get gie token transactions',error)
+    }
+}
+export const getRecentGies = async()=>{
+    try {
+        const response = await getAPI(GET_RECENT_GIES,true)
+        console.log('response from get recent gies',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent gies ',error)
     }
 }

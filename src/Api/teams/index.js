@@ -5,6 +5,7 @@ import { getAPI } from "Api"
 import { ADD_TEAM_BY_ADMIN } from "Api/apiurls"
 import { DELETE_TEAM } from "Api/apiurls"
 import { GET_GIE_TEAMS_LENGTH } from "Api/apiurls"
+import { GET_RECENT_TEAMS } from "Api/apiurls"
 import { GET_AGENCY_TEAMS_LENGTH } from "Api/apiurls"
 import { GET_ALL_TEAMS_LENGTH } from "Api/apiurls"
 import { UPDATE_TEAM_MEMBERS } from "Api/apiurls"
@@ -132,5 +133,14 @@ export const getAgencyTeamsLength = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get agency teams length ',error)
+    }
+}
+export const getRecentTeams = async()=>{
+    try {
+        const response = await getAPI(GET_RECENT_TEAMS,true)
+        console.log('response get recent teams',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent teams',error)
     }
 }

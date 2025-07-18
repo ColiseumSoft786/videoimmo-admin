@@ -4,6 +4,7 @@ import { deleteAPI } from "Api"
 import { getAPI } from "Api"
 import { GET_ALL_AGENCIES_NAMES_BY_GIE } from "Api/apiurls"
 import { GET_SINGLE_AGENCY } from "Api/apiurls"
+import { GET_RECENT_AGENCIES } from "Api/apiurls"
 import { GET_GIE_AGENCY_LENGTH } from "Api/apiurls"
 import { GET_ALL_AGENCIES_NAMES } from "Api/apiurls"
 import { Update_Agency } from "Api/apiurls"
@@ -99,5 +100,14 @@ export const getSingleAgency = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get single agency',error)
+    }
+}
+export const getRecentAgencies = async()=>{
+    try {
+        const response = await getAPI(GET_RECENT_AGENCIES,true)
+        console.log('response from get recent agencies',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent agencies',error)
     }
 }
