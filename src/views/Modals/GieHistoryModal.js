@@ -53,7 +53,7 @@ const GieHistoryModal = ({ handleclose, Gie }) => {
           <CardBody 
           style={{
                   maxHeight: "70vh",
-                  overflowy: "auto",
+                  overflowY: "scroll",
                 }}
           className="px-5 py-lg-5"
           >
