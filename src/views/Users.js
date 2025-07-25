@@ -474,7 +474,7 @@ const Users = () => {
                                 }}
                               >
                                 <img
-                                  style={{ height: "100%", width: "100%" }}
+                                  style={{ height: "100%", width: "100%",objectFit:'cover' }}
                                   src={`https://api.videorpi.com/${user.image}`}
                                 />
                               </div>
