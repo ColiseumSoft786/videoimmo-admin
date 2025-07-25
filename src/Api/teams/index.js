@@ -6,6 +6,8 @@ import { ADD_TEAM_BY_ADMIN } from "Api/apiurls"
 import { DELETE_TEAM } from "Api/apiurls"
 import { GET_GIE_TEAMS_LENGTH } from "Api/apiurls"
 import { GET_RECENT_TEAMS } from "Api/apiurls"
+import { GET_TEAM_LENGTH_BY_MEMBER } from "Api/apiurls"
+import { GET_TEAM_BY_MEMBER } from "Api/apiurls"
 import { GET_AGENCY_TEAMS_LENGTH } from "Api/apiurls"
 import { GET_ALL_TEAMS_LENGTH } from "Api/apiurls"
 import { UPDATE_TEAM_MEMBERS } from "Api/apiurls"
@@ -142,5 +144,25 @@ export const getRecentTeams = async()=>{
         return response
     } catch (error) {
         console.log('error in get recent teams',error)
+    }
+}
+export const getTeamsByUserId = async(userid,page)=>{
+    try {
+        const path = GET_TEAM_BY_MEMBER+userid+`/${page}`
+        const response = await getAPI(path,true)
+        console.log('response from get teams by user id ',response)
+        return response
+    } catch (error) {
+        console.log('errors inn get teams by user id ',error)
+    }
+}
+export const getTeamlengthByUserid = async (userid)=>{
+    try {
+        const path = GET_TEAM_LENGTH_BY_MEMBER+userid
+        const response = await getAPI(path,true)
+        console.log('response from get team length by user id',response)
+        return response
+    } catch (error) {
+        console.log('error in get team length by user id',error)
     }
 }

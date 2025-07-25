@@ -89,7 +89,7 @@ const Admin = (props) => {
               <Route path="/houses/filtered/:gieId/:agencyId/:page" element={<Houses />} />
               <Route path="/teams/:gieId/:agencyId/:page" element={<AllTeams />} />
               <Route path="/gies/searched/:gieId" element={<GEI/>}/>
-              <Route path="/teams/searched/:teamid" element={<AllTeams />} />
+              <Route path="/teams/searched/:userid/:page" element={<AllTeams />} />
               <Route path="/users/:gieId/:agencyId/:page" element={<Users/>}/>
               <Route path="/users/searched/:userId" element={<Users/>}/>
               <Route path="/team/:managerid" element={<Teams/>}/>

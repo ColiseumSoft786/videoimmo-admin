@@ -85,13 +85,15 @@ import Teams from "./Teams";
 import { getManagerTeam } from "Api/Users";
 import ConfirmModal from "./Modals/ConfirmModals";
 import { getAllTeamsNames } from "Api/teams";
+import { getAllUserNames } from "Api/Users";
+import { getTeamsByUserId } from "Api/teams";
+import { getTeamlengthByUserid } from "Api/teams";
 // core components
 
 const AllTeams = () => {
-  const searchtext = useSelector((state) => state.admin.searchText);
   const location = useLocation();
   const navigate = useNavigate();
-  const { page, gieId, agencyId, teamid } = useParams();
+  const { page, gieId, agencyId, userid } = useParams();
   const [isloading, setisloading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [isfetchingag, setisfetchingag] = useState(false);
@@ -112,6 +114,10 @@ const AllTeams = () => {
   const [isfetching, setisfetching] = useState(true);
   const getpages = async () => {
     let pages = null;
+    const issearched = window.location.pathname.includes('searched')
+    if(issearched&&userid){
+      pages = await getTeamlengthByUserid(userid)
+    }else{
     if (gieId && agencyId === "null") {
       pages = await getGieTeamsLength(gieId);
     }
@@ -120,7 +126,7 @@ const AllTeams = () => {
     }
     if (!agencyId && !gieId) {
       pages = await getAllTeamsLength();
-    }
+    }}
     if (!pages.error) {
       settotalitems(Number(pages.data));
       settotalpages(Math.ceil(pages.data / 20));
@@ -132,6 +138,10 @@ const AllTeams = () => {
   const handleprev = () => {
     if (currentpage > 1) {
       const prev = currentpage - 1;
+      const issearched = window.location.pathname.includes('searched')
+      if(issearched&&userid){
+        navigate(`/teams/searched/${userid}/${prev}`)
+      }else{
       if (agencyId !== "null") {
         navigate(`/teams/${gieId}/${agencyId}/${prev}`);
       }
@@ -140,12 +150,16 @@ const AllTeams = () => {
       }
       if (!gieId && !agencyId) {
         navigate(`/teams/${prev}`);
-      }
+      }}
     }
   };
   const handlenext = () => {
     if (currentpage < totalpages) {
       const next = currentpage + 1;
+      const issearched = window.location.pathname.includes('searched')
+      if(issearched&&userid){
+        navigate(`/teams/searched/${userid}/${next}`)
+      }else{
       if (agencyId !== "null") {
         navigate(`/teams/${gieId}/${agencyId}/${next}`);
       }
@@ -154,7 +168,7 @@ const AllTeams = () => {
       }
       if (!gieId && !agencyId) {
         navigate(`/teams/${next}`);
-      }
+      }}
     }
   };
   useEffect(() => {
@@ -165,8 +179,8 @@ const AllTeams = () => {
     let teams = [];
     const gei = await getAllGIESNames();
     const issearched = window.location.pathname.includes("searched");
-    if (teamid && issearched) {
-      teams = await getManagerTeam(teamid);
+    if (userid && issearched) {
+      teams = await getTeamsByUserId(userid,page);
     }
     if (gieId && agencyId === "null" && !issearched) {
       teams = await getAllTeamsByGie(gieId, page);
@@ -180,7 +194,7 @@ const AllTeams = () => {
     if (!gei.error && !teams.error) {
       setAllGEI(gei.data);
       if (issearched) {
-        setallteams([teams.data.data]);
+        setallteams(teams.data.data);
       } else {
         setallteams(teams.data);
       }
@@ -189,7 +203,7 @@ const AllTeams = () => {
   };
   const handlegetlistitems = async () => {
     setisfetching(true);
-    const items = await getAllTeamsNames();
+    const items = await getAllUserNames();
     if (!items.error) {
       setlistitems(items.data);
       setlistitemstoshow(items.data);
@@ -248,16 +262,19 @@ const AllTeams = () => {
     setisconfirm(true);
   };
   const handlesuggestionclick = (id) => {
-    navigate(`/teams/searched/${id}`);
+    navigate(`/teams/searched/${id}/1`);
     setSearchText("");
   };
   useEffect(() => {
     setlistitemstoshow(
       listitems.filter((item) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
+        item.fname.toLowerCase().includes(searchText.toLowerCase())
       )
     );
   }, [searchText]);
+  useEffect(()=>{
+    console.log('these are all teams ',allteams)
+  },[allteams])
   return (
     <>
       <Header />
@@ -314,7 +331,7 @@ const AllTeams = () => {
                             }}
                             key={index}
                           >
-                            {item.name}
+                            {item.fname}
                           </div>
                         );
                       })}
@@ -508,7 +525,7 @@ const AllTeams = () => {
                 </Table>
               )}
             </Card>
-            {!isloading && totalpages !== 1 && totalitems > 20 && !teamid && (
+            {!isloading && totalpages !== 1 && totalitems > 20 && (
               <div
                 style={{
                   width: "100%",
