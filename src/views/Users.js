@@ -44,6 +44,8 @@ import {
   FormGroup,
   InputGroup,
   Input,
+  InputGroupAddon,
+  InputGroupText,
 } from "reactstrap";
 import ViewUserModal from "./Modals/ViewUserModal";
 import EditUserModal from "./Modals/EditUserModal";
@@ -61,10 +63,11 @@ import { getGieUserLength } from "Api/Users";
 import { getAgencyUserLength } from "Api/Users";
 import { getSingleUser } from "Api/Users";
 import ConfirmModal from "./Modals/ConfirmModals";
+import { getAllUserNames } from "Api/Users";
 // core components
 
 const Users = () => {
-  const { page,gieId, agencyId ,userId} = useParams();
+  const { page, gieId, agencyId, userId } = useParams();
   const searchtext = useSelector((state) => state.admin.searchText);
   const [users, setusers] = useState([]);
   const [isloading, setisloading] = useState(true);
@@ -77,79 +80,84 @@ const Users = () => {
   const [selectedGEI, setSelectedGEI] = useState("");
   const [allAgencies, setAllAgencies] = useState([]);
   const [isfetchingag, setisfetchingag] = useState(false);
-  const [currentpage,setcurrentpage] = useState(Number(page))
+  const [currentpage, setcurrentpage] = useState(Number(page));
   const [allGEI, setAllGEI] = useState([]);
-  const [totalpages,settotalpages] = useState(0)
-  const [totalitems,settotalitems] = useState(0)
-  const [isconfirm,setisconfirm] = useState(false)
-  const [deleteid,setdeleteid]= useState('')
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems, settotalitems] = useState(0);
+  const [isconfirm, setisconfirm] = useState(false);
+  const [deleteid, setdeleteid] = useState("");
   const location = useLocation();
+  const adminName = localStorage.getItem("username");
+  const [listitems, setlistitems] = useState([]);
+  const [listitemstoshow, setlistitemstoshow] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [isfetching, setisfetching] = useState(true);
   const navigate = useNavigate();
-  const getpages = async()=>{
-    let pages = null
+  const getpages = async () => {
+    let pages = null;
     if (agencyId !== "null") {
-        pages = await getAgencyUserLength(agencyId);
-      }
-      if (agencyId === "null") {
-        pages = await getGieUserLength(gieId);
-      }
-      if (!gieId && !agencyId) {
-        pages = await getUserLength();
-      }
-    if(!pages.error){
-      settotalitems(Number(pages.data))
-      settotalpages(Math.ceil(pages.data/20))
-    }else{
-      settotalitems(0)
-      settotalpages(1)
+      pages = await getAgencyUserLength(agencyId);
     }
-  }
-  const handleprev=()=>{
-    if(currentpage>1){
-      const prev = currentpage-1
+    if (agencyId === "null") {
+      pages = await getGieUserLength(gieId);
+    }
+    if (!gieId && !agencyId) {
+      pages = await getUserLength();
+    }
+    if (!pages.error) {
+      settotalitems(Number(pages.data));
+      settotalpages(Math.ceil(pages.data / 20));
+    } else {
+      settotalitems(0);
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
       if (agencyId !== "null") {
-        navigate(`/users/${gieId}/${agencyId}/${prev}`)
+        navigate(`/users/${gieId}/${agencyId}/${prev}`);
       }
       if (agencyId === "null") {
-        navigate(`/users/${gieId}/null/${prev}`)
+        navigate(`/users/${gieId}/null/${prev}`);
       }
       if (!gieId && !agencyId) {
-        navigate(`/users/${prev}`)
+        navigate(`/users/${prev}`);
       }
     }
-  }
-  const handlenext=()=>{
-    if(currentpage<totalpages){
-      const next = currentpage+1
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
       if (agencyId !== "null") {
-        navigate(`/users/${gieId}/${agencyId}/${next}`)
+        navigate(`/users/${gieId}/${agencyId}/${next}`);
       }
       if (agencyId === "null") {
-        navigate(`/users/${gieId}/null/${next}`)
+        navigate(`/users/${gieId}/null/${next}`);
       }
       if (!gieId && !agencyId) {
-        navigate(`/users/${next}`)
+        navigate(`/users/${next}`);
       }
     }
-  }
-  useEffect(()=>{
-    setcurrentpage(Number(page))
-  },[page])
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
   const handlegetallUsers = async () => {
     setisloading(true);
     try {
       let gie = {};
       let response = {};
       gie = await getAllGIESNames();
-      const issearched = window.location.pathname.includes('searched')
-      if(userId){
-        response = await getSingleUser(userId)
+      const issearched = window.location.pathname.includes("searched");
+      if (userId) {
+        response = await getSingleUser(userId);
       }
-      if (agencyId !== "null"&&!issearched) {
-        response = await getAllAgencyUsers(agencyId,page);
+      if (agencyId !== "null" && !issearched) {
+        response = await getAllAgencyUsers(agencyId, page);
       }
-      if (agencyId === "null"&&!issearched) {
-        response = await getAllGieUsers(gieId,page);
+      if (agencyId === "null" && !issearched) {
+        response = await getAllGieUsers(gieId, page);
       }
       if (!gieId && !agencyId && !userId && !issearched) {
         response = await getAllUsers(page);
@@ -157,21 +165,31 @@ const Users = () => {
       console.log("Users", response);
       if (!response.error && !gie.error) {
         setAllGEI(gie.data);
-        if(issearched){
-          setusers([response.data])
-        }else{
-        setusers(response.data);}
+        if (issearched) {
+          setusers([response.data]);
+        } else {
+          setusers(response.data);
+        }
         setisloading(false);
       }
     } catch (error) {
       console.log(error);
     }
   };
+  const handlegetlistitems = async () => {
+    setisfetching(true);
+    const items = await getAllUserNames();
+    if (!items.error) {
+      setlistitems(items.data);
+      setlistitemstoshow(items.data);
+      setisfetching(false);
+    }
+  };
   useEffect(() => {
-    
     if (window.location.pathname.includes("users")) {
-      getpages()
+      getpages();
       handlegetallUsers();
+      handlegetlistitems();
     }
     if (gieId) {
       setSelectedGEI(gieId);
@@ -206,23 +224,23 @@ const Users = () => {
     if (selectedGEI !== "") {
       handlegetAgenciesnames();
     }
-    if (selectedGEI=== "") {
+    if (selectedGEI === "") {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
-  const handleDeleteUser = async(id)=>{
+  const handleDeleteUser = async (id) => {
     const response = await deleteUser(id);
     if (!response.error) {
       toastService.success(`User Deleted Successfully`);
       handlegetallUsers();
-      setisconfirm(false)
+      setisconfirm(false);
     } else {
       toastService.warn("Something went wrong");
     }
-  }
+  };
   const handleDeleteClick = async (id) => {
-    setdeleteid(id)
-    setisconfirm(true)
+    setdeleteid(id);
+    setisconfirm(true);
   };
   const handleFilterUsers = (e) => {
     e.preventDefault();
@@ -234,6 +252,17 @@ const Users = () => {
       navigate(`/users/${selectedGEI}/${selectedAgency}/1`);
     }
   };
+  const handlesuggestionclick = (id) => {
+    navigate(`/users/searched/${id}`);
+    setSearchText("");
+  };
+  useEffect(() => {
+    setlistitemstoshow(
+      listitems.filter((item) =>
+        item.fname.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [searchText]);
   return (
     <>
       <Header />
@@ -243,6 +272,54 @@ const Users = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
+                    <Form style={{display:'flex',justifyContent:'end',margin:'10px',marginBottom:'-20px'}}>
+                                  <FormGroup className="mb-3" style={{width:'40%'}}>
+                                    <InputGroup className="input-group-alternative">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>
+                            <i className="fas fa-search" />
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <Input
+                          disabled={isfetching}
+                          placeholder="Search User"
+                          type="text"
+                          value={searchText}
+                          onChange={(e) => setSearchText(e.target.value)}
+                        />
+                      </InputGroup>
+                      {searchText.trim() !== "" && (
+                        <div
+                          style={{
+                            backgroundColor: "white",
+                            position: "absolute",
+                            top: "60px",
+                            right: "0",
+                            width: "40%",
+                            maxHeight: "40vw",
+                            overflowY: "scroll",
+                            zIndex:19
+                          }}
+                        >
+                          {listitemstoshow.map((item, index) => {
+                            return (
+                              <div
+                                onClick={() => handlesuggestionclick(item._id)}
+                                style={{
+                                  padding: "10px",
+                                  textAlign: "left",
+                                  cursor: "pointer",
+                                }}
+                                key={index}
+                              >
+                                {item.fname}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </FormGroup>
+              </Form>
               <CardHeader
                 className="border-0"
                 style={{
@@ -330,13 +407,17 @@ const Users = () => {
                       className="my-4"
                       color="danger"
                       type="submit"
-                      disabled={!agencyId&&!gieId}
+                      disabled={!agencyId && !gieId}
                     >
                       Clear Filter
                     </Button>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="danger" onClick={()=>setisadding(true)}>
+                    <Button
+                      className="my-4"
+                      color="danger"
+                      onClick={() => setisadding(true)}
+                    >
                       Add User
                     </Button>
                   </div>
@@ -366,7 +447,8 @@ const Users = () => {
                       <th scope="col">Mobile #</th>
                       <th scope="col">House</th>
                       <th scope="col">Agency</th>
-
+                      <th scope="col">Manager Of</th>
+                      <th scope="col">Member Of</th>
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
@@ -413,6 +495,10 @@ const Users = () => {
                             </Button>
                           </td>
                           <td>{user?.agency?.name}</td>
+                          <td>
+                            {user.managerOf.length>0&&<span>{user.managerOf.join(' ,')}</span>}
+                          </td>
+                          <td>{user.memberOf.length>0&&<span>{user.memberOf.join(' ,')}</span>}</td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -434,14 +520,12 @@ const Users = () => {
                                   View
                                 </DropdownItem>
                                 <DropdownItem
-                                onClick={() => handleEditClick(user)}
-                              >
-                                Edit
-                              </DropdownItem>
+                                  onClick={() => handleEditClick(user)}
+                                >
+                                  Edit
+                                </DropdownItem>
                                 <DropdownItem
-                                  onClick={() =>
-                                    handleDeleteClick(user._id)
-                                  }
+                                  onClick={() => handleDeleteClick(user._id)}
                                 >
                                   Delete
                                 </DropdownItem>
@@ -455,29 +539,35 @@ const Users = () => {
                 </Table>
               )}
             </Card>
-            {!isloading && totalpages !== 1&&totalitems>20&&!userId&&<div style={{width:'100%',alignContent:'center',display:'flex',justifyContent:'center',marginTop:'20px'}}> 
-              <div>
-              <Button
-                              color="danger"
-                              onClick={handleprev}
-                              disabled={currentpage===1}
-                            >
-                              Prev
-                            </Button>
-                            <Button
-                              color="danger"
-                            >
-                              {currentpage}
-                            </Button>
-                            <Button
-                              color="danger"
-                              onClick={handlenext}
-                              disabled={currentpage===totalpages}
-                            >
-                              Next
-                            </Button>
-                            </div>
-              </div>}
+            {!isloading && totalpages !== 1 && totalitems > 20 && !userId && (
+              <div
+                style={{
+                  width: "100%",
+                  alignContent: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <div>
+                  <Button
+                    color="danger"
+                    onClick={handleprev}
+                    disabled={currentpage === 1}
+                  >
+                    Prev
+                  </Button>
+                  <Button color="danger">{currentpage}</Button>
+                  <Button
+                    color="danger"
+                    onClick={handlenext}
+                    disabled={currentpage === totalpages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Row>
       </Container>
@@ -492,7 +582,7 @@ const Users = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop: isadding||isediting?'':isconfirm?'15%':"5vh",
+            paddingTop: isadding || isediting ? "" : isconfirm ? "15%" : "5vh",
             zIndex: 20,
           }}
         >
@@ -502,9 +592,25 @@ const Users = () => {
               userdetails={usertoview}
             />
           )}
-          {isediting&&<EditUserModal handleclose={()=>setisediting(false)} usertoedit={usertoview} fetchUsers={handlegetallUsers}/>}
-          {isadding&&<AddUserModal handleclose={()=>setisadding(false)} fetchusers = {handlegetallUsers}/>}
-          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteUser(deleteid)}/>}
+          {isediting && (
+            <EditUserModal
+              handleclose={() => setisediting(false)}
+              usertoedit={usertoview}
+              fetchUsers={handlegetallUsers}
+            />
+          )}
+          {isadding && (
+            <AddUserModal
+              handleclose={() => setisadding(false)}
+              fetchusers={handlegetallUsers}
+            />
+          )}
+          {isconfirm && (
+            <ConfirmModal
+              handleclose={() => setisconfirm(false)}
+              handleaction={() => handleDeleteUser(deleteid)}
+            />
+          )}
         </div>
       )}
     </>

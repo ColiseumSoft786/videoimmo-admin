@@ -30,11 +30,6 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
   const [selectedGIE,setSelectedGIE] = useState('')
   const handleAddAgency = async (e) => {
     e.preventDefault();
-    const selectedgietokens = GEIs.find((gie)=>gie._id===selectedGIE).tokens
-    if(selectedgietokens===0){
-      toastService.warn('This Gie Has No Tokens')
-      return
-    }
     if (
       name.trim() === "" ||
       contact.trim() === "" ||
@@ -43,7 +38,13 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
       toastService.warn("All fields must be filled");
       return;
     }
-    const requestbody = {
+    const selectedgietokens = GEIs.find((gie)=>gie._id===selectedGIE).tokens
+    if(selectedgietokens===0){
+      toastService.warn('This Gie Has No Tokens')
+      return
+    }
+    try {
+      const requestbody = {
     image:"",
       name:name,
       phone:contact.slice(countryCode.length-1),
@@ -52,10 +53,19 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
     }
     const response = await addAgency(requestbody)
     if(!response.error){
+      if(response.data.message==='Agency already registered.'){
+        toastService.warn('Agecny Already Exists')
+        return
+      }
       toastService.success(`Agency Added Successfully`);
       fetchagencies()
       handleclose();
     }
+      
+    } catch (error) {
+      toastService.warn('Something Went Wrong')
+    }
+    
   };
   useEffect(()=>{
     console.log('this country code',countryCode,'and',contact)

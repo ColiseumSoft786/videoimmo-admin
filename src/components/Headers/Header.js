@@ -28,21 +28,21 @@ import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 const Header = () => {
   const [totalusers, settotalusers] = useState(0);
   const [totalvideos, settotalvideos] = useState(0);
-  const [totalhouses, settotalhouses] = useState(0);
+  // const [totalhouses, settotalhouses] = useState(0);
   const [totalAgencies, settotalagencies] = useState(0);
   const [totalGEI, settotalGEI] = useState(0);
   const getallstats = async () => {
     const resusers = await getUserLength();
     const resvideos = await getVideosLength();
-    const reshouses = await getHouseslength();
+    // const reshouses = await getHouseslength();
     const resgies = await getGieslength();
     const resagencies = await getAgenciesLength();
     if (!resusers.error) {
       settotalusers(resusers.data);
     }
-    if (!reshouses.error) {
-      settotalhouses(reshouses.data);
-    }
+    // if (!reshouses.error) {
+    //   settotalhouses(reshouses.data);
+    // }
     if (!resvideos.error) {
       settotalvideos(resvideos.data);
     }
@@ -52,7 +52,6 @@ const Header = () => {
     if (!resagencies.error) {
       settotalagencies(resagencies.data);
     }
-    console.log(totalhouses, totalusers, totalvideos);
   };
   useEffect(() => {
     if (window.location.pathname === "/") {
@@ -118,7 +117,7 @@ const Header = () => {
                     </CardBody>
                   </Card>
                 </Col>
-                <Col lg="6" xl="3">
+                {/* <Col lg="6" xl="3">
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>
                       <Row>
@@ -141,7 +140,7 @@ const Header = () => {
                       </Row>
                     </CardBody>
                   </Card>
-                </Col>
+                </Col> */}
                 <Col lg="6" xl="3">
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>

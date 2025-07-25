@@ -43,13 +43,21 @@ import {
   Form,
   InputGroup,
   Input,
+  InputGroupAddon,
+  InputGroupText,
+  FormGroup,
 } from "reactstrap";
 import EditAdminModal from "./Modals/EditAdminModal";
 import ViewAdminModal from "./Modals/ViewAdminModal";
 import { deleteAdmin } from "Api/Admins";
 import toastService from "Toaster/toaster";
 import AddAdminModal from "./Modals/AddAdminModal";
-import { useAsyncError, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useAsyncError,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AddGeiModal from "./Modals/AddGeiModal";
 import ViewGeiModal from "./Modals/ViewGeiModal";
@@ -76,13 +84,14 @@ import { getAllTeamsLength } from "Api/teams";
 import Teams from "./Teams";
 import { getManagerTeam } from "Api/Users";
 import ConfirmModal from "./Modals/ConfirmModals";
+import { getAllTeamsNames } from "Api/teams";
 // core components
 
 const AllTeams = () => {
   const searchtext = useSelector((state) => state.admin.searchText);
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { page,gieId, agencyId ,teamid} = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { page, gieId, agencyId, teamid } = useParams();
   const [isloading, setisloading] = useState(true);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [isfetchingag, setisfetchingag] = useState(false);
@@ -94,54 +103,58 @@ const AllTeams = () => {
   const [isadding, setisadding] = useState(false);
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
-  const [totalitems,settotalitems] = useState(0)
-  const [isconfirm,setisconfirm] = useState(false)
-  const [deleteid,setdeleteid] = useState('')
+  const [totalitems, settotalitems] = useState(0);
+  const [isconfirm, setisconfirm] = useState(false);
+  const [deleteid, setdeleteid] = useState("");
+  const [listitems, setlistitems] = useState([]);
+  const [listitemstoshow, setlistitemstoshow] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [isfetching, setisfetching] = useState(true);
   const getpages = async () => {
     let pages = null;
-      if (gieId && agencyId === "null") {
-        pages = await getGieTeamsLength(gieId);
-      }
-      if (agencyId && agencyId !== "null") {
-        pages = await getAgencyTeamsLength(agencyId);
-      }
-      if (!agencyId && !gieId) {
-        pages = await getAllTeamsLength();
-      }
+    if (gieId && agencyId === "null") {
+      pages = await getGieTeamsLength(gieId);
+    }
+    if (agencyId && agencyId !== "null") {
+      pages = await getAgencyTeamsLength(agencyId);
+    }
+    if (!agencyId && !gieId) {
+      pages = await getAllTeamsLength();
+    }
     if (!pages.error) {
-      settotalitems(Number(pages.data))
+      settotalitems(Number(pages.data));
       settotalpages(Math.ceil(pages.data / 20));
     } else {
-      settotalitems(0)
+      settotalitems(0);
       settotalpages(1);
     }
   };
   const handleprev = () => {
     if (currentpage > 1) {
       const prev = currentpage - 1;
-        if (agencyId !== "null") {
-          navigate(`/teams/${gieId}/${agencyId}/${prev}`);
-        }
-        if (agencyId === "null") {
-          navigate(`/teams/${gieId}/null/${prev}`);
-        }
-        if (!gieId && !agencyId) {
-          navigate(`/teams/${prev}`);
-        }
+      if (agencyId !== "null") {
+        navigate(`/teams/${gieId}/${agencyId}/${prev}`);
+      }
+      if (agencyId === "null") {
+        navigate(`/teams/${gieId}/null/${prev}`);
+      }
+      if (!gieId && !agencyId) {
+        navigate(`/teams/${prev}`);
+      }
     }
   };
   const handlenext = () => {
     if (currentpage < totalpages) {
       const next = currentpage + 1;
-        if (agencyId !== "null") {
-          navigate(`/teams/${gieId}/${agencyId}/${next}`);
-        }
-        if (agencyId === "null") {
-          navigate(`/teams/${gieId}/null/${next}`);
-        }
-        if (!gieId && !agencyId) {
-          navigate(`/teams/${next}`);
-        }
+      if (agencyId !== "null") {
+        navigate(`/teams/${gieId}/${agencyId}/${next}`);
+      }
+      if (agencyId === "null") {
+        navigate(`/teams/${gieId}/null/${next}`);
+      }
+      if (!gieId && !agencyId) {
+        navigate(`/teams/${next}`);
+      }
     }
   };
   useEffect(() => {
@@ -151,36 +164,46 @@ const AllTeams = () => {
     setisloading(true);
     let teams = [];
     const gei = await getAllGIESNames();
-    const issearched = window.location.pathname.includes('searched')
-    if(teamid&&issearched){
-      teams = await getManagerTeam(teamid)
+    const issearched = window.location.pathname.includes("searched");
+    if (teamid && issearched) {
+      teams = await getManagerTeam(teamid);
     }
-    if (gieId && agencyId === "null"&&!issearched) {
-      teams = await getAllTeamsByGie(gieId,page);
+    if (gieId && agencyId === "null" && !issearched) {
+      teams = await getAllTeamsByGie(gieId, page);
     }
-    if (agencyId && agencyId !== "null"&&!issearched) {
-      teams = await getAllTeamsByAgency(agencyId,page);
+    if (agencyId && agencyId !== "null" && !issearched) {
+      teams = await getAllTeamsByAgency(agencyId, page);
     }
     if (!gieId && !agencyId && !issearched) {
       teams = await getAllTeams(page);
     }
     if (!gei.error && !teams.error) {
       setAllGEI(gei.data);
-      if(issearched){
-        setallteams([teams.data.data])
-      }else{
-      setallteams(teams.data);}
+      if (issearched) {
+        setallteams([teams.data.data]);
+      } else {
+        setallteams(teams.data);
+      }
       setisloading(false);
     }
   };
-
+  const handlegetlistitems = async () => {
+    setisfetching(true);
+    const items = await getAllTeamsNames();
+    if (!items.error) {
+      setlistitems(items.data);
+      setlistitemstoshow(items.data);
+      setisfetching(false);
+    }
+  };
   useEffect(() => {
     if (
       window.location.pathname.includes("teams") &&
       !window.location.pathname.includes("users")
     ) {
       handlegetallteams();
-      getpages()
+      handlegetlistitems();
+      getpages();
       if (gieId) {
         setSelectedGEI(gieId);
       }
@@ -212,18 +235,29 @@ const AllTeams = () => {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
-  const handleDeleteTeam = async(id)=>{
-     const response = await deleteTeam(id);
+  const handleDeleteTeam = async (id) => {
+    const response = await deleteTeam(id);
     if (!response.error) {
       toastService.success("Team Deleted Successfully");
-      handlegetallteams()
-      setisconfirm(false)
+      handlegetallteams();
+      setisconfirm(false);
     }
-  }
-   const handledeleteclick = (id) => {
-    setdeleteid(id)
-    setisconfirm(true)
   };
+  const handledeleteclick = (id) => {
+    setdeleteid(id);
+    setisconfirm(true);
+  };
+  const handlesuggestionclick = (id) => {
+    navigate(`/teams/searched/${id}`);
+    setSearchText("");
+  };
+  useEffect(() => {
+    setlistitemstoshow(
+      listitems.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [searchText]);
   return (
     <>
       <Header />
@@ -233,6 +267,61 @@ const AllTeams = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
+              <Form
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  margin: "10px",
+                  marginBottom: "-20px",
+                }}
+              >
+                <FormGroup className="mb-3" style={{ width: "40%" }}>
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="fas fa-search" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      disabled={isfetching}
+                      placeholder="Search Team"
+                      type="text"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                    />
+                  </InputGroup>
+                  {searchText.trim() !== "" && (
+                    <div
+                      style={{
+                        backgroundColor: "white",
+                        position: "absolute",
+                        top: "60px",
+                        right: "0",
+                        width: "40%",
+                        maxHeight: "40vw",
+                        overflowY: "scroll",
+                        zIndex: 19,
+                      }}
+                    >
+                      {listitemstoshow.map((item, index) => {
+                        return (
+                          <div
+                            onClick={() => handlesuggestionclick(item._id)}
+                            style={{
+                              padding: "10px",
+                              textAlign: "left",
+                              cursor: "pointer",
+                            }}
+                            key={index}
+                          >
+                            {item.name}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </FormGroup>
+              </Form>
               <CardHeader
                 className="border-0"
                 style={{
@@ -318,7 +407,7 @@ const AllTeams = () => {
                       }}
                       className="my-4"
                       color="danger"
-                      disabled={!gieId&&!agencyId}
+                      disabled={!gieId && !agencyId}
                     >
                       Clear Filter
                     </Button>
@@ -397,8 +486,18 @@ const AllTeams = () => {
                                 className="dropdown-menu-arrow"
                                 right
                               >
-                                <DropdownItem onClick={()=>{navigate(`/team/${team._id}`)}}>Edit</DropdownItem>
-                                <DropdownItem onClick={()=>handledeleteclick(team._id)}>Delete</DropdownItem>
+                                <DropdownItem
+                                  onClick={() => {
+                                    navigate(`/team/${team._id}`);
+                                  }}
+                                >
+                                  Edit
+                                </DropdownItem>
+                                <DropdownItem
+                                  onClick={() => handledeleteclick(team._id)}
+                                >
+                                  Delete
+                                </DropdownItem>
                               </DropdownMenu>
                             </UncontrolledDropdown>
                           </td>
@@ -409,7 +508,7 @@ const AllTeams = () => {
                 </Table>
               )}
             </Card>
-            {!isloading && totalpages !== 1 && totalitems>20&&!teamid && (
+            {!isloading && totalpages !== 1 && totalitems > 20 && !teamid && (
               <div
                 style={{
                   width: "100%",
@@ -441,7 +540,7 @@ const AllTeams = () => {
           </div>
         </Row>
       </Container>
-      {( isediting || isadding || isconfirm) && (
+      {(isediting || isadding || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -452,12 +551,22 @@ const AllTeams = () => {
             left: 0,
             display: "flex",
             justifyContent: "center",
-            paddingTop:isconfirm?'15%': "5vh",
+            paddingTop: isconfirm ? "15%" : "5vh",
             zIndex: 20,
           }}
         >
-          {isadding&&<AddTeamModal handleclose={()=>setisadding(false)} fetchusers={handlegetallteams}/>}
-          {isconfirm&&<ConfirmModal handleclose={()=>setisconfirm(false)} handleaction={()=>handleDeleteTeam(deleteid)}/>}
+          {isadding && (
+            <AddTeamModal
+              handleclose={() => setisadding(false)}
+              fetchusers={handlegetallteams}
+            />
+          )}
+          {isconfirm && (
+            <ConfirmModal
+              handleclose={() => setisconfirm(false)}
+              handleaction={() => handleDeleteTeam(deleteid)}
+            />
+          )}
         </div>
       )}
     </>

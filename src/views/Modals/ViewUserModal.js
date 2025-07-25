@@ -57,9 +57,9 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                 <label>GIE</label>
                 <InputGroup className="input-group-alternative">
                   <Input
-                    placeholder="Last name"
+                    placeholder="GIE name"
                     type="text"
-                    value={userdetails.gie.name}
+                    value={userdetails.gie?.name}
                     readOnly
                   />
                 </InputGroup>
@@ -68,9 +68,9 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                 <label>Agency</label>
                 <InputGroup className="input-group-alternative">
                   <Input
-                    placeholder="Last name"
+                    placeholder="Agency name"
                     type="text"
-                    value={userdetails.agency.name}
+                    value={userdetails.agency?.name}
                     readOnly
                   />
                 </InputGroup>
@@ -92,7 +92,7 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                               }}
                             >
                               <img
-                                style={{ height: "100%", width: "100%", }}
+                                style={{ height: "100%", width: "100%",objectFit:'cover' }}
                                 src={`https://api.videorpi.com/${userdetails.image}`}
                               />
                             </div>
