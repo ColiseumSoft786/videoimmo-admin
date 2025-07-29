@@ -28,7 +28,7 @@ const AddManagerModal = ({ handleclose,team, fetchteam }) => {
     const [selectedManager,setselectedManager]=useState('')
     const handleGetAllUserNames = async()=>{
     try {
-        const response = await getotherusernamesforteam(team._id,team.agency._id)
+        const response = await getotherusernamesforteam(team._id,team?.agency?._id)
         if(!response.error){
             setAllUsers(response.data.data)
         }
