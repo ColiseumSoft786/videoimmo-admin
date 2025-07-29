@@ -3,6 +3,7 @@ import { getAllAgenciesNamesByGie } from "Api/agency";
 import { getAllGIESNames } from "Api/gei";
 import { addTeam } from "Api/teams";
 import { addUser } from "Api/Users";
+import { getAllUserNames } from "Api/Users";
 import { getAllUserNamesByAgency } from "Api/Users";
 import { updateUserInfo } from "Api/Users";
 import React, { useEffect, useState } from "react";
@@ -48,7 +49,13 @@ const AddTeamModal = ({ handleclose, fetchusers }) => {
   };
   const handlegetUsersnames = async()=>{
     setIsFetchingUser(true)
-    const response = await getAllUserNamesByAgency(selectedAgency);
+    let response = {}
+    if(selectedAgency.trim()===''){
+      response = await getAllUserNames()
+    }
+    if(selectedAgency.trim()!==''){
+      response = await getAllUserNamesByAgency(selectedAgency);
+    }
     if(!response.error){
         setAllUsers(response.data)
         setIsFetchingUser(false)
@@ -63,29 +70,28 @@ const AddTeamModal = ({ handleclose, fetchusers }) => {
     }
   }, [selectedGEI]);
   useEffect(() => {
-    if (selectedAgency !== "") {
       handlegetUsersnames();
-    }
-    if (selectedAgency=== "") {
-      setAllUsers([]);
-    }
   }, [selectedAgency]);
   const handleAddUser = async (e) => {
     e.preventDefault();
     if (
       name.trim()===''||
-      selectedManager===''||
-      selectedGEI === "" ||
-      selectedAgency === ""
+      selectedManager===''
     ) {
       toastService.warn("All fields must be filled");
       return;
     }
+    if(selectedGEI!==''){
+      if(selectedAgency.trim()===''){
+        toastService.warn('Please Select Agency')
+        return
+      }
+    }
     const requestbody = {
       name: name,
       managerId: selectedManager,
-      gie: selectedGEI,
-      agency: selectedAgency,
+      gie: selectedGEI==='' ? null : selectedGEI,
+      agency: selectedAgency==='' ? null : selectedAgency,
     };
     const response = await addTeam(requestbody);
     if (!response.error) {
@@ -132,7 +138,7 @@ const AddTeamModal = ({ handleclose, fetchusers }) => {
                 </InputGroup>
               </FormGroup>
               <FormGroup className="mb-3">
-                <label>GIE</label>
+                <label>GIE (Optional)</label>
                 <InputGroup className="input-group-alternative">
                   <Input
                     type="select"
@@ -151,7 +157,7 @@ const AddTeamModal = ({ handleclose, fetchusers }) => {
                 </InputGroup>
               </FormGroup>
               <FormGroup className="mb-3">
-                <label>Agency</label>
+                <label>Agency (Optional)</label>
                 {/* <InputGroup className="input-group-alternative"> */}
                 <InputGroup className="input-group-alternative">
                   <Input
@@ -185,7 +191,6 @@ const AddTeamModal = ({ handleclose, fetchusers }) => {
                     type="select"
                     value={selectedManager}
                     onChange={(e) => setSelectedManager(e.target.value)}
-                    disabled={selectedAgency.trim() === "" || isFetchingUser}
                   >
                     {selectedAgency.trim() === "" && (
                       <option value="">Select Agency First</option>

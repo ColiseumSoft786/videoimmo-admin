@@ -57,12 +57,16 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
     if (
       fullname.trim() === "" ||
       contact.trim() === "" ||
-      useremail.trim() === ""||
-      selectedGEI===''||
-      selectedAgency===''
+      useremail.trim() === ""
     ) {
       toastService.warn("All fields must be filled");
       return;
+    }
+    if(selectedGEI!==''){
+      if(selectedAgency.trim()===''){
+        toastService.warn('Please Select Agency')
+        return
+      }
     }
     const requestbody = {
       image: "",
@@ -72,8 +76,8 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
       email: useremail,
       mobile_no: contact.slice(countryCode.length-1),
       type: "user",
-      gie: selectedGEI,
-      agency:selectedAgency
+      gie: selectedGEI=== "" ? null : selectedGEI,
+      agency: selectedAgency === "" ? null : selectedAgency,
     };
     const response = await addUser(requestbody);
     if (!response.error) {
@@ -150,7 +154,7 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
                 {/* </InputGroup> */}
               </FormGroup>
               <FormGroup className="mb-3">
-                <label>GIE</label>
+                <label>GIE (Optional)</label>
                 <InputGroup
                     className="input-group-alternative"
                   >
@@ -171,7 +175,7 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
                   </InputGroup>
               </FormGroup>
               <FormGroup className="mb-3">
-                <label>Agency</label>
+                <label>Agency (Optional)</label>
                 {/* <InputGroup className="input-group-alternative"> */}
                 <InputGroup
                     className="input-group-alternative"
