@@ -79,6 +79,7 @@ const Notifications = () => {
             toastService.warn('User already selected')
         }else{
         setRecievers((prev)=>[...prev,item])}
+        setSearchText('')
     }
     const handleRemoveReceiver = (id)=>{
         const newReceivers = recievers.filter((r)=>r._id!==id)
