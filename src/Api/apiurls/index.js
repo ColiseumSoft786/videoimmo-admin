@@ -71,3 +71,4 @@ export const GET_RECENT_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/recenttea
 export const GET_RECENT_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/recentagencies/null'
 export const GET_TEAM_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/bymember/'
 export const GET_TEAM_LENGTH_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/bymember/length/'
+export const SEND_MULTIPLE_NOTIFICATIONS = process.env.REACT_APP_ENDPOINT + 'admin/sendNotifications'

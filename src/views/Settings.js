@@ -144,7 +144,7 @@ const Settings = () => {
                 </InputGroup>
               </FormGroup>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="submit">
+                <Button className="my-4" color="danger" type="submit">
                     Update
                 </Button>
               </div>

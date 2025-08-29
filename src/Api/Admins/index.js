@@ -3,6 +3,7 @@ import { putAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
 import { DELETE_ADMIN } from "Api/apiurls"
+import { SEND_MULTIPLE_NOTIFICATIONS } from "Api/apiurls"
 import { ADD_ADMIN } from "Api/apiurls"
 import { UPDATE_ADMIN_NAME } from "Api/apiurls"
 import { GET_ALL_ADMINS } from "Api/apiurls"
@@ -43,5 +44,15 @@ export const addAdmin = async(body)=>{
         return response
     } catch (error) {
         console.log('errors in the add admin ',error)
+    }
+}
+export const sendMultipleNotifications = async(body)=>{
+    try {
+        const response = await postAPI(SEND_MULTIPLE_NOTIFICATIONS,body,true)
+        console.log('response from send multiple notifications',response)
+        return response
+    } catch (error) {
+        console.log("error in send multiple notifications",error)
+        throw error
     }
 }

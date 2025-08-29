@@ -30,6 +30,7 @@ import Settings from "views/Settings";
 import GEI from "views/GEI";
 import Agencies from "views/Agencies";
 import AllTeams from "views/AllTeams";
+import Notifications from "views/Notifications";
 
 var routes = [
   {
@@ -79,6 +80,13 @@ var routes = [
     name: "Agencies",
     icon: "ni ni-paper-diploma text-orange",
     component: <Agencies/>,
+    layout: "/",
+  },
+  {
+    path: "/notifications",
+    name: "Notifications",
+    icon: "ni ni-send text-green",
+    component: <Notifications />,
     layout: "/",
   },
   {
