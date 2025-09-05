@@ -55,6 +55,7 @@ export const GET_GIE_USER_LENGTH =  process.env.REACT_APP_ENDPOINT + 'user/getgi
 export const GET_AGENCY_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/agency/getlength/'
 export const GET_GIE_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/gie/getlength/'
 export const GET_USER_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/getuserhouse/length/'
+export const GET_OPTIN_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/getOptins'
 export const GET_ALL_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/all/teamslength/'
 export const GET_GIE_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/gie/teamslength/'
 export const GET_AGENCY_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/agency/teamslength/'

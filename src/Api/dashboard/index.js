@@ -1,5 +1,6 @@
 import { getAPI } from "Api"
 import { GET_TOTAL_AGENCIES_LENGTH } from "Api/apiurls"
+import { GET_OPTIN_LENGTH } from "Api/apiurls"
 import { GET_TOTAL_GIE_LENGTH } from "Api/apiurls"
 import { HOUSES_GET_LENGTH } from "Api/apiurls"
 import { VIDEOES_GET_LENGTH } from "Api/apiurls"
@@ -8,6 +9,15 @@ import { USER_GET_LENGTH } from "Api/apiurls"
 export const getUserLength = async()=>{
     try {
         const response = await getAPI(USER_GET_LENGTH,true)
+        console.log('this is the response from user get length api ', response)
+        return response
+    } catch (error) {
+        console.log('error in user get length api ', error)
+    }
+}
+export const getOptinLength = async()=>{
+    try {
+        const response = await getAPI(GET_OPTIN_LENGTH,true)
         console.log('this is the response from user get length api ', response)
         return response
     } catch (error) {

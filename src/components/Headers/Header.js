@@ -20,6 +20,7 @@
 import { getVideosLength } from "Api/dashboard";
 import { getHouseslength } from "Api/dashboard";
 import { getAgenciesLength } from "Api/dashboard";
+import { getOptinLength } from "Api/dashboard";
 import { getGieslength } from "Api/dashboard";
 import { getUserLength } from "Api/dashboard";
 import { useEffect, useState } from "react";
@@ -29,14 +30,14 @@ const Header = () => {
   const [totalusers, settotalusers] = useState(0);
   const [totalvideos, settotalvideos] = useState(0);
   // const [totalhouses, settotalhouses] = useState(0);
-  const [totalAgencies, settotalagencies] = useState(0);
+  const [totalOptins, setTotalOptins] = useState(0);
   const [totalGEI, settotalGEI] = useState(0);
   const getallstats = async () => {
     const resusers = await getUserLength();
     const resvideos = await getVideosLength();
     // const reshouses = await getHouseslength();
     const resgies = await getGieslength();
-    const resagencies = await getAgenciesLength();
+    const resagencies = await getOptinLength();
     if (!resusers.error) {
       settotalusers(resusers.data);
     }
@@ -50,7 +51,7 @@ const Header = () => {
       settotalGEI(resgies.data);
     }
     if (!resagencies.error) {
-      settotalagencies(resagencies.data);
+      setTotalOptins(resagencies.data);
     }
   };
   useEffect(() => {
@@ -150,10 +151,10 @@ const Header = () => {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Total Agencies
+                            Total Prospects
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
-                            {totalAgencies}
+                            {totalOptins}
                           </span>
                         </div>
                         <Col className="col-auto">
