@@ -25,8 +25,9 @@ import {
 import toastService from "Toaster/toaster";
 
 const AddMemberModal = ({ handleclose,team, fetchteam }) => {
-    const [allUsers,setAllUsers]= useState([])
-    const [selectedMember,setselectedMember]=useState('')
+    const [allUsers,setAllUsers]= useState([]);
+    const [selectedMembers,setselectedMembers]=useState([]);
+    const [inputValue,setInputValue] = useState("");
     const handleGetAllUserNames = async()=>{
     try {
         const response = await getotherusernamesforteam(team._id,team?.agency?._id)
@@ -43,21 +44,34 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
  const handleAddMember = async(e)=>{
     e.preventDefault()
     try {
-        if(selectedMember.trim()===''){
-            toastService.warn('Please Select Member')
+        if(selectedMembers.length===0){
+            toastService.warn('Please Select Members')
             return
         }
-        const requestbody = [...team.members,selectedMember]
+        const requestbody = [...team.members,...selectedMembers]
         console.log('this is r body',requestbody,team._id)
         const response = await updateTeamMembers(requestbody,team._id)
         if(!response.error){
-            toastService.success('Member Added Successfully')
+            toastService.success('Members Added Successfully')
             fetchteam()
             handleclose()
         }
     } catch (error) {
         console.log(error)
     }
+  }
+  const handleSelectMembers = (id) => {
+    const isExisting = selectedMembers.find((sm) => sm === id);
+    if (isExisting) {
+      return;
+    } else {
+      setselectedMembers((prev) => [...prev, id]);
+    }
+    setInputValue("")
+  };
+  const handleRemoveMembers = (id)=>{
+    const filteredMembers = selectedMembers.filter((sm)=>sm!==id);
+    setselectedMembers(filteredMembers)
   }
   return (
     <>
@@ -87,8 +101,8 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
                   >
                     <Input
                       type="select"
-                      value={selectedMember}
-                      onChange={(e) => setselectedMember(e.target.value)}
+                      value={inputValue}
+                      onChange={(e) => handleSelectMembers(e.target.value)}
                     >
                       <option value="">Select Member</option>
                       {allUsers.map((user, index) => {
@@ -101,6 +115,37 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
                     </Input>
                   </InputGroup>
               </FormGroup>
+              {selectedMembers.length>0&&<div style={{ backgroundColor: "white", maxHeight:"40vh",overflowY:"scroll" }}>
+                {selectedMembers.map((sm) => {
+                  return (
+                    <div
+                      style={{
+                        fontSize: "15px",
+                        position: "relative",
+                        padding: "5px",
+                        border: "1px solid #D9D9D9",
+                      }}
+                    >
+                      {allUsers.find((au) => au._id === sm).fname}{" "}
+                      <span
+                      onClick={()=>handleRemoveMembers(sm)}
+                        style={{
+                          fontSize: "15px",
+                          position: "absolute",
+                          top: "0",
+                          cursor: "pointer",
+                          right: "1%",
+                          height: "100%",
+                          alignContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        &times;
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>}
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">
                   ADD

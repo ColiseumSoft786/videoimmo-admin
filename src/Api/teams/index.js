@@ -1,4 +1,5 @@
 import { postAPI } from "Api"
+import { patchAPI } from "Api"
 import { putAPI } from "Api"
 import { deleteAPI } from "Api"
 import { getAPI } from "Api"
@@ -7,6 +8,7 @@ import { DELETE_TEAM } from "Api/apiurls"
 import { GET_GIE_TEAMS_LENGTH } from "Api/apiurls"
 import { GET_RECENT_TEAMS } from "Api/apiurls"
 import { GET_TEAM_LENGTH_BY_MEMBER } from "Api/apiurls"
+import { LINK_AGENCY_TO_TEAM } from "Api/apiurls"
 import { GET_TEAM_BY_MEMBER } from "Api/apiurls"
 import { GET_AGENCY_TEAMS_LENGTH } from "Api/apiurls"
 import { GET_ALL_TEAMS_LENGTH } from "Api/apiurls"
@@ -164,5 +166,16 @@ export const getTeamlengthByUserid = async (userid)=>{
         return response
     } catch (error) {
         console.log('error in get team length by user id',error)
+    }
+}
+export const linkTeamToAgency = async(agencyId,teamId)=>{
+    try {
+        const path = LINK_AGENCY_TO_TEAM+`${agencyId}/${teamId}`;
+        const response = await getAPI(path,true);
+        console.log("response form link team to agency",response);
+        return response
+    } catch (error) {
+        console.error("error in link team to agency",error);
+        throw error
     }
 }

@@ -88,6 +88,7 @@ import { getAllTeamsNames } from "Api/teams";
 import { getAllUserNames } from "Api/Users";
 import { getTeamsByUserId } from "Api/teams";
 import { getTeamlengthByUserid } from "Api/teams";
+import LinkAgencyModal from "./Modals/LinkAgencyModal";
 // core components
 
 const AllTeams = () => {
@@ -101,7 +102,6 @@ const AllTeams = () => {
   const [allAgencies, setAllAgencies] = useState([]);
   const [allGEI, setAllGEI] = useState([]);
   const [allteams, setallteams] = useState("");
-  const [isediting, setisediting] = useState(false);
   const [isadding, setisadding] = useState(false);
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
@@ -112,6 +112,7 @@ const AllTeams = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  const [teamToLink,setTeamToLink] = useState(null)
   const getpages = async () => {
     let pages = null;
     const issearched = window.location.pathname.includes('searched')
@@ -510,6 +511,13 @@ const AllTeams = () => {
                                 >
                                   Edit
                                 </DropdownItem>
+                                {(!team.agency||team.agency===undefined)&& <DropdownItem
+                                  onClick={() => {
+                                    setTeamToLink(team._id)
+                                  }}
+                                >
+                                  Link Agency
+                                </DropdownItem>}
                                 <DropdownItem
                                   onClick={() => handledeleteclick(team._id)}
                                 >
@@ -557,7 +565,7 @@ const AllTeams = () => {
           </div>
         </Row>
       </Container>
-      {(isediting || isadding || isconfirm) && (
+      {(isadding || isconfirm || teamToLink) && (
         <div
           style={{
             height: "100vh",
@@ -576,6 +584,13 @@ const AllTeams = () => {
             <AddTeamModal
               handleclose={() => setisadding(false)}
               fetchusers={handlegetallteams}
+            />
+          )}
+          {teamToLink && (
+            <LinkAgencyModal
+              handleclose={() => setTeamToLink(null)}
+              teamId = {teamToLink}
+              FetchTeams = {handlegetallteams}
             />
           )}
           {isconfirm && (
