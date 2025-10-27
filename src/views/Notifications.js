@@ -69,7 +69,7 @@ const Notifications = () => {
   const [recievers, setRecievers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirm, setIsConfirm] = useState(false);
-  const [sortType,setSortType] = useState('none')
+  const [sortType, setSortType] = useState("none");
   const handleGetAllUsersNames = async () => {
     const response = await getAllUserNames();
     if (!response.error) {
@@ -126,16 +126,16 @@ const Notifications = () => {
     console.log("lowest", lowestFirst);
     setFilteredUsers(lowestFirst);
   };
-  useEffect(()=>{
-    if(sortType==='highest'){
-        handlehighestHousesSort()
-    } else if(sortType==='lowest'){
-        handlelowestHousesSort()
-    } else if (sortType==='none'){
-      setSearchText('')
-      setFilteredUsers(allUsers)
+  useEffect(() => {
+    if (sortType === "highest") {
+      handlehighestHousesSort();
+    } else if (sortType === "lowest") {
+      handlelowestHousesSort();
+    } else if (sortType === "none") {
+      setSearchText("");
+      setFilteredUsers(allUsers);
     }
-  },[sortType])
+  }, [sortType]);
   const handleSingleCheckboxChange = (id, checked) => {
     if (checked) {
       // push id
@@ -174,9 +174,8 @@ const Notifications = () => {
                   justifyContent: "space-between",
                   alignItems: "center",
                   alignContent: "center",
-                }}
-              >
-                <h3 className="mb-0">Users</h3>
+                }}>
+                <h3 className="mb-0">Notifications</h3>
                 <Form
                   role="form"
                   style={{
@@ -185,12 +184,10 @@ const Notifications = () => {
                     maxHeight: "50px",
                     width: "85%",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <InputGroup
                     className="input-group-alternative"
-                    style={{ width: "45%" }}
-                  >
+                    style={{ width: "45%" }}>
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
                         <i className="fas fa-search" />
@@ -203,30 +200,38 @@ const Notifications = () => {
                       onChange={(e) => setSearchText(e.target.value)}
                     />
                   </InputGroup>
-                  <div className="text-center" style={{display:'flex',alignItems:'center',gap:'10px',width:'38%'}}>
-                    <label style={{marginRight:'10px',marginTop:'7px'}}>Sort By Houses:</label>
-                   <InputGroup
-                    className="input-group-alternative"
-                    style={{ width: "55%" }}
-                  >
-                    <Input
-                      type="select"
-                      value={sortType}
-                      onChange={(e) => setSortType(e.target.value)}
-                    >
+                  <div
+                    className="text-center"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "38%",
+                    }}>
+                    <label style={{ marginRight: "10px", marginTop: "7px" }}>
+                      Sort By Houses:
+                    </label>
+                    <InputGroup
+                      className="input-group-alternative"
+                      style={{ width: "55%" }}>
+                      <Input
+                        type="select"
+                        value={sortType}
+                        onChange={(e) => setSortType(e.target.value)}>
                         <option value="highest">Highest</option>
                         <option value="lowest">Lowest</option>
                         <option value="none">None</option>
-                    </Input>
-                  </InputGroup>
+                      </Input>
+                    </InputGroup>
                   </div>
                   <div className="text-center">
                     <Button
                       className="my-4"
                       color="danger"
-                      onClick={()=>{setIsConfirm(true)}}
-                      disabled={recievers.length===0}
-                    >
+                      onClick={() => {
+                        setIsConfirm(true);
+                      }}
+                      disabled={recievers.length === 0}>
                       Send
                     </Button>
                   </div>
@@ -243,8 +248,7 @@ const Notifications = () => {
                     marginTop: "20vh",
                     display: "flex",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   <Loader />
                 </div>
               ) : (
@@ -264,12 +268,13 @@ const Notifications = () => {
                           />
                           <label
                             className="custom-control-label"
-                            htmlFor="select-all-checkbox"
-                          ></label>
+                            htmlFor="select-all-checkbox"></label>
                         </div>
                       </th>
                       <th scope="col">Full Name</th>
-                      <th scope="col">Houses</th>
+                      <th scope="col">Total Houses</th>
+                      <th scope="col">Total Leads</th>
+                      <th scope="col">Reg. Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -293,12 +298,25 @@ const Notifications = () => {
                               />
                               <label
                                 className="custom-control-label"
-                                htmlFor={checkboxId}
-                              ></label>
+                                htmlFor={checkboxId}></label>
                             </div>
                           </th>
                           <td>{user.fname}</td>
-                          <td>{user.houseCount}</td>
+                          <td>
+                            <span
+                              className="badge badge-info badge-pill"
+                              style={{ fontSize: "14px" }}>
+                              {user.houseCount}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className="badge badge-success badge-pill"
+                              style={{ fontSize: "14px" }}>
+                              {user.optinCount}
+                            </span>
+                          </td>
+                          <td>{new Date(user.createdAt).toLocaleString()}</td>
                         </tr>
                       );
                     })}
@@ -309,7 +327,7 @@ const Notifications = () => {
           </div>
         </Row>
       </Container>
-      {(isConfirm) && (
+      {isConfirm && (
         <div
           style={{
             height: "100vh",
@@ -322,17 +340,16 @@ const Notifications = () => {
             justifyContent: "center",
             paddingTop: "5%",
             zIndex: 20,
-          }}
-        >
+          }}>
           {isConfirm && (
             <NotificationModel
-            handleclose={()=>setIsConfirm(false)}
-            handleaction={handleSendNotification}
-            setTitle={setTitle}
-            title={title}
-            setMessage={setMessage}
-            message={message}
-            recievers={recievers}
+              handleclose={() => setIsConfirm(false)}
+              handleaction={handleSendNotification}
+              setTitle={setTitle}
+              title={title}
+              setMessage={setMessage}
+              message={message}
+              recievers={recievers}
             />
           )}
         </div>

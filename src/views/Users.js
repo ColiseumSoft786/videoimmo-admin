@@ -272,53 +272,57 @@ const Users = () => {
         <Row>
           <div className="col">
             <Card className="shadow">
-                    <Form style={{display:'flex',justifyContent:'end',margin:'10px',marginBottom:'-20px'}}>
-                                  <FormGroup className="mb-3" style={{width:'40%'}}>
-                                    <InputGroup className="input-group-alternative">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>
-                            <i className="fas fa-search" />
-                          </InputGroupText>
-                        </InputGroupAddon>
-                        <Input
-                          disabled={isfetching}
-                          placeholder="Search User"
-                          type="text"
-                          value={searchText}
-                          onChange={(e) => setSearchText(e.target.value)}
-                        />
-                      </InputGroup>
-                      {searchText.trim() !== "" && (
-                        <div
-                          style={{
-                            backgroundColor: "white",
-                            position: "absolute",
-                            top: "60px",
-                            right: "0",
-                            width: "40%",
-                            maxHeight: "40vw",
-                            overflowY: "scroll",
-                            zIndex:19
-                          }}
-                        >
-                          {listitemstoshow.map((item, index) => {
-                            return (
-                              <div
-                                onClick={() => handlesuggestionclick(item._id)}
-                                style={{
-                                  padding: "10px",
-                                  textAlign: "left",
-                                  cursor: "pointer",
-                                }}
-                                key={index}
-                              >
-                                {item.fname}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </FormGroup>
+              <Form
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  margin: "10px",
+                  marginBottom: "-20px",
+                }}>
+                <FormGroup className="mb-3" style={{ width: "40%" }}>
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="fas fa-search" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      disabled={isfetching}
+                      placeholder="Search User"
+                      type="text"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                    />
+                  </InputGroup>
+                  {searchText.trim() !== "" && (
+                    <div
+                      style={{
+                        backgroundColor: "white",
+                        position: "absolute",
+                        top: "60px",
+                        right: "0",
+                        width: "40%",
+                        maxHeight: "40vw",
+                        overflowY: "scroll",
+                        zIndex: 19,
+                      }}>
+                      {listitemstoshow.map((item, index) => {
+                        return (
+                          <div
+                            onClick={() => handlesuggestionclick(item._id)}
+                            style={{
+                              padding: "10px",
+                              textAlign: "left",
+                              cursor: "pointer",
+                            }}
+                            key={index}>
+                            {item.fname}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </FormGroup>
               </Form>
               <CardHeader
                 className="border-0"
@@ -327,8 +331,7 @@ const Users = () => {
                   justifyContent: "space-between",
                   alignItems: "center",
                   alignContent: "center",
-                }}
-              >
+                }}>
                 <h3 className="mb-0">Users</h3>
                 <Form
                   role="form"
@@ -339,17 +342,14 @@ const Users = () => {
                     width: "85%",
                     alignItems: "center",
                   }}
-                  onSubmit={(e) => handleFilterUsers(e)}
-                >
+                  onSubmit={(e) => handleFilterUsers(e)}>
                   <InputGroup
                     className="input-group-alternative"
-                    style={{ width: "25%" }}
-                  >
+                    style={{ width: "25%" }}>
                     <Input
                       type="select"
                       value={selectedGEI}
-                      onChange={(e) => setSelectedGEI(e.target.value)}
-                    >
+                      onChange={(e) => setSelectedGEI(e.target.value)}>
                       <option value="">Select GIE</option>
                       {allGEI.map((gei, index) => {
                         return (
@@ -362,14 +362,12 @@ const Users = () => {
                   </InputGroup>
                   <InputGroup
                     className="input-group-alternative"
-                    style={{ width: "25%" }}
-                  >
+                    style={{ width: "25%" }}>
                     <Input
                       type="select"
                       value={selectedAgency}
                       onChange={(e) => setSelectedAgency(e.target.value)}
-                      disabled={selectedGEI.trim() === "" || isfetchingag}
-                    >
+                      disabled={selectedGEI.trim() === "" || isfetchingag}>
                       {selectedGEI.trim() === "" && (
                         <option value="">Select GIE First</option>
                       )}
@@ -392,8 +390,7 @@ const Users = () => {
                       className="my-4"
                       color="danger"
                       type="submit"
-                      disabled={selectedGEI.trim() === ""}
-                    >
+                      disabled={selectedGEI.trim() === ""}>
                       Filter
                     </Button>
                   </div>
@@ -407,8 +404,7 @@ const Users = () => {
                       className="my-4"
                       color="danger"
                       type="submit"
-                      disabled={!agencyId && !gieId}
-                    >
+                      disabled={!agencyId && !gieId}>
                       Clear Filter
                     </Button>
                   </div>
@@ -416,8 +412,7 @@ const Users = () => {
                     <Button
                       className="my-4"
                       color="danger"
-                      onClick={() => setisadding(true)}
-                    >
+                      onClick={() => setisadding(true)}>
                       Add User
                     </Button>
                   </div>
@@ -434,8 +429,7 @@ const Users = () => {
                     marginTop: "20vh",
                     display: "flex",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   <Loader />
                 </div>
               ) : (
@@ -447,6 +441,7 @@ const Users = () => {
                       <th scope="col">Mobile #</th>
                       <th scope="col">House</th>
                       <th scope="col">Agency</th>
+                      <th scope="col">GIE</th>
                       <th scope="col">Manager Of</th>
                       <th scope="col">Member Of</th>
                       <th scope="col">Actions</th>
@@ -454,14 +449,14 @@ const Users = () => {
                   </thead>
                   <tbody>
                     {users.map((user, index) => {
+                      console.log("user", user);
                       return (
                         <tr>
                           <td>
                             {user.image === "" ? (
                               <i
                                 style={{ fontSize: "25px" }}
-                                className="ni ni-circle-08"
-                              ></i>
+                                className="ni ni-circle-08"></i>
                             ) : (
                               <div
                                 style={{
@@ -471,10 +466,13 @@ const Users = () => {
                                   overflow: "hidden",
                                   alignItems: "center",
                                   alignContent: "center",
-                                }}
-                              >
+                                }}>
                                 <img
-                                  style={{ height: "100%", width: "100%",objectFit:'cover' }}
+                                  style={{
+                                    height: "100%",
+                                    width: "100%",
+                                    objectFit: "cover",
+                                  }}
                                   src={`https://api.videorpi.com/${user.image}`}
                                 />
                               </div>
@@ -489,16 +487,23 @@ const Users = () => {
                               color="danger"
                               onClick={() =>
                                 handlelisthousesclick(user._id, user.fname)
-                              }
-                            >
+                              }>
                               List Houses
                             </Button>
                           </td>
                           <td>{user?.agency?.name}</td>
+                          <td>{user?.gie?.name}</td>
+
                           <td>
-                            {user.managerOf.length>0&&<span>{user.managerOf.join(' ,')}</span>}
+                            {user.managerOf.length > 0 && (
+                              <span>{user.managerOf.join(" ,")}</span>
+                            )}
                           </td>
-                          <td>{user.memberOf.length>0&&<span>{user.memberOf.join(' ,')}</span>}</td>
+                          <td>
+                            {user.memberOf.length > 0 && (
+                              <span>{user.memberOf.join(" ,")}</span>
+                            )}
+                          </td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -506,27 +511,22 @@ const Users = () => {
                                 role="button"
                                 size="sm"
                                 color="danger"
-                                onClick={(e) => e.preventDefault()}
-                              >
+                                onClick={(e) => e.preventDefault()}>
                                 <i className="fas fa-ellipsis-v" />
                               </DropdownToggle>
                               <DropdownMenu
                                 className="dropdown-menu-arrow"
-                                right
-                              >
+                                right>
                                 <DropdownItem
-                                  onClick={() => handleviewClick(user)}
-                                >
+                                  onClick={() => handleviewClick(user)}>
                                   View
                                 </DropdownItem>
                                 <DropdownItem
-                                  onClick={() => handleEditClick(user)}
-                                >
+                                  onClick={() => handleEditClick(user)}>
                                   Edit
                                 </DropdownItem>
                                 <DropdownItem
-                                  onClick={() => handleDeleteClick(user._id)}
-                                >
+                                  onClick={() => handleDeleteClick(user._id)}>
                                   Delete
                                 </DropdownItem>
                               </DropdownMenu>
@@ -547,22 +547,19 @@ const Users = () => {
                   display: "flex",
                   justifyContent: "center",
                   marginTop: "20px",
-                }}
-              >
+                }}>
                 <div>
                   <Button
                     color="danger"
                     onClick={handleprev}
-                    disabled={currentpage === 1}
-                  >
+                    disabled={currentpage === 1}>
                     Prev
                   </Button>
                   <Button color="danger">{currentpage}</Button>
                   <Button
                     color="danger"
                     onClick={handlenext}
-                    disabled={currentpage === totalpages}
-                  >
+                    disabled={currentpage === totalpages}>
                     Next
                   </Button>
                 </div>
@@ -584,8 +581,7 @@ const Users = () => {
             justifyContent: "center",
             paddingTop: isadding || isediting ? "" : isconfirm ? "15%" : "5vh",
             zIndex: 20,
-          }}
-        >
+          }}>
           {isviewing && (
             <ViewUserModal
               handleclose={() => setisviewing(false)}

@@ -1,76 +1,132 @@
-export const LOGIN_URL = process.env.REACT_APP_ENDPOINT+'admin/login'
-export const USER_GET_LENGTH = process.env.REACT_APP_ENDPOINT+'user/getlength'
-export const VIDEOES_GET_LENGTH = process.env.REACT_APP_ENDPOINT+'videos/getlength'
-export const HOUSES_GET_LENGTH = process.env.REACT_APP_ENDPOINT+'house/getlength'
-export const GET_ALL_ADMINS = process.env.REACT_APP_ENDPOINT+'admin/get'
-export const GET_ALL_USERS = process.env.REACT_APP_ENDPOINT+ 'user/getusers/'
-export const GET_ALL_VIDEOS = process.env.REACT_APP_ENDPOINT+ 'videos/get'
-export const GET_ALL_HOUSES = process.env.REACT_APP_ENDPOINT+ 'house/get/'
-export const UPDATE_ADMIN_NAME = process.env.REACT_APP_ENDPOINT+ 'admin/update/'
-export const DELETE_ADMIN = process.env.REACT_APP_ENDPOINT+ 'admin/del/'
-export const GET_USER_HOUSES = process.env.REACT_APP_ENDPOINT+ 'house/getuser/'
-export const GET_OTHER_TEAMS = process.env.REACT_APP_ENDPOINT+ 'user/getOtherTeams/'
-export const ADD_MEMBERS_IN_TEAM = process.env.REACT_APP_ENDPOINT+ 'user/addMembersInTeam/' 
-export const UPDATE_USER_INFO = process.env.REACT_APP_ENDPOINT+ 'user/updateuser/'
-export const DELETE_USER = process.env.REACT_APP_ENDPOINT + 'user/deluser/'
-export const ADD_USER = process.env.REACT_APP_ENDPOINT + 'user/adduser'
-export const GET_MANAGER_TEAM = process.env.REACT_APP_ENDPOINT + 'user/getteams/'
-export const UPDATE_MEMBERS_OF_TEAM = process.env.REACT_APP_ENDPOINT + 'user/updateTeamMembers/'
-export const DELETE_VIDEO  = process.env.REACT_APP_ENDPOINT + 'videos/del/'
-export const DELETE_HOUSE = process.env.REACT_APP_ENDPOINT + 'house/del/'
-export const ADD_ADMIN = process.env.REACT_APP_ENDPOINT + 'admin/add'
-export const GET_SETTINGS = process.env.REACT_APP_ENDPOINT + 'settings/getsettings'
-export const UPDATE_SETTINGS = process.env.REACT_APP_ENDPOINT + 'settings/updatesettings'
-export const GET_ALL_GEIS = process.env.REACT_APP_ENDPOINT + 'gie/all/'
-export const ADD_GEI = process.env.REACT_APP_ENDPOINT + 'gie/create'
-export const UPDATE_GEI = process.env.REACT_APP_ENDPOINT + 'gie/update/'
-export const DELETE_GEI = process.env.REACT_APP_ENDPOINT + 'gie/del/'
-export const GET_ALL_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/all/'
-export const GET_GEI_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/allgie/'
-export const DELETE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/del/'
-export const ADD_AGENCY = process.env.REACT_APP_ENDPOINT+ 'agency/create'
-export const Update_Agency = process.env.REACT_APP_ENDPOINT + 'agency/update/'
-export const GET_ALL_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/teams/all/'
-export const GET_ALL_TEAMS_NAMES = process.env.REACT_APP_ENDPOINT + 'user/allteams/names'
-export const GET_ALL_AGENCIES_NAMES =  process.env.REACT_APP_ENDPOINT + 'agency/allagencies/names'
-export const GET_ALL_GIES_NAMES = process.env.REACT_APP_ENDPOINT + 'gie/allgie/names'
-export const GET_ALL_AGENCIES_NAMES_BY_GIE = process.env.REACT_APP_ENDPOINT + 'agency/allagencies/names/'
-export const GET_ALL_GIE_USERS = process.env.REACT_APP_ENDPOINT + 'user/getgieuser/'
-export const GET_ALL_AGENCY_USERS = process.env.REACT_APP_ENDPOINT + 'user/getagencyuser/'
-export const GET_TOTAL_AGENCIES_LENGTH = process.env.REACT_APP_ENDPOINT + 'agency/getlength'
-export const GET_TOTAL_GIE_LENGTH = process.env.REACT_APP_ENDPOINT + 'gie/getlength'
-export const GET_ALL_HOUSES_BY_AGENCY  = process.env.REACT_APP_ENDPOINT + "house/gethouse/agency/"
-export const GET_ALL_HOUSES_BY_GIE = process.env.REACT_APP_ENDPOINT + 'house/gethouse/gie/'
-export const GET_ALL_TEAMS_BY_AGENCY = process.env.REACT_APP_ENDPOINT + 'user/agencyteams/'
-export const GET_ALL_GIE_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/gieteams/'
-export const ADD_TEAM_BY_ADMIN = process.env.REACT_APP_ENDPOINT + 'user/addteam'
-export const GET_ALL_USERS_NAMES_BY_AGENCY = process.env.REACT_APP_ENDPOINT + "user/getagencyusernames/"
-export const UPDATE_TEAM_NAME = process.env.REACT_APP_ENDPOINT + 'user/updateTeam/'
-export const UPDATE_TEAM_MEMBERS = process.env.REACT_APP_ENDPOINT + 'user/updateTeamMembers/'
-export const UPDATE_TEAM_MANAGERS = process.env.REACT_APP_ENDPOINT + 'user/updateTeamManagers/'
-export const GET_OTHER_USERS_NAMES = process.env.REACT_APP_ENDPOINT + 'user/getTeams/otherUsersNames/'
-export const DELETE_TEAM = process.env.REACT_APP_ENDPOINT + 'user/delteam/'
-export const GET_AGENCY_USER_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/getagencyuser/length/'
-export const GET_GIE_USER_LENGTH =  process.env.REACT_APP_ENDPOINT + 'user/getgieuser/length/'
-export const GET_AGENCY_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/agency/getlength/'
-export const GET_GIE_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/gie/getlength/'
-export const GET_USER_HOUSES_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/getuserhouse/length/'
-export const GET_OPTIN_LENGTH = process.env.REACT_APP_ENDPOINT + 'house/getOptins'
-export const GET_ALL_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/all/teamslength/'
-export const GET_GIE_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/gie/teamslength/'
-export const GET_AGENCY_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/agency/teamslength/'
-export const GET_GIE_AGENCY_LENGTH = process.env.REACT_APP_ENDPOINT + 'agency/gie/getlength/'
-export const GET_ALL_USER_NAMES = process.env.REACT_APP_ENDPOINT + 'user/getnames'
-export const GET_SINGLE_USER = process.env.REACT_APP_ENDPOINT + 'user/getsingleuser/'
-export const GET_SINGLE_GIE = process.env.REACT_APP_ENDPOINT + 'gie/profile/'
-export const GET_SINGLE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/profile/'
-export const GET_OTHER_USER_NAMES_FORTEAM= process.env.REACT_APP_ENDPOINT + 'user/getTeams/otherUsersNames/'
-export const GET_GIE_TOKENS_TRANSACTION = process.env.REACT_APP_ENDPOINT + 'tokentransaction/get/'
-export const GET_RECENT_GIES = process.env.REACT_APP_ENDPOINT + 'gie/recentgies'
-export const GET_RECENT_USERS = process.env.REACT_APP_ENDPOINT + 'user/recentusers/null/null'
-export const GET_RECENT_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/recentteams/null/null'
-export const GET_RECENT_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/recentagencies/null'
-export const GET_TEAM_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/bymember/'
-export const GET_TEAM_LENGTH_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/bymember/length/'
-export const SEND_MULTIPLE_NOTIFICATIONS = process.env.REACT_APP_ENDPOINT + 'admin/sendNotifications'
-export const LINK_AGENCY_TO_TEAM = process.env.REACT_APP_ENDPOINT + 'user/team/link/agency/'
+export const LOGIN_URL = process.env.REACT_APP_ENDPOINT + "admin/login";
+export const USER_GET_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/getlength";
+export const VIDEOES_GET_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "videos/getlength";
+export const HOUSES_GET_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "house/getlength";
+export const GET_ALL_ADMINS = process.env.REACT_APP_ENDPOINT + "admin/get";
+export const GET_ALL_USERS = process.env.REACT_APP_ENDPOINT + "user/getusers/";
+export const GET_ALL_VIDEOS = process.env.REACT_APP_ENDPOINT + "videos/get";
+export const GET_ALL_HOUSES = process.env.REACT_APP_ENDPOINT + "house/get/";
+export const UPDATE_ADMIN_NAME =
+  process.env.REACT_APP_ENDPOINT + "admin/update/";
+export const DELETE_ADMIN = process.env.REACT_APP_ENDPOINT + "admin/del/";
+export const GET_USER_HOUSES =
+  process.env.REACT_APP_ENDPOINT + "house/getuser/";
+export const GET_OTHER_TEAMS =
+  process.env.REACT_APP_ENDPOINT + "user/getOtherTeams/";
+export const ADD_MEMBERS_IN_TEAM =
+  process.env.REACT_APP_ENDPOINT + "user/addMembersInTeam/";
+export const UPDATE_USER_INFO =
+  process.env.REACT_APP_ENDPOINT + "user/updateuser/";
+export const DELETE_USER = process.env.REACT_APP_ENDPOINT + "user/deluser/";
+export const ADD_USER = process.env.REACT_APP_ENDPOINT + "user/adduser";
+export const GET_MANAGER_TEAM =
+  process.env.REACT_APP_ENDPOINT + "user/getteams/";
+export const UPDATE_MEMBERS_OF_TEAM =
+  process.env.REACT_APP_ENDPOINT + "user/updateTeamMembers/";
+export const DELETE_VIDEO = process.env.REACT_APP_ENDPOINT + "videos/del/";
+export const DELETE_HOUSE = process.env.REACT_APP_ENDPOINT + "house/del/";
+export const ADD_ADMIN = process.env.REACT_APP_ENDPOINT + "admin/add";
+export const GET_SETTINGS =
+  process.env.REACT_APP_ENDPOINT + "settings/getsettings";
+export const UPDATE_SETTINGS =
+  process.env.REACT_APP_ENDPOINT + "settings/updatesettings";
+export const GET_ALL_GEIS = process.env.REACT_APP_ENDPOINT + "gie/all/";
+export const ADD_GEI = process.env.REACT_APP_ENDPOINT + "gie/create";
+export const UPDATE_GEI = process.env.REACT_APP_ENDPOINT + "gie/update/";
+export const DELETE_GEI = process.env.REACT_APP_ENDPOINT + "gie/del/";
+export const GET_ALL_AGENCIES = process.env.REACT_APP_ENDPOINT + "agency/all/";
+export const GET_GEI_AGENCIES =
+  process.env.REACT_APP_ENDPOINT + "agency/allgie/";
+export const DELETE_AGENCY = process.env.REACT_APP_ENDPOINT + "agency/del/";
+export const ADD_AGENCY = process.env.REACT_APP_ENDPOINT + "agency/create";
+export const Update_Agency = process.env.REACT_APP_ENDPOINT + "agency/update/";
+export const GET_ALL_TEAMS = process.env.REACT_APP_ENDPOINT + "user/teams/all/";
+export const GET_ALL_TEAMS_NAMES =
+  process.env.REACT_APP_ENDPOINT + "user/allteams/names";
+export const GET_ALL_AGENCIES_NAMES =
+  process.env.REACT_APP_ENDPOINT + "agency/allagencies/names";
+export const GET_ALL_GIES_NAMES =
+  process.env.REACT_APP_ENDPOINT + "gie/allgie/names";
+export const GET_ALL_AGENCIES_NAMES_BY_GIE =
+  process.env.REACT_APP_ENDPOINT + "agency/allagencies/names/";
+export const GET_ALL_GIE_USERS =
+  process.env.REACT_APP_ENDPOINT + "user/getgieuser/";
+export const GET_ALL_AGENCY_USERS =
+  process.env.REACT_APP_ENDPOINT + "user/getagencyuser/";
+export const GET_TOTAL_AGENCIES_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "agency/getlength";
+export const GET_TOTAL_GIE_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "gie/getlength";
+export const GET_ALL_HOUSES_BY_AGENCY =
+  process.env.REACT_APP_ENDPOINT + "house/gethouse/agency/";
+export const GET_ALL_HOUSES_BY_GIE =
+  process.env.REACT_APP_ENDPOINT + "house/gethouse/gie/";
+export const GET_ALL_TEAMS_BY_AGENCY =
+  process.env.REACT_APP_ENDPOINT + "user/agencyteams/";
+export const GET_ALL_GIE_TEAMS =
+  process.env.REACT_APP_ENDPOINT + "user/gieteams/";
+export const ADD_TEAM_BY_ADMIN =
+  process.env.REACT_APP_ENDPOINT + "user/addteam";
+export const GET_ALL_USERS_NAMES_BY_AGENCY =
+  process.env.REACT_APP_ENDPOINT + "user/getagencyusernames/";
+export const UPDATE_TEAM_NAME =
+  process.env.REACT_APP_ENDPOINT + "user/updateTeam/";
+export const UPDATE_TEAM_MEMBERS =
+  process.env.REACT_APP_ENDPOINT + "user/updateTeamMembers/";
+export const UPDATE_TEAM_MANAGERS =
+  process.env.REACT_APP_ENDPOINT + "user/updateTeamManagers/";
+export const GET_OTHER_USERS_NAMES =
+  process.env.REACT_APP_ENDPOINT + "user/getTeams/otherUsersNames/";
+export const DELETE_TEAM = process.env.REACT_APP_ENDPOINT + "user/delteam/";
+export const GET_AGENCY_USER_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/getagencyuser/length/";
+export const GET_GIE_USER_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/getgieuser/length/";
+export const GET_AGENCY_HOUSES_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "house/agency/getlength/";
+export const GET_GIE_HOUSES_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "house/gie/getlength/";
+export const GET_USER_HOUSES_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "house/getuserhouse/length/";
+export const GET_OPTIN_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "house/getOptins";
+export const GET_ALL_TEAMS_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/all/teamslength/";
+export const GET_GIE_TEAMS_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/gie/teamslength/";
+export const GET_AGENCY_TEAMS_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "user/agency/teamslength/";
+export const GET_GIE_AGENCY_LENGTH =
+  process.env.REACT_APP_ENDPOINT + "agency/gie/getlength/";
+export const GET_ALL_USER_NAMES =
+  process.env.REACT_APP_ENDPOINT + "user/getnames";
+export const GET_SINGLE_USER =
+  process.env.REACT_APP_ENDPOINT + "user/getsingleuser/";
+export const GET_SINGLE_GIE = process.env.REACT_APP_ENDPOINT + "gie/profile/";
+export const GET_SINGLE_AGENCY =
+  process.env.REACT_APP_ENDPOINT + "agency/profile/";
+export const GET_OTHER_USER_NAMES_FORTEAM =
+  process.env.REACT_APP_ENDPOINT + "user/getTeams/otherUsersNames/";
+export const GET_GIE_TOKENS_TRANSACTION =
+  process.env.REACT_APP_ENDPOINT + "tokentransaction/get/";
+export const GET_RECENT_GIES =
+  process.env.REACT_APP_ENDPOINT + "gie/recentgies";
+export const GET_RECENT_USERS =
+  process.env.REACT_APP_ENDPOINT + "user/recentusers/null/null";
+export const GET_RECENT_HOUSES =
+  process.env.REACT_APP_ENDPOINT + "house/getRecentHouses";
+export const GET_RECENT_TEAMS =
+  process.env.REACT_APP_ENDPOINT + "user/recentteams/null/null";
+export const GET_RECENT_AGENCIES =
+  process.env.REACT_APP_ENDPOINT + "agency/recentagencies/null";
+export const GET_TEAM_BY_MEMBER =
+  process.env.REACT_APP_ENDPOINT + "user/getteams/bymember/";
+export const GET_TEAM_LENGTH_BY_MEMBER =
+  process.env.REACT_APP_ENDPOINT + "user/getteams/bymember/length/";
+export const SEND_MULTIPLE_NOTIFICATIONS =
+  process.env.REACT_APP_ENDPOINT + "admin/sendNotifications";
+export const LINK_AGENCY_TO_TEAM =
+  process.env.REACT_APP_ENDPOINT + "user/team/link/agency/";
