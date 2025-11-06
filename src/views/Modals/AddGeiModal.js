@@ -34,7 +34,6 @@ const AddGeiModal = ({ handleclose,fetchGEIS }) => {
   // Basic validation
   if (
     name.trim() === "" ||
-    contact.trim() === "" ||
     tokens === null ||
     !expiryDate
   ) {
@@ -58,14 +57,14 @@ const AddGeiModal = ({ handleclose,fetchGEIS }) => {
   const requestbody = {
     name: name,
     phone: contact.slice(countryCode.length - 1),
-    countryCode: countryCode,
+    countryCode: contact.trim()===""?"":countryCode,
     tokens: tokens,
     expiresOn: expiryDate,
   };
 
   const response = await addGei(requestbody);
   if (!response.error) {
-    toastService.success(`GEI Added Successfully`);
+    toastService.success(`GIE Added Successfully`);
     fetchGEIS();
     handleclose();
   }
