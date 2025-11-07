@@ -20,6 +20,7 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
     e.preventDefault()
     handleclose()
   }
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   return (
     <>
       <Col lg="7" md="7">
@@ -93,7 +94,7 @@ const ViewUserModal = ({ handleclose, userdetails }) => {
                             >
                               <img
                                 style={{ height: "100%", width: "100%",objectFit:'cover' }}
-                                src={`https://api.videorpi.com/${userdetails.image}`}
+                                src={`${baseUrl}${userdetails.image}`}
                               />
                             </div>
                           )}

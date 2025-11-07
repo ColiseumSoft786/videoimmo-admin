@@ -76,6 +76,7 @@ const Houses = () => {
   const [totalitems,settotalitems] = useState(0)
   const [isconfirm,setisconfirm] = useState(false)
   const [deleteid,setdeleteid] = useState('')
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   const getpages = async () => {
     let pages = null;
     if (userid) {
@@ -381,7 +382,7 @@ const Houses = () => {
                                     maxHeight: "100%",
                                     maxWidth: "100%",
                                   }}
-                                  src={`https://api.videorpi.com/${house.thumbnail}`}
+                                  src={`${baseUrl}${house.thumbnail}`}
                                 />
                               )}
                             </div>
@@ -393,7 +394,7 @@ const Houses = () => {
                             <Button
                               color="danger"
                               tag="a"
-                              href={`https://web.videorpi.com/v/${getHouseTimestamp(
+                              href={`https://web.video-immo.com/v/${getHouseTimestamp(
                                 house.createdAt
                               )}`}
                               target="_blank"

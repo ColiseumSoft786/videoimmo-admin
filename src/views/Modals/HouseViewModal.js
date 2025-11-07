@@ -133,7 +133,7 @@ const HouseViewModal = ({ handleclose, houseDetails }) => {
                 }}
               >
                 <QRCodeSVG
-                  value={`https://web.videorpi.com/v/${getHouseTimestamp(
+                  value={`https://web.video-immo.com/v/${getHouseTimestamp(
                     houseDetails.createdAt
                   )}`}
                   size={200}

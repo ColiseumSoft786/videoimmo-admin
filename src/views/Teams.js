@@ -65,6 +65,7 @@ const Teams = () => {
   const [managerconfirm,setmanagerconfirm] = useState(false)
   const [memberconfirm,setmemberconfirm] = useState(false)
   const [deleteid,setdeleteid] = useState('')
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   console.log('this is teamt id ',managerid)
   const handlegetteam = async () => {
     try {
@@ -179,7 +180,7 @@ const Teams = () => {
                               >
                                 <img
                                   style={{ height: "100%", width: "100%" }}
-                                  src={`https://api.videorpi.com/${manager.image}`}
+                                  src={`${baseUrl}${manager.image}`}
                                 />
                               </div>
                             )}
@@ -253,7 +254,7 @@ const Teams = () => {
                               >
                                 <img
                                   style={{ height: "100%", width: "100%" }}
-                                  src={`https://api.videorpi.com/${memeber.image}`}
+                                  src={`${baseUrl}${memeber.image}`}
                                 />
                               </div>
                             )}

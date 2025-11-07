@@ -100,6 +100,7 @@ const Agencies = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   const getpages = async () => {
     let pages = null;
     if (gieId) {
@@ -410,7 +411,7 @@ const Agencies = () => {
                               >
                                 <img
                                   style={{ height: "100%", width: "100%",objectFit:'cover'}}
-                                  src={`https://api.videorpi.com/${agency.image}`}
+                                  src={`${baseUrl}${agency.image}`}
                                 />
                               </div>
                             )}

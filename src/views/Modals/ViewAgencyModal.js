@@ -20,6 +20,7 @@ const ViewAgencyModal = ({ handleclose, agencyDetails }) => {
     e.preventDefault()
     handleclose()
   }
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   return (
     <>
       <Col lg="7" md="7">
@@ -93,7 +94,7 @@ const ViewAgencyModal = ({ handleclose, agencyDetails }) => {
                             >
                               <img
                                 style={{ height: "100%", width: "100%",objectFit:'cover' }}
-                                src={`https://api.videorpi.com/${agencyDetails.image}`}
+                                src={`${baseUrl}${agencyDetails.image}`}
                               />
                             </div>
                           )}

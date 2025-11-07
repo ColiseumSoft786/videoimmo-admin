@@ -58,6 +58,7 @@ const Videos = () => {
     "agency4",
   ]);
   const [allGEI, setAllGEI] = useState(["GEI1", "GEI2", "GEI3"]);
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   const handlegetallVideos = async () => {
     try {
       setisloading(true)
@@ -172,7 +173,7 @@ const Videos = () => {
                           >
                             <img
                               style={{ height: "100%", width: "100%" }}
-                              src={`https://api.videorpi.com/${video.thumbnail}`}
+                              src={`${baseUrl}${video.thumbnail}`}
                             />
                           </div>
                         </td>

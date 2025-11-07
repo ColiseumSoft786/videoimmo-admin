@@ -92,6 +92,7 @@ const Users = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   const navigate = useNavigate();
   const getpages = async () => {
     let pages = null;
@@ -473,7 +474,7 @@ const Users = () => {
                                     width: "100%",
                                     objectFit: "cover",
                                   }}
-                                  src={`https://api.videorpi.com/${user.image}`}
+                                  src={`${baseUrl}${user.image}`}
                                 />
                               </div>
                             )}

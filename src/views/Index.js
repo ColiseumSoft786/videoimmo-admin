@@ -64,6 +64,7 @@ const Dashboard = (props) => {
   const [recentTeams, setRecentTeams] = useState([]);
   const [recentGies, setRecentGies] = useState([]);
   const [isloading, setislaoding] = useState(["gie", "agency", "user", "team"]);
+  const baseUrl = process.env.REACT_APP_ENDPOINT;
   const getrecentitems = async () => {
     setislaoding(["gie", "agency", "user", "team"]);
 
@@ -207,7 +208,7 @@ const Dashboard = (props) => {
                             }}>
                             <img
                               style={{ height: "100%", width: "100%" }}
-                              src={`https://api.videorpi.com/${agency.image}`}
+                              src={`${baseUrl}${agency.image}`}
                             />
                           </div>
                         )}
@@ -336,7 +337,7 @@ const Dashboard = (props) => {
                             ) : (
                               <img
                                 style={{ height: "100%", width: "100%" }}
-                                src={`https://api.videorpi.com/${user.thumbnail}`}
+                                src={`${baseUrl}${user.thumbnail}`}
                               />
                             )}
                           </div>
