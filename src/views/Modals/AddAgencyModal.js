@@ -32,7 +32,6 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
     e.preventDefault();
     if (
       name.trim() === "" ||
-      contact.trim() === "" ||
       selectedGIE.trim()===''
     ) {
       toastService.warn("All fields must be filled");
@@ -47,8 +46,8 @@ const AddAgencyModal = ({ handleclose,fetchagencies ,GEIs}) => {
       const requestbody = {
     image:"",
       name:name,
-      phone:contact.slice(countryCode.length-1),
-      countryCode:countryCode,
+      phone:contact.slice(countryCode.length-1).trim()!==""?contact.slice(countryCode.length-1):"",
+      countryCode:contact.slice(countryCode.length-1).trim()===""?"":countryCode,
       gie: selectedGIE
     }
     const response = await addAgency(requestbody)
