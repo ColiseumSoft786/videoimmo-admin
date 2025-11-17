@@ -34,7 +34,6 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
 
   if (
     name.trim() === "" ||
-    contact.trim() === "" ||
     tokens === null ||
     !expiryDate
   ) {
@@ -67,8 +66,8 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
 
   const requestbody = {
     name: name,
-    phone: contact.slice(countryCode.length - 1),
-    countryCode: countryCode,
+    phone: contact.slice(countryCode.length - 1).trim()===""?"":contact.slice(countryCode.length - 1),
+    countryCode: contact.slice(countryCode.length - 1).trim()===""?"":countryCode,
     tokens: tokens,
     expiresOn: expiryDate,
     completeNumber:`${countryCode}${contact.slice(countryCode.length-1)}`
