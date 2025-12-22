@@ -92,6 +92,7 @@ const Users = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  const [sortType,setSortType] = useState('-1')
   const baseUrl = process.env.REACT_APP_ENDPOINT;
   const navigate = useNavigate();
   const getpages = async () => {
@@ -155,13 +156,13 @@ const Users = () => {
         response = await getSingleUser(userId);
       }
       if (agencyId !== "null" && !issearched) {
-        response = await getAllAgencyUsers(agencyId, page);
+        response = await getAllAgencyUsers(agencyId, page , sortType);
       }
       if (agencyId === "null" && !issearched) {
-        response = await getAllGieUsers(gieId, page);
+        response = await getAllGieUsers(gieId, page , sortType);
       }
       if (!gieId && !agencyId && !userId && !issearched) {
-        response = await getAllUsers(page);
+        response = await getAllUsers(page,sortType);
       }
       console.log("Users", response);
       if (!response.error && !gie.error) {
@@ -198,7 +199,7 @@ const Users = () => {
     if (agencyId && agencyId !== "null") {
       setSelectedAgency(agencyId);
     }
-  }, [location]);
+  }, [location,sortType]);
   useEffect(() => {
     console.log("all Users", users);
   }, [users]);
@@ -340,13 +341,13 @@ const Users = () => {
                     display: "flex",
                     gap: "20px",
                     maxHeight: "50px",
-                    width: "85%",
+                    width: "90%",
                     alignItems: "center",
                   }}
                   onSubmit={(e) => handleFilterUsers(e)}>
                   <InputGroup
                     className="input-group-alternative"
-                    style={{ width: "25%" }}>
+                    style={{ width: "18%" }}>
                     <Input
                       type="select"
                       value={selectedGEI}
@@ -363,7 +364,7 @@ const Users = () => {
                   </InputGroup>
                   <InputGroup
                     className="input-group-alternative"
-                    style={{ width: "25%" }}>
+                    style={{ width: "18%" }}>
                     <Input
                       type="select"
                       value={selectedAgency}
@@ -383,6 +384,21 @@ const Users = () => {
                           </option>
                         );
                       })}
+                    </Input>
+                  </InputGroup>
+                  <InputGroup
+                    className="input-group-alternative"
+                    style={{ width: "18%" }}>
+                    <Input
+                      type="select"
+                      value={sortType}
+                      onChange={(e) => setSortType(e.target.value)}>
+                          <option value={'1'} >
+                            Sort by increasing houses
+                          </option>
+                          <option value={'-1'} >
+                            Sort by decreasing houses
+                          </option>
                     </Input>
                   </InputGroup>
                   <div className="text-center">
