@@ -108,7 +108,7 @@ const Users = () => {
     }
     if (!pages.error) {
       settotalitems(Number(pages.data));
-      settotalpages(Math.ceil(pages.data / 20));
+      settotalpages(Math.ceil(pages.data / 10));
     } else {
       settotalitems(0);
       settotalpages(1);
@@ -261,7 +261,7 @@ const Users = () => {
   useEffect(() => {
     setlistitemstoshow(
       listitems.filter((item) =>
-        item.fname.toLowerCase().includes(searchText.toLowerCase())
+        item.fname.toLowerCase().includes(searchText.toLowerCase())||item.completePhone.toLowerCase().includes(searchText.toLowerCase())
       )
     );
   }, [searchText]);
@@ -290,7 +290,7 @@ const Users = () => {
                     </InputGroupAddon>
                     <Input
                       disabled={isfetching}
-                      placeholder="Search User"
+                      placeholder="Search User by name or phone"
                       type="text"
                       value={searchText}
                       onChange={(e) => setSearchText(e.target.value)}
@@ -457,6 +457,7 @@ const Users = () => {
                       <th scope="col">Full Name</th>
                       <th scope="col">Mobile #</th>
                       <th scope="col">House</th>
+                      <th scope="col">No. of Houses</th>
                       <th scope="col">Agency</th>
                       <th scope="col">GIE</th>
                       <th scope="col">Manager Of</th>
@@ -507,6 +508,9 @@ const Users = () => {
                               }>
                               List Houses
                             </Button>
+                          </td>
+                          <td>
+                            {user?.houseCount}
                           </td>
                           <td>{user?.agency?.name}</td>
                           <td>{user?.gie?.name}</td>
