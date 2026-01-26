@@ -24,42 +24,51 @@ import {
 } from "reactstrap";
 import toastService from "Toaster/toaster";
 
-const AddMemberModal = ({ handleclose,team, fetchteam }) => {
-    const [allUsers,setAllUsers]= useState([]);
-    const [selectedMembers,setselectedMembers]=useState([]);
-    const [inputValue,setInputValue] = useState("");
-    const handleGetAllUserNames = async()=>{
+const AddMemberModal = ({ handleclose, team, fetchteam }) => {
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedMembers, setselectedMembers] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+  const handleGetAllUserNames = async () => {
     try {
-        const response = await getotherusernamesforteam(team._id,team?.agency?._id)
-        if(!response.error){
-            setAllUsers(response.data.data)
-        }
+      setIsFetching(true);
+      const response = await getotherusernamesforteam(
+        team._id,
+        team?.agency?._id
+      );
+      if (!response.error) {
+        setAllUsers(response.data.data);
+      }
     } catch (error) {
-        console.log(error)
+      console.log(error);
+    } finally {
+      setIsFetching(false);
     }
-  }
-  useEffect(()=>{
-    handleGetAllUserNames()
-  },[])
- const handleAddMember = async(e)=>{
-    e.preventDefault()
+  };
+  useEffect(() => {
+    handleGetAllUserNames();
+  }, []);
+  const handleAddMember = async (e) => {
+    e.preventDefault();
     try {
-        if(selectedMembers.length===0){
-            toastService.warn('Please Select Members')
-            return
-        }
-        const requestbody = [...team.members,...selectedMembers]
-        console.log('this is r body',requestbody,team._id)
-        const response = await updateTeamMembers(requestbody,team._id)
-        if(!response.error){
-            toastService.success('Members Added Successfully')
-            fetchteam()
-            handleclose()
-        }
+      if (selectedMembers.length === 0) {
+        toastService.warn("Please Select Members");
+        return;
+      }
+      const requestbody = [...team.members, ...selectedMembers];
+      console.log("this is r body", requestbody, team._id);
+      const response = await updateTeamMembers(requestbody, team._id);
+      if (!response.error) {
+        toastService.success("Members Added Successfully");
+        fetchteam();
+        handleclose();
+      }
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-  }
+  };
   const handleSelectMembers = (id) => {
     const isExisting = selectedMembers.find((sm) => sm === id);
     if (isExisting) {
@@ -67,12 +76,24 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
     } else {
       setselectedMembers((prev) => [...prev, id]);
     }
-    setInputValue("")
+    setSearchText("");
   };
-  const handleRemoveMembers = (id)=>{
-    const filteredMembers = selectedMembers.filter((sm)=>sm!==id);
-    setselectedMembers(filteredMembers)
-  }
+  const handleRemoveMembers = (id) => {
+    const filteredMembers = selectedMembers.filter((sm) => sm !== id);
+    setselectedMembers(filteredMembers);
+  };
+  // to filter the users with search query
+  useEffect(() => {
+    if (searchText.trim() !== "") {
+      setFilteredUsers(
+        allUsers.filter((au) =>
+          au.fname.toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredUsers([]);
+    }
+  }, [searchText]);
   return (
     <>
       <Col lg="5" md="7">
@@ -91,61 +112,113 @@ const AddMemberModal = ({ handleclose,team, fetchteam }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <span style={{fontSize:'20px',fontWeight:'bold'}}>Add Member</span>
+              <span style={{ fontSize: "20px", fontWeight: "bold" }}>
+                Add Member
+              </span>
             </div>
             <Form role="form" onSubmit={(e) => handleAddMember(e)}>
               <FormGroup className="mb-3">
                 <label>Select Member</label>
-                <InputGroup
-                    className="input-group-alternative"
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="fas fa-search" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    disabled={isFetching}
+                    placeholder="Search User by name or phone"
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
+                </InputGroup>
+                {searchText.trim() !== "" && (
+                  <div
+                    style={{
+                      backgroundColor: "white",
+                      position: "absolute",
+                      top: "180px",
+                      right: "50px",
+                      width: "87%",
+                      maxHeight: "40vw",
+                      overflowY: "scroll",
+                      zIndex: 19,
+                    }}
                   >
-                    <Input
-                      type="select"
-                      value={inputValue}
-                      onChange={(e) => handleSelectMembers(e.target.value)}
-                    >
-                      <option value="">Select Member</option>
-                      {allUsers.map((user, index) => {
-                        return (
-                          <option value={user._id} key={index}>
-                            {user.fname}
-                          </option>
-                        );
-                      })}
-                    </Input>
-                  </InputGroup>
+                    {filteredUsers.map((item, index) => {
+                      return (
+                        <div
+                          onClick={() => handleSelectMembers(item._id)}
+                          style={{
+                            padding: "10px",
+                            textAlign: "left",
+                            cursor: "pointer",
+                          }}
+                          key={index}
+                        >
+                          {item.fname}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* <InputGroup className="input-group-alternative">
+                  <Input
+                    type="select"
+                    value={inputValue}
+                    onChange={(e) => handleSelectMembers(e.target.value)}
+                  >
+                    <option value="">Select Member</option>
+                    {allUsers.map((user, index) => {
+                      return (
+                        <option value={user._id} key={index}>
+                          {user.fname}
+                        </option>
+                      );
+                    })}
+                  </Input>
+                </InputGroup> */}
               </FormGroup>
-              {selectedMembers.length>0&&<div style={{ backgroundColor: "white", maxHeight:"40vh",overflowY:"scroll" }}>
-                {selectedMembers.map((sm) => {
-                  return (
-                    <div
-                      style={{
-                        fontSize: "15px",
-                        position: "relative",
-                        padding: "5px",
-                        border: "1px solid #D9D9D9",
-                      }}
-                    >
-                      {allUsers.find((au) => au._id === sm).fname}{" "}
-                      <span
-                      onClick={()=>handleRemoveMembers(sm)}
+              {selectedMembers.length > 0 && (
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    maxHeight: "40vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {selectedMembers.map((sm) => {
+                    return (
+                      <div
                         style={{
                           fontSize: "15px",
-                          position: "absolute",
-                          top: "0",
-                          cursor: "pointer",
-                          right: "1%",
-                          height: "100%",
-                          alignContent: "center",
-                          alignItems: "center",
+                          position: "relative",
+                          padding: "5px",
+                          border: "1px solid #D9D9D9",
                         }}
                       >
-                        &times;
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>}
+                        {allUsers.find((au) => au._id === sm).fname}{" "}
+                        <span
+                          onClick={() => handleRemoveMembers(sm)}
+                          style={{
+                            fontSize: "15px",
+                            position: "absolute",
+                            top: "0",
+                            cursor: "pointer",
+                            right: "1%",
+                            height: "100%",
+                            alignContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          &times;
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">
                   ADD

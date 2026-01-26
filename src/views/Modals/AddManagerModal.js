@@ -25,10 +25,13 @@ import toastService from "Toaster/toaster";
 
 const AddManagerModal = ({ handleclose, team, fetchteam }) => {
   const [allUsers, setAllUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedManagers, setSelectedManagers] = useState([]);
-  const [inputValue,setInputValue] = useState("")
+  const [isFetching, setIsFetching] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const handleGetAllUserNames = async () => {
     try {
+      setIsFetching(true);
       const response = await getotherusernamesforteam(
         team._id,
         team?.agency?._id
@@ -38,6 +41,8 @@ const AddManagerModal = ({ handleclose, team, fetchteam }) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsFetching(false);
     }
   };
   useEffect(() => {
@@ -69,15 +74,27 @@ const AddManagerModal = ({ handleclose, team, fetchteam }) => {
     } else {
       setSelectedManagers((prev) => [...prev, id]);
     }
-    setInputValue("")
+    setSearchText("");
   };
-  const handleRemoveManagers = (id)=>{
-    const filteredManagers = selectedManagers.filter((sm)=>sm!==id);
-    setSelectedManagers(filteredManagers)
-  }
+  const handleRemoveManagers = (id) => {
+    const filteredManagers = selectedManagers.filter((sm) => sm !== id);
+    setSelectedManagers(filteredManagers);
+  };
   useEffect(() => {
     console.log("these are the selected manages", selectedManagers);
   }, [selectedManagers]);
+  // to filter the user by search query
+  useEffect(() => {
+    if (searchText.trim() !== "") {
+      setFilteredUsers(
+        allUsers.filter((au) =>
+          au.fname.toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredUsers([]);
+    }
+  }, [searchText]);
   return (
     <>
       <Col lg="5" md="7">
@@ -104,6 +121,53 @@ const AddManagerModal = ({ handleclose, team, fetchteam }) => {
               <FormGroup className="mb-3">
                 <label>Select Manager</label>
                 <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="fas fa-search" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    disabled={isFetching}
+                    placeholder="Search User by name or phone"
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
+                </InputGroup>
+                {searchText.trim() !== "" && (
+                  <div
+                    style={{
+                      backgroundColor: "white",
+                      position: "absolute",
+                      top: "180px",
+                      right: "50px",
+                      width: "87%",
+                      maxHeight: "40vw",
+                      overflowY: "scroll",
+                      zIndex: 19,
+                    }}
+                  >
+                    {filteredUsers.map((item, index) => {
+                      return (
+                        <div
+                          onClick={() => handleSelectManagers(item._id)}
+                          style={{
+                            padding: "10px",
+                            textAlign: "left",
+                            cursor: "pointer",
+                          }}
+                          key={index}
+                        >
+                          {item.fname}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </FormGroup>
+              {/* <FormGroup className="mb-3">
+                <label>Select Manager</label>
+                <InputGroup className="input-group-alternative">
                   <Input
                     type="select"
                     value={inputValue}
@@ -119,38 +183,46 @@ const AddManagerModal = ({ handleclose, team, fetchteam }) => {
                     })}
                   </Input>
                 </InputGroup>
-              </FormGroup>
-              {selectedManagers.length>0&&<div style={{ backgroundColor: "white", maxHeight:"40vh",overflowY:"scroll" }}>
-                {selectedManagers.map((sm) => {
-                  return (
-                    <div
-                      style={{
-                        fontSize: "15px",
-                        position: "relative",
-                        padding: "5px",
-                        border: "1px solid #D9D9D9",
-                      }}
-                    >
-                      {allUsers.find((au) => au._id === sm).fname}{" "}
-                      <span
-                      onClick={()=>handleRemoveManagers(sm)}
+              </FormGroup> */}
+              {selectedManagers.length > 0 && (
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    maxHeight: "40vh",
+                    overflowY: "scroll",
+                  }}
+                >
+                  {selectedManagers.map((sm) => {
+                    return (
+                      <div
                         style={{
                           fontSize: "15px",
-                          position: "absolute",
-                          top: "0",
-                          cursor: "pointer",
-                          right: "1%",
-                          height: "100%",
-                          alignContent: "center",
-                          alignItems: "center",
+                          position: "relative",
+                          padding: "5px",
+                          border: "1px solid #D9D9D9",
                         }}
                       >
-                        &times;
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>}
+                        {allUsers.find((au) => au._id === sm).fname}{" "}
+                        <span
+                          onClick={() => handleRemoveManagers(sm)}
+                          style={{
+                            fontSize: "15px",
+                            position: "absolute",
+                            top: "0",
+                            cursor: "pointer",
+                            right: "1%",
+                            height: "100%",
+                            alignContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          &times;
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">
                   ADD
