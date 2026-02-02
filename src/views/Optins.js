@@ -16,29 +16,16 @@
 
 */
 // reactstrap components
-import { GetAllAdmins } from "Api/Admins";
 import Header from "components/Headers/Header";
 import Loader from "Loader/Loader";
 import { useEffect, useState } from "react";
 import "./Modals/enhancements.css";
 import {
-  Badge,
   Card,
   CardHeader,
-  CardFooter,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
   Container,
   Row,
-  UncontrolledTooltip,
   Button,
   Form,
   InputGroup,
@@ -47,51 +34,22 @@ import {
   InputGroupText,
   FormGroup,
 } from "reactstrap";
-import EditAdminModal from "./Modals/EditAdminModal";
-import ViewAdminModal from "./Modals/ViewAdminModal";
-import { deleteAdmin } from "Api/Admins";
-import toastService from "Toaster/toaster";
-import AddAdminModal from "./Modals/AddAdminModal";
 import {
-  useAsyncError,
   useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import AddGeiModal from "./Modals/AddGeiModal";
-import ViewGeiModal from "./Modals/ViewGeiModal";
-import EditGeiModal from "./Modals/EditGeiModal";
-import { getAllGEI } from "Api/gei";
-import { deleteGEI } from "Api/gei";
-import { getallAgencies } from "Api/agency";
-import { getGEIAgencies } from "Api/agency";
-import { deleteAgency } from "Api/agency";
-import ViewAgencyModal from "./Modals/ViewAgencyModal";
-import AddAgencyModal from "./Modals/AddAgencyModal";
-import EditAgency from "./Modals/EditAgency";
-import { getAllTeams } from "Api/teams";
 import { getAllGIESNames } from "Api/gei";
-import { getAllAgenciesNames } from "Api/agency";
 import { getAllAgenciesNamesByGie } from "Api/agency";
-import { getAllTeamsByGie } from "Api/teams";
-import { getAllTeamsByAgency } from "Api/teams";
 import AddTeamModal from "./Modals/AddTeamModal";
-import { deleteTeam } from "Api/teams";
-import { getGieTeamsLength } from "Api/teams";
-import { getAgencyTeamsLength } from "Api/teams";
-import { getAllTeamsLength } from "Api/teams";
-import Teams from "./Teams";
-import { getManagerTeam } from "Api/Users";
 import ConfirmModal from "./Modals/ConfirmModals";
-import { getAllTeamsNames } from "Api/teams";
 import { getAllUserNames } from "Api/Users";
-import { getTeamsByUserId } from "Api/teams";
-import { getTeamlengthByUserid } from "Api/teams";
 import LinkAgencyModal from "./Modals/LinkAgencyModal";
+import { getAllFilteredOptins } from "Api/optins";
+import { format } from "date-fns";
 // core components
 
-const AllTeams = () => {
+const Optins = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { page, gieId, agencyId, userid } = useParams();
@@ -101,104 +59,77 @@ const AllTeams = () => {
   const [selectedGEI, setSelectedGEI] = useState("");
   const [allAgencies, setAllAgencies] = useState([]);
   const [allGEI, setAllGEI] = useState([]);
-  const [allteams, setallteams] = useState("");
-  const [isadding, setisadding] = useState(false);
+  const [allOptins, setAllOptins] = useState([]);
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems, settotalitems] = useState(0);
-  const [isconfirm, setisconfirm] = useState(false);
-  const [deleteid, setdeleteid] = useState("");
   const [listitems, setlistitems] = useState([]);
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
-  const [teamToLink,setTeamToLink] = useState(null)
-  const getpages = async () => {
-    let pages = null;
-    const issearched = window.location.pathname.includes('searched')
-    if(issearched&&userid){
-      pages = await getTeamlengthByUserid(userid)
-    }else{
-    if (gieId && agencyId === "null") {
-      pages = await getGieTeamsLength(gieId);
-    }
-    if (agencyId && agencyId !== "null") {
-      pages = await getAgencyTeamsLength(agencyId);
-    }
-    if (!agencyId && !gieId) {
-      pages = await getAllTeamsLength();
-    }}
-    if (!pages.error) {
-      settotalitems(Number(pages.data));
-      settotalpages(Math.ceil(pages.data / 20));
-    } else {
-      settotalitems(0);
-      settotalpages(1);
-    }
-  };
   const handleprev = () => {
     if (currentpage > 1) {
       const prev = currentpage - 1;
-      const issearched = window.location.pathname.includes('searched')
-      if(issearched&&userid){
-        navigate(`/teams/searched/${userid}/${prev}`)
-      }else{
-      if (agencyId !== "null") {
-        navigate(`/teams/${gieId}/${agencyId}/${prev}`);
+      const issearched = window.location.pathname.includes("searched");
+      if (issearched && userid) {
+        navigate(`/prospects/searched/${userid}/${prev}`);
+      } else {
+        if (agencyId !== "null") {
+          navigate(`/prospects/${gieId}/${agencyId}/${prev}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/prospects/${gieId}/null/${prev}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/prospects/${prev}`);
+        }
       }
-      if (agencyId === "null") {
-        navigate(`/teams/${gieId}/null/${prev}`);
-      }
-      if (!gieId && !agencyId) {
-        navigate(`/teams/${prev}`);
-      }}
     }
   };
   const handlenext = () => {
     if (currentpage < totalpages) {
       const next = currentpage + 1;
-      const issearched = window.location.pathname.includes('searched')
-      if(issearched&&userid){
-        navigate(`/teams/searched/${userid}/${next}`)
-      }else{
-      if (agencyId !== "null") {
-        navigate(`/teams/${gieId}/${agencyId}/${next}`);
+      const issearched = window.location.pathname.includes("searched");
+      if (issearched && userid) {
+        navigate(`/prospects/searched/${userid}/${next}`);
+      } else {
+        if (agencyId !== "null") {
+          navigate(`/prospects/${gieId}/${agencyId}/${next}`);
+        }
+        if (agencyId === "null") {
+          navigate(`/prospects/${gieId}/null/${next}`);
+        }
+        if (!gieId && !agencyId) {
+          navigate(`/prospects/${next}`);
+        }
       }
-      if (agencyId === "null") {
-        navigate(`/teams/${gieId}/null/${next}`);
-      }
-      if (!gieId && !agencyId) {
-        navigate(`/teams/${next}`);
-      }}
     }
   };
   useEffect(() => {
     setcurrentpage(Number(page));
   }, [page]);
-  const handlegetallteams = async () => {
+  const handlegetalloptins = async () => {
     setisloading(true);
-    let teams = [];
+    let optins = [];
     const gei = await getAllGIESNames();
     const issearched = window.location.pathname.includes("searched");
     if (userid && issearched) {
-      teams = await getTeamsByUserId(userid,page);
+      optins = await getAllFilteredOptins(page, "null", "null", userid);
     }
     if (gieId && agencyId === "null" && !issearched) {
-      teams = await getAllTeamsByGie(gieId, page);
+      optins = await getAllFilteredOptins(page, gieId, "null", "null");
     }
     if (agencyId && agencyId !== "null" && !issearched) {
-      teams = await getAllTeamsByAgency(agencyId, page);
+      optins = await getAllFilteredOptins(page, "null", agencyId, "null");
     }
     if (!gieId && !agencyId && !issearched) {
-      teams = await getAllTeams(page);
+      optins = await getAllFilteredOptins(page, "null", "null", "null");
     }
-    if (!gei.error && !teams.error) {
+    if (!gei.error && !optins.error) {
       setAllGEI(gei.data);
-      if (issearched) {
-        setallteams(teams.data.data);
-      } else {
-        setallteams(teams.data);
-      }
+      setAllOptins(optins.data.results)
+      settotalitems(Number(optins.data.total));
+      settotalpages(Math.ceil(optins.data.total / 20));
       setisloading(false);
     }
   };
@@ -213,12 +144,11 @@ const AllTeams = () => {
   };
   useEffect(() => {
     if (
-      window.location.pathname.includes("teams") &&
+      window.location.pathname.includes("prospects") &&
       !window.location.pathname.includes("users")
     ) {
-      handlegetallteams();
+      handlegetalloptins();
       handlegetlistitems();
-      getpages();
       if (gieId) {
         setSelectedGEI(gieId);
       }
@@ -229,9 +159,9 @@ const AllTeams = () => {
   }, [location]);
   const handlefilterbyids = () => {
     if (selectedAgency === "") {
-      navigate(`/teams/${selectedGEI}/null/1`);
+      navigate(`/prospects/${selectedGEI}/null/1`);
     } else {
-      navigate(`/teams/${selectedGEI}/${selectedAgency}/1`);
+      navigate(`/prospects/${selectedGEI}/${selectedAgency}/1`);
     }
   };
   const handlegetAgenciesnames = async () => {
@@ -250,20 +180,8 @@ const AllTeams = () => {
       setAllAgencies([]);
     }
   }, [selectedGEI]);
-  const handleDeleteTeam = async (id) => {
-    const response = await deleteTeam(id);
-    if (!response.error) {
-      toastService.success("Team Deleted Successfully");
-      handlegetallteams();
-      setisconfirm(false);
-    }
-  };
-  const handledeleteclick = (id) => {
-    setdeleteid(id);
-    setisconfirm(true);
-  };
   const handlesuggestionclick = (id) => {
-    navigate(`/teams/searched/${id}/1`);
+    navigate(`/prospects/searched/${id}/1`);
     setSearchText("");
   };
   useEffect(() => {
@@ -273,9 +191,12 @@ const AllTeams = () => {
       )
     );
   }, [searchText]);
-  useEffect(()=>{
-    console.log('these are all teams ',allteams)
-  },[allteams])
+  useEffect(() => {
+    console.log("these are all optins ", allOptins);
+  }, [allOptins]);
+  const getHouseTimestamp = (createdAt) => {
+    return new Date(createdAt).getTime(); // or .valueOf()
+  };
   return (
     <>
       <Header />
@@ -349,7 +270,7 @@ const AllTeams = () => {
                   alignContent: "center",
                 }}
               >
-                <h3 className="mb-0">Teams</h3>
+                <h3 className="mb-0">Propects</h3>
                 <Form
                   role="form"
                   style={{
@@ -419,24 +340,15 @@ const AllTeams = () => {
                   <div className="text-center">
                     <Button
                       onClick={() => {
-                        navigate("/teams/1");
+                        navigate("/prospects/1");
                         setSelectedAgency("");
                         setSelectedGEI("");
                       }}
                       className="my-4"
                       color="danger"
-                      disabled={!gieId && !agencyId}
+                      disabled={!gieId && !agencyId && !window.location.pathname.includes("searched")}
                     >
                       Clear Filter
-                    </Button>
-                  </div>
-                  <div className="text-center">
-                    <Button
-                      onClick={() => setisadding(true)}
-                      className="my-4"
-                      color="danger"
-                    >
-                      Add Team
                     </Button>
                   </div>
                 </Form>
@@ -458,74 +370,52 @@ const AllTeams = () => {
                   <thead className="thead-light">
                     <tr>
                       <th scope="col">Sr.#</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Manager</th>
-                      <th scope="col">GIE</th>
-                      <th scope="col">Agency</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Actions</th>
+                      <th scope="col">Client</th>
+                      <th scope="col">User</th>
+                      <th scope="col">House</th>
+                      <th scope="col">Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {allteams.map((team, index) => {
+                    {allOptins.map((optin, index) => {
                       return (
                         <tr>
                           <td>{index + 1}</td>
-                          <td>{team.name}</td>
                           <td>
-                            {team.managers.map((manager, index) => {
-                              return <span>({manager.fname})</span>;
-                            })}
+                            {optin.name} (
+                            <a
+                              href={`tel:${
+                                optin.phone
+                              }`}>
+                              {optin.phone}
+                            </a>
+                            )
+                            </td>
+                          <td>
+                            {optin?.user?.fname} (
+                            <a
+                              href={`tel:${
+                                optin?.user?.country_Code +
+                                optin?.user?.mobile_no
+                              }`}>
+                              {optin?.user?.country_Code +
+                                optin?.user?.mobile_no}
+                            </a>
+                            )
                           </td>
-                          <td>{team.gie?.name}</td>
-                          <td>{team.agency?.name}</td>
-                          <td className="text-center">
-                            <i
-                              style={{ fontSize: "20px" }}
-                              className={`${
-                                team.status === "1"
-                                  ? "ni ni-check-bold text-green"
-                                  : "ni ni-fat-remove text-red"
-                              }`}
-                            />
+                          <td>
+                            <Button
+                              color="danger"
+                              tag="a"
+                              href={`https://web.video-immo.com/v/${getHouseTimestamp(
+                                optin.house.createdAt
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer">
+                              Visit
+                            </Button>
                           </td>
-                          <td className="text-right">
-                            <UncontrolledDropdown>
-                              <DropdownToggle
-                                className="btn-icon-only text-light"
-                                role="button"
-                                size="sm"
-                                color="danger"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                <i className="fas fa-ellipsis-v" />
-                              </DropdownToggle>
-                              <DropdownMenu
-                                className="dropdown-menu-arrow"
-                                right
-                              >
-                                <DropdownItem
-                                  onClick={() => {
-                                    navigate(`/team/${team._id}`);
-                                  }}
-                                >
-                                  Edit
-                                </DropdownItem>
-                                {(!team.agency||team.agency===undefined)&& <DropdownItem
-                                  onClick={() => {
-                                    setTeamToLink(team._id)
-                                  }}
-                                >
-                                  Link Agency
-                                </DropdownItem>}
-                                <DropdownItem
-                                  onClick={() => handledeleteclick(team._id)}
-                                >
-                                  Delete
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </td>
+                          <td>{format(optin.createdAt,"yyyy-MM-dd")}</td>
                         </tr>
                       );
                     })}
@@ -565,44 +455,8 @@ const AllTeams = () => {
           </div>
         </Row>
       </Container>
-      {(isadding || isconfirm || teamToLink) && (
-        <div
-          style={{
-            height: "100vh",
-            width: "100vw",
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: isconfirm ? "15%" : "5vh",
-            zIndex: 20,
-          }}
-        >
-          {isadding && (
-            <AddTeamModal
-              handleclose={() => setisadding(false)}
-              fetchusers={handlegetallteams}
-            />
-          )}
-          {teamToLink && (
-            <LinkAgencyModal
-              handleclose={() => setTeamToLink(null)}
-              teamId = {teamToLink}
-              FetchTeams = {handlegetallteams}
-            />
-          )}
-          {isconfirm && (
-            <ConfirmModal
-              handleclose={() => setisconfirm(false)}
-              handleaction={() => handleDeleteTeam(deleteid)}
-            />
-          )}
-        </div>
-      )}
     </>
   );
 };
 
-export default AllTeams;
+export default Optins;

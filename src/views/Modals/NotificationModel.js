@@ -1,11 +1,4 @@
-import { updateAdminName } from "Api/Admins";
-import { getAllAgenciesNamesByGie } from "Api/agency";
-import { getAllGIESNames } from "Api/gei";
-import { updateTeamName } from "Api/teams";
-import { addUser } from "Api/Users";
-import { updateUserInfo } from "Api/Users";
-import React, { useEffect, useState } from "react";
-import PhoneInput from "react-phone-input-2";
+import React from "react";
 import "react-phone-input-2/lib/style.css";
 import {
   Button,
@@ -16,10 +9,7 @@ import {
   FormGroup,
   Input,
   InputGroup,
-  InputGroupAddon,
-  InputGroupText,
 } from "reactstrap";
-import toastService from "Toaster/toaster";
 
 const NotificationModel = ({ handleclose, handleaction , setTitle,title,setMessage,message,recievers }) => {
   return (

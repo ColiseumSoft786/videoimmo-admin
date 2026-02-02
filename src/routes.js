@@ -16,21 +16,15 @@
 
 */
 import Index from "views/Index.js";
-import Profile from "views/examples/Profile.js";
-import Maps from "views/examples/Maps.js";
-import Register from "views/examples/Register.js";
-import Login from "views/examples/Login.js";
-import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
 import Admins from "views/Admins";
 import Users from "views/Users";
-import Videos from "views/Videos";
 import Houses from "views/Houses";
 import Settings from "views/Settings";
 import GEI from "views/GEI";
 import Agencies from "views/Agencies";
 import AllTeams from "views/AllTeams";
-import Notifications from "views/Notifications";
+import Optins from "views/Optins";
+import NotificationTable from "views/NotificationTable";
 
 var routes = [
   {
@@ -83,10 +77,17 @@ var routes = [
     layout: "/",
   },
   {
-    path: "/notifications",
+    path: "/prospects/:page",
+    name: "Prospects",
+    icon: "ni ni-single-02 text-green",
+    component: <Optins/>,
+    layout: "/",
+  },
+  {
+    path: "/notifications/:page",
     name: "Notifications",
     icon: "ni ni-send text-green",
-    component: <Notifications />,
+    component: <NotificationTable />,
     layout: "/",
   },
   {

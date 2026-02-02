@@ -130,3 +130,5 @@ export const SEND_MULTIPLE_NOTIFICATIONS =
   process.env.REACT_APP_ENDPOINT + "admin/sendNotifications";
 export const LINK_AGENCY_TO_TEAM =
   process.env.REACT_APP_ENDPOINT + "user/team/link/agency/";
+export const GET_FILTERED_OPTINS = process.env.REACT_APP_ENDPOINT + "optin/get/all/";
+export const GET_ALL_NOTIFICATIONS = process.env.REACT_APP_ENDPOINT + "admin/get/notifications/";

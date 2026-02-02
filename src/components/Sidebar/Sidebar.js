@@ -74,7 +74,7 @@ const Sidebar = (props) => {
       return (
         <NavItem key={key}>
           <NavLink
-            to={prop.path==='/settings'||prop.path==='/'||prop.path==='/notifications'?prop.path:`${prop.path.slice(0,-5)}1`}
+            to={prop.path==='/settings'||prop.path==='/'?prop.path:`${prop.path.slice(0,-5)}1`}
             tag={NavLinkRRD}
             onClick={closeCollapse}
           >

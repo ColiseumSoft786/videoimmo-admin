@@ -31,6 +31,8 @@ import Users from "views/Users";
 import AllTeams from "views/AllTeams";
 import Agencies from "views/Agencies";
 import GEI from "views/GEI";
+import Optins from "views/Optins";
+import Notifications from "views/Notifications";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -90,7 +92,10 @@ const Admin = (props) => {
               <Route path="/teams/:gieId/:agencyId/:page" element={<AllTeams />} />
               <Route path="/gies/searched/:gieId" element={<GEI/>}/>
               <Route path="/teams/searched/:userid/:page" element={<AllTeams />} />
+              <Route path="/prospects/:gieId/:agencyId/:page" element={<Optins/>}/>
+              <Route path="/prospects/searched/:userid/:page" element={<Optins/>}/>
               <Route path="/users/:gieId/:agencyId/:page" element={<Users/>}/>
+              <Route path="/create/notification" element={<Notifications/>}/>
               <Route path="/users/searched/:userId" element={<Users/>}/>
               <Route path="/team/:managerid" element={<Teams/>}/>
               <Route path="/agencies/:gieId/:page" element={<Agencies/>}/>
