@@ -47,6 +47,7 @@ import { getAllUserNames } from "Api/Users";
 import LinkAgencyModal from "./Modals/LinkAgencyModal";
 import { getAllFilteredOptins } from "Api/optins";
 import { format } from "date-fns";
+import moment from "moment";
 // core components
 
 const Optins = () => {
@@ -67,6 +68,7 @@ const Optins = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  
   const handleprev = () => {
     if (currentpage > 1) {
       const prev = currentpage - 1;
@@ -378,6 +380,8 @@ const Optins = () => {
                   </thead>
                   <tbody>
                     {allOptins.map((optin, index) => {
+                        const currentDate = moment(optin.createdAt);
+                        const formattedDate = currentDate.format("DD MMM, YYYY");
                       return (
                         <tr>
                           <td>{index + 1}</td>
@@ -415,7 +419,7 @@ const Optins = () => {
                               Visit
                             </Button>
                           </td>
-                          <td>{format(optin.createdAt,"yyyy-MM-dd")}</td>
+                          <td>{formattedDate}</td>
                         </tr>
                       );
                     })}

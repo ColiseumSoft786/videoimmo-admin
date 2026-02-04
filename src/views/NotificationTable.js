@@ -35,6 +35,7 @@ import "./Modals/enhancements.css";
 import { getAllNotifications } from "Api/Admins";
 import { format } from "date-fns";
 import NotificationViewModel from "./Modals/NotificationViewModel";
+import moment from "moment";
 
 // core components
 const NotificationTable = () => {
@@ -148,6 +149,8 @@ const NotificationTable = () => {
                   </thead>
                   <tbody>
                     {notifications?.map((notification, index) => {
+                        const currentDate = moment(notification.createdAt);
+                                                const formattedDate = currentDate.format("DD MMM, YYYY");
                       return (
                         <tr>
                           <td>{index + 1}</td>
@@ -156,7 +159,7 @@ const NotificationTable = () => {
                           <td>{notification.successCount}</td>
                           <td>{notification.failureCount}</td>
                           <td>
-                            {format(notification.createdAt, "yyyy-MM-dd")}
+                            {formattedDate}
                           </td>
                           <td className="text-right">
                             <UncontrolledDropdown>
