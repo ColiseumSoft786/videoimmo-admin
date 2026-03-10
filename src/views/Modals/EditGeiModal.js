@@ -63,14 +63,14 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
     toastService.warn("No Changes To Save");
     return;
   }
-
+  const slicedContact = contact.startsWith("+")?contact.slice(countryCode.length-1):contact.slice(countryCode.length-1);
   const requestbody = {
     name: name,
-    phone: contact.slice(countryCode.length - 1).trim()===""?"":contact.slice(countryCode.length - 1),
-    countryCode: contact.slice(countryCode.length - 1).trim()===""?"":countryCode,
+    phone: slicedContact.trim()===""?"":slicedContact,
+    countryCode: slicedContact.trim()===""?"":countryCode,
     tokens: tokens,
     expiresOn: expiryDate,
-    completeNumber:`${countryCode}${contact.slice(countryCode.length-1)}`
+    completeNumber:slicedContact.trim()===""?"":`${countryCode}${contact.slice(countryCode.length-1)}`
   };
 
   const response = await updateGEI(requestbody, GeitoEdit._id);

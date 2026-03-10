@@ -46,12 +46,13 @@ const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
       toastService.warn("No Changes To Save");
       return;
     }
+    const slicedContact = contact.startsWith("+")?contact.slice(countryCode.length-1):contact.slice(countryCode.length-1);
     const requestbody = {
     image:"",
       name:name,
-      phone:contact.slice(countryCode.length-1).trim()===""?"":contact.slice(countryCode.length-1),
-      countryCode:contact.slice(countryCode.length-1).trim()===""?"":countryCode,
-      completeNumber:`${countryCode}${contact.slice(countryCode.length-1)}`,
+      phone:slicedContact.trim()===""?"":slicedContact,
+      countryCode:slicedContact.trim()===""?"":countryCode,
+      completeNumber:slicedContact.trim()===""?"":`${countryCode}${contact.slice(countryCode.length-1)}`,
       gie: selectedGIE
     }
     const response = await updateAgency(requestbody,agencyToedit._id)
