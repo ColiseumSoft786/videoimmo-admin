@@ -22,6 +22,9 @@ import toastService from "Toaster/toaster";
 const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
   console.log(usertoedit);
   const [fullname, setfullname] = useState(usertoedit.fname);
+  const [isPaymentFree, setPaymentFree] = useState(
+    usertoedit.isPaymentFree ? "yes" : "no"
+  );
   const [contact, setcontact] = useState(
     usertoedit.country_Code + usertoedit.mobile_no
   );
@@ -79,6 +82,7 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
         ? contact.slice(countryCode.length)
         : contact.slice(countryCode.length - 1),
       country_Code: countryCode,
+      isPaymentFree: isPaymentFree==="yes"?true:false,
       gie: selectedGEI.trim() === "" ? null : selectedGEI,
       agency: selectedAgency.trim() === "" ? null : selectedAgency,
     };
@@ -97,7 +101,7 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
     if (selectedAgency === "") {
       setAllAgencies([]);
     }
-    if(selectedGEI===""){
+    if (selectedGEI === "") {
       setSelectedAgency("");
     }
   }, [selectedGEI]);
@@ -221,6 +225,19 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
                   </Input>
                 </InputGroup>
                 {/* </InputGroup> */}
+              </FormGroup>
+              <FormGroup className="mb-3">
+                <label>Payment free ?</label>
+                <InputGroup className="input-group-alternative">
+                  <Input
+                    type="select"
+                    value={isPaymentFree}
+                    onChange={(e) => setPaymentFree(e.target.value)}
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </Input>
+                </InputGroup>
               </FormGroup>
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">

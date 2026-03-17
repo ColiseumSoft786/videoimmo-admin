@@ -9,6 +9,9 @@ import { GET_ALL_USERS_NAMES_BY_AGENCY } from "Api/apiurls";
 import { GET_GIE_USER_LENGTH } from "Api/apiurls";
 import { GET_ALL_USER_NAMES } from "Api/apiurls";
 import { GET_OTHER_USER_NAMES_FORTEAM } from "Api/apiurls";
+import { GET_USER_INVOICES_BY_CUS_ID } from "Api/apiurls";
+import { GET_CUS_CARDS_BY_CUS_ID } from "Api/apiurls";
+import { GET_SUBSCRIPTION_BY_SUB_ID } from "Api/apiurls";
 import { GET_RECENT_USERS } from "Api/apiurls";
 import { GET_SINGLE_USER } from "Api/apiurls";
 import { GET_AGENCY_USER_LENGTH } from "Api/apiurls";
@@ -198,5 +201,38 @@ export const getRecentUsers = async () => {
     return response;
   } catch (error) {
     console.log("error in get recent user ", error);
+  }
+};
+export const getUserInvoices = async (cusId) => {
+  try {
+    const path = GET_USER_INVOICES_BY_CUS_ID + cusId;
+    const response = await getAPI(path, true);
+    console.log("response from get user invoices", response);
+    return response;
+  } catch (error) {
+    console.error("error in get user invoices", error);
+    throw error;
+  }
+};
+export const getUserSubscription = async (subId) => {
+  try {
+    const path = GET_SUBSCRIPTION_BY_SUB_ID + subId;
+    const response = await getAPI(path, true);
+    console.log("response from get user subscription", response);
+    return response;
+  } catch (error) {
+    console.error("error in get user subscription by sub id", error);
+    throw error;
+  }
+};
+export const getUserCards = async (cusId) => {
+  try {
+    const path = GET_CUS_CARDS_BY_CUS_ID + cusId;
+    const response = await getAPI(path, true);
+    console.log("response from get user cards", response);
+    return response;
+  } catch (error) {
+    console.error("error in get user cards", error);
+    throw error;
   }
 };

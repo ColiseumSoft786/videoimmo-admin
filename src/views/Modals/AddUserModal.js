@@ -19,7 +19,6 @@ import {
   InputGroupText,
 } from "reactstrap";
 import toastService from "Toaster/toaster";
-
 const AddUserModal = ({ handleclose, fetchusers }) => {
   const [fullname, setfullname] = useState("");
   const [contact, setcontact] = useState("");
@@ -30,6 +29,7 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
   const [allGEI,setAllGEI] = useState([])
   const [allAgencies,setAllAgencies] = useState([])
   const [isfetchingag,setisfetchingag] = useState(false)
+  const [isPaymentFree,setPaymentFree] = useState("no");
   const handleGetAllGie = async()=>{
     const response = await getAllGIESNames();
     if(!response.error){
@@ -78,6 +78,7 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
       type: "user",
       gie: selectedGEI=== "" ? null : selectedGEI,
       agency: selectedAgency === "" ? null : selectedAgency,
+      isPaymentFree: isPaymentFree==="yes"?true:false
     };
     const response = await addUser(requestbody);
     if (!response.error) {
@@ -203,6 +204,21 @@ const AddUserModal = ({ handleclose, fetchusers }) => {
                     </Input>
                   </InputGroup>
                 {/* </InputGroup> */}
+              </FormGroup>
+              <FormGroup className="mb-3">
+                <label>Payment free ?</label>
+                <InputGroup
+                    className="input-group-alternative"
+                  >
+                    <Input
+                      type="select"
+                      value={isPaymentFree}
+                      onChange={(e) => setPaymentFree(e.target.value)}
+                    >
+                      <option value="no">No</option>
+                      <option value="yes">Yes</option>
+                    </Input>
+                  </InputGroup>
               </FormGroup>
               <div className="text-center">
                 <Button className="my-4" color="danger" type="submit">

@@ -25,6 +25,7 @@ import Agencies from "views/Agencies";
 import AllTeams from "views/AllTeams";
 import Optins from "views/Optins";
 import NotificationTable from "views/NotificationTable";
+import Invoices from "views/Invoices";
 
 var routes = [
   {
@@ -95,6 +96,13 @@ var routes = [
     name: "Settings",
     icon: "ni ni-settings text-blue",
     component: <Settings />,
+    layout: "/",
+  },
+  {
+    path: "/invoices",
+    name: "Stripe invoices",
+    icon: "ni ni-book-bookmark text-purple",
+    component: <Invoices />,
     layout: "/",
   },
 ];

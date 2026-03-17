@@ -132,3 +132,7 @@ export const LINK_AGENCY_TO_TEAM =
   process.env.REACT_APP_ENDPOINT + "user/team/link/agency/";
 export const GET_FILTERED_OPTINS = process.env.REACT_APP_ENDPOINT + "optin/get/all/";
 export const GET_ALL_NOTIFICATIONS = process.env.REACT_APP_ENDPOINT + "admin/get/notifications/";
+export const GET_USER_INVOICES_BY_CUS_ID = process.env.REACT_APP_ENDPOINT + "mob/payment/getCustomerInvoices/";
+export const GET_SUBSCRIPTION_BY_SUB_ID = process.env.REACT_APP_ENDPOINT + 'mob/payment/getSubscription/';
+export const GET_CUS_CARDS_BY_CUS_ID = process.env.REACT_APP_ENDPOINT + "mob/payment/customerCards/";
+export const GET_ALL_STRIPE_INVOICES = process.env.REACT_APP_ENDPOINT + "payment_transaction/get/all-invoices/";

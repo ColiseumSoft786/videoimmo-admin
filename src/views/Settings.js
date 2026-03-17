@@ -67,7 +67,7 @@ const Settings = () => {
             const settings = response.data.settings
             setsettingsid(settings._id)
             setsecretkey(settings.secretkey)
-            setpublishkey(settings.publishke)
+            setpublishkey(settings.publishkey)
             setuserseconds(settings.seconds)
             setisloading(false)
         }

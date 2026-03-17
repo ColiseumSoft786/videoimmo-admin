@@ -33,6 +33,7 @@ import Agencies from "views/Agencies";
 import GEI from "views/GEI";
 import Optins from "views/Optins";
 import Notifications from "views/Notifications";
+import Invoices from "views/Invoices";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
