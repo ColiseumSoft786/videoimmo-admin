@@ -1,8 +1,10 @@
 import { putAPI } from "Api"
 import { deleteAPI } from "Api"
+import { exportFileGetAPI } from "Api"
 import { postAPI } from "Api"
 import { getAPI } from "Api"
 import { GET_GIE_TOKENS_TRANSACTION } from "Api/apiurls"
+import { EXPORT_GIE_DATA_TO_CSV } from "Api/apiurls"
 import { GET_RECENT_GIES } from "Api/apiurls"
 import { GET_SINGLE_GIE } from "Api/apiurls"
 import { UPDATE_GEI } from "Api/apiurls"
@@ -86,5 +88,15 @@ export const getRecentGies = async()=>{
         return response
     } catch (error) {
         console.log('error in get recent gies ',error)
+    }
+}
+export const exportGieDataToCsv = async(gieId,email)=>{
+    try {
+        const path = EXPORT_GIE_DATA_TO_CSV+`${gieId}/${email}`;
+        const response = await getAPI(path,true)
+        return response;
+    } catch (error) {
+        console.error("error in expor gie data to csv",error);
+        throw error;
     }
 }

@@ -69,6 +69,7 @@ import { getSingleGie } from "Api/gei";
 import GieHistoryModal from "./Modals/GieHistoryModal";
 import ConfirmModal from "./Modals/ConfirmModals";
 import { getAllGIESNames } from "Api/gei";
+import GieExportModal from "./Modals/GieExportModal";
 // core components
 
 const GEI = () => {
@@ -95,6 +96,7 @@ const GEI = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isfetching, setisfetching] = useState(true);
+  const [gieToExport,setGieToExport] = useState(null);
   const getpages = async () => {
     const pages = await getGieslength();
     if (!pages.error) {
@@ -262,9 +264,14 @@ const GEI = () => {
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <h3 className="mb-0">GIEs</h3>
+                <div style={{display:"flex",gap:"5px"}}>
                 <Button color="danger" onClick={() => setisadding(true)}>
                   Add GIE
                 </Button>
+                <Button color="danger" onClick={() => setGieToExport("all")}>
+                  Export to csv
+                </Button>
+                </div>
               </CardHeader>
               {isloading ? (
                 <div
@@ -327,6 +334,11 @@ const GEI = () => {
                                   View History
                                 </DropdownItem>
                                 <DropdownItem
+                                  onClick={() => setGieToExport(gei._id)}
+                                >
+                                  Export to csv
+                                </DropdownItem>
+                                <DropdownItem
                                   onClick={() => handleEditClick(gei)}
                                 >
                                   Edit
@@ -378,7 +390,7 @@ const GEI = () => {
           </div>
         </Row>
       </Container>
-      {(isediting || isviewing || isadding || ishistory || isconfirm) && (
+      {(isediting || isviewing || isadding || ishistory || isconfirm || gieToExport!==null) && (
         <div
           style={{
             height: "100vh",
@@ -422,6 +434,12 @@ const GEI = () => {
             <ConfirmModal
               handleclose={() => setisconfirm(false)}
               handleaction={() => handleDeleteGig(deleteId)}
+            />
+          )}
+          {gieToExport!==null && (
+            <GieExportModal
+              handleclose={() => setGieToExport(null)}
+              gieToExport={gieToExport}
             />
           )}
         </div>

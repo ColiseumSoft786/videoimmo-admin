@@ -762,3 +762,47 @@ export const patchAPIFetch = async (url, data) => {
     };
   }
 };
+export const exportFileGetAPI = async (
+  url,
+  tokenRequired = false,
+  fileName = "download.xlsx",
+) => {
+  try {
+    const headers = {
+      Accept: "*/*",
+    };
+
+    // Add token if required
+    if (tokenRequired) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers["access-token"] = token; // Match backend expectation
+      }
+    }
+
+    const response = await axios.get(url, {
+      responseType: "blob", // important for binary data
+      headers,
+    });
+
+    const blob = new Blob([response.data], {
+      type:
+        response.headers["content-type"] ||
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(downloadUrl);
+    console.log(`✅ File downloaded successfully: ${fileName}`);
+  } catch (error) {
+    console.error("❌ Error exporting file:", error);
+    throw error;
+  }
+};

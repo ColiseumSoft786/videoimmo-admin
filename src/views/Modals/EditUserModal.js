@@ -135,7 +135,7 @@ const EditUserModal = ({ handleclose, usertoedit, fetchUsers }) => {
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
               <span style={{ fontSize: "20px", fontWeight: "bold" }}>
-                Add User
+                Edit User
               </span>
             </div>
             <Form role="form" onSubmit={(e) => handleUseredit(e)}>

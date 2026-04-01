@@ -136,3 +136,4 @@ export const GET_USER_INVOICES_BY_CUS_ID = process.env.REACT_APP_ENDPOINT + "mob
 export const GET_SUBSCRIPTION_BY_SUB_ID = process.env.REACT_APP_ENDPOINT + 'mob/payment/getSubscription/';
 export const GET_CUS_CARDS_BY_CUS_ID = process.env.REACT_APP_ENDPOINT + "mob/payment/customerCards/";
 export const GET_ALL_STRIPE_INVOICES = process.env.REACT_APP_ENDPOINT + "payment_transaction/get/all-invoices/";
+export const EXPORT_GIE_DATA_TO_CSV = process.env.REACT_APP_ENDPOINT + "gie/export/gies/csv/";
