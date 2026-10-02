@@ -21,57 +21,73 @@ import {
 import { addGEi } from "ReduxSlices/AdminSlice";
 import toastService from "Toaster/toaster";
 
-const AddGeiModal = ({ handleclose,fetchGEIS }) => {
+const AddGeiModal = ({ handleclose, fetchGEIS }) => {
   const dispatch = useDispatch()
   const [name, setname] = useState("");
   const [contact, setcontact] = useState("");
   const [tokens, setTokens] = useState(null);
   const [countryCode, setCountryCode] = useState("+33");
-  const [expiryDate,setExpiryDate] = useState()
-  const handleAddGei = async (e) => {
-  e.preventDefault();
+  const [expiryDate, setExpiryDate] = useState("");
+  const [image, setImage] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
-  // Basic validation
-  if (
-    name.trim() === "" ||
-    tokens === null ||
-    !expiryDate
-  ) {
-    toastService.warn("All fields must be filled");
-    return;
-  }
-
-  // ✅ Expiry date check
-  const today = new Date();
-  const selectedDate = new Date(expiryDate);
-
-  // Clear time part for an accurate date-only comparison
-  today.setHours(0, 0, 0, 0);
-  selectedDate.setHours(0, 0, 0, 0);
-
-  if (selectedDate < today) {
-    toastService.warn("Expiry date cannot be in the past");
-    return;
-  }
-
-  const requestbody = {
-    name: name,
-    phone: contact.slice(countryCode.length - 1),
-    countryCode: contact.trim()===""?"":countryCode,
-    tokens: tokens,
-    expiresOn: expiryDate,
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const response = await addGei(requestbody);
-  if (!response.error) {
-    toastService.success(`GIE Added Successfully`);
-    fetchGEIS();
-    handleclose();
-  }
-};
-  useEffect(()=>{
-    console.log('this country code',countryCode,'and',contact,'and',expiryDate)
-  },[countryCode,contact,expiryDate])
+  const handleAddGei = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (
+      name.trim() === "" ||
+      tokens === null ||
+      !expiryDate
+    ) {
+      toastService.warn("All fields must be filled");
+      return;
+    }
+
+    // ✅ Expiry date check
+    const today = new Date();
+    const selectedDate = new Date(expiryDate);
+
+    // Clear time part for an accurate date-only comparison
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      toastService.warn("Expiry date cannot be in the past");
+      return;
+    }
+
+    const requestbody = {
+      image: image,
+      name: name,
+      phone: contact.slice(countryCode.length - 1),
+      countryCode: contact.trim() === "" ? "" : countryCode,
+      tokens: tokens,
+      expiresOn: expiryDate,
+    };
+
+    const response = await addGei(requestbody);
+    if (!response.error) {
+      toastService.success(`GIE Added Successfully`);
+      fetchGEIS();
+      handleclose();
+    }
+  };
+  useEffect(() => {
+    console.log('this country code', countryCode, 'and', contact, 'and', expiryDate)
+  }, [countryCode, contact, expiryDate])
   return (
     <>
       <Col lg="5" md="7">
@@ -90,9 +106,60 @@ const AddGeiModal = ({ handleclose,fetchGEIS }) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <span style={{fontSize:'20px',fontWeight:'bold'}}>Add GIE</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Add GIE</span>
             </div>
             <Form role="form" onSubmit={(e) => handleAddGei(e)}>
+              <FormGroup className="mb-3">
+                <label style={{ display: "block", textAlign: "left", marginBottom: "12px" }}>Logo</label>
+                <label
+                  htmlFor="gie-image-upload"
+                  style={{
+                    display: "inline-flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "110px",
+                    height: "110px",
+                    borderRadius: "16px",
+                    border: "2px dashed #cbd5e1",
+                    backgroundColor: "#f8fafc",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="GIE Logo Preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        color: "#94a3b8",
+                      }}
+                    >
+                      <i className="ni ni-camera-compact" style={{ fontSize: "36px" }} />
+                    </div>
+                  )}
+                  <input
+                    id="gie-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </FormGroup>
               <FormGroup className="mb-3">
                 <label>Name</label>
                 <InputGroup className="input-group-alternative">

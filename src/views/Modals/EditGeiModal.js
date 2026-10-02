@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useDispatch } from "react-redux";
+import config from "Api/config/config";
 import {
   Button,
   Card,
@@ -28,7 +29,28 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
   const [contact, setcontact] = useState(GeitoEdit.countryCode.slice(1)+GeitoEdit.phone);
   const [tokens, setTokens] = useState(GeitoEdit.tokens);
   const [countryCode, setCountryCode] = useState(GeitoEdit.countryCode);
-  const [expiryDate,setExpiryDate] = useState(GeitoEdit.expiresOn.slice(0, 10))
+  const [expiryDate,setExpiryDate] = useState(GeitoEdit.expiresOn.slice(0, 10));
+  const [image, setImage] = useState(GeitoEdit.image || "");
+  const [imagePreview, setImagePreview] = useState(
+    GeitoEdit.image
+      ? GeitoEdit.image.startsWith("data:image")
+        ? GeitoEdit.image
+        : `${config.baseUrl}${GeitoEdit.image}`
+      : null
+  );
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleEditGIE = async (e) => {
   e.preventDefault();
 
@@ -58,13 +80,15 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
     tokens === GeitoEdit.tokens &&
     contact.slice(countryCode.length - 1) === GeitoEdit.phone &&
     expiryDate === GeitoEdit.expiresOn &&
-    countryCode === GeitoEdit.countryCode
+    countryCode === GeitoEdit.countryCode &&
+    image === (GeitoEdit.image || "")
   ) {
     toastService.warn("No Changes To Save");
     return;
   }
   const slicedContact = contact.startsWith("+")?contact.slice(countryCode.length-1):contact.slice(countryCode.length-1);
   const requestbody = {
+    image: image,
     name: name,
     phone: slicedContact.trim()===""?"":slicedContact,
     countryCode: slicedContact.trim()===""?"":countryCode,
@@ -105,6 +129,57 @@ const EditGeiModal = ({ handleclose ,GeitoEdit,fetchGeis}) => {
               <span style={{fontSize:'20px',fontWeight:'bold'}}>Edit GIE</span>
             </div>
             <Form role="form" onSubmit={(e) => handleEditGIE(e)}>
+              <FormGroup className="mb-3">
+                <label style={{ display: "block", textAlign: "left", marginBottom: "12px" }}>Logo</label>
+                <label
+                  htmlFor="edit-gie-image-upload"
+                  style={{
+                    display: "inline-flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "110px",
+                    height: "110px",
+                    borderRadius: "16px",
+                    border: "2px dashed #cbd5e1",
+                    backgroundColor: "#f8fafc",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    position: "relative",
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="GIE Logo Preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        color: "#94a3b8",
+                      }}
+                    >
+                      <i className="ni ni-camera-compact" style={{ fontSize: "36px" }} />
+                    </div>
+                  )}
+                  <input
+                    id="edit-gie-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </FormGroup>
               <FormGroup className="mb-3">
                 <label>Name</label>
                 <InputGroup className="input-group-alternative">
