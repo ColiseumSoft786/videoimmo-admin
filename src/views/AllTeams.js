@@ -243,6 +243,7 @@ const AllTeams = () => {
     }
   };
   useEffect(() => {
+    setSelectedAgency("");
     if (selectedGEI !== "") {
       handlegetAgenciesnames();
     }
