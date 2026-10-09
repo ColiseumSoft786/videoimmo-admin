@@ -223,6 +223,7 @@ const Users = () => {
     }
   };
   useEffect(() => {
+    setSelectedAgency("");
     if (selectedGEI !== "") {
       handlegetAgenciesnames();
     }

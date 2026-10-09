@@ -154,6 +154,7 @@ const Houses = () => {
     }
   };
   useEffect(() => {
+    setSelectedAgency("");
     if (selectedGEI !== "") {
       handlegetAgenciesnames();
     }
