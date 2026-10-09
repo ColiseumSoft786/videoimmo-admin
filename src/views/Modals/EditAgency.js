@@ -23,48 +23,49 @@ import {
 import { addGEi } from "ReduxSlices/AdminSlice";
 import toastService from "Toaster/toaster";
 
-const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
+const EditAgency = ({ handleclose, agencyToedit, fetchagencies, GEIs }) => {
   const dispatch = useDispatch()
   const [name, setname] = useState(agencyToedit.name);
-  const [contact, setcontact] = useState(agencyToedit.countryCode.slice(1)+agencyToedit.phone);
+  const [contact, setcontact] = useState(agencyToedit.countryCode.slice(1) + agencyToedit.phone);
   const [countryCode, setCountryCode] = useState(agencyToedit.countryCode);
-  const [selectedGIE,setSelectedGIE] = useState(agencyToedit.gie._id)
+  const [selectedGIE, setSelectedGIE] = useState(agencyToedit.gie._id)
   const handleAddAgency = async (e) => {
     e.preventDefault();
     if (
       name.trim() === "" ||
-      selectedGIE.trim()===''
+      selectedGIE.trim() === ''
     ) {
       toastService.warn("All fields must be filled");
       return;
     }
     if (
-      name===agencyToedit.name &&
-      contact.slice(countryCode.length-1)===agencyToedit.phone &&
-      selectedGIE===agencyToedit.gie._id
+      name === agencyToedit.name &&
+      contact.slice(countryCode.length - 1) === agencyToedit.phone &&
+      selectedGIE === agencyToedit.gie._id
     ) {
       toastService.warn("No Changes To Save");
       return;
     }
-    const slicedContact = contact.startsWith("+")?contact.slice(countryCode.length-1):contact.slice(countryCode.length-1);
+    const slicedContact = contact.startsWith("+") ? contact.slice(countryCode.length - 1) : contact.slice(countryCode.length - 1);
     const requestbody = {
-    image:"",
-      name:name,
-      phone:slicedContact.trim()===""?"":slicedContact,
-      countryCode:slicedContact.trim()===""?"":countryCode,
-      completeNumber:slicedContact.trim()===""?"":`${countryCode}${contact.slice(countryCode.length-1)}`,
+      image: "",
+      name: name,
+      phone: slicedContact.trim() === "" ? "" : slicedContact,
+      countryCode: slicedContact.trim() === "" ? "" : countryCode,
+      completeNumber: slicedContact.trim() === "" ? "" : `${countryCode}${contact.slice(countryCode.length - 1)}`,
       gie: selectedGIE
     }
-    const response = await updateAgency(requestbody,agencyToedit._id)
-    if(!response.error){
+    const response = await updateAgency(requestbody, agencyToedit._id)
+    if (!response.error) {
       toastService.success(`Agency Updated Successfully`);
       fetchagencies()
       handleclose();
     }
   };
-  useEffect(()=>{
-    console.log('this country code',countryCode,'and',contact)
-  },[countryCode,contact])
+  useEffect(() => {
+    // i want to print here the selectedgie
+    console.log('this country code', countryCode, 'and', contact, 'and this is the selected gie', selectedGIE)
+  }, [countryCode, contact, selectedGIE])
   return (
     <>
       <Col lg="5" md="7">
@@ -83,7 +84,7 @@ const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
           </span>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <span style={{fontSize:'20px',fontWeight:'bold'}}>Add Agency</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Add Agency</span>
             </div>
             <Form role="form" onSubmit={(e) => handleAddAgency(e)}>
               <FormGroup className="mb-3">
@@ -99,22 +100,22 @@ const EditAgency = ({ handleclose,agencyToedit,fetchagencies ,GEIs}) => {
               </FormGroup>
               <FormGroup>
                 <label>GIE</label>
-                 <InputGroup className="input-group-alternative">
-                      <Input
-                        type="select"
-                        value={selectedGIE}
-                        onChange={(e) => setSelectedGIE(e.target.value)}
-                      >
-                        <option value="">Select GEI</option>
-                        {GEIs.map((gei, index) => {
-                          return (
-                              <option value={gei._id} key={index}>
-                                {gei.name}
-                              </option>
-                          );
-                        })}
-                      </Input>
-                    </InputGroup>
+                <InputGroup className="input-group-alternative">
+                  <Input
+                    type="select"
+                    value={selectedGIE}
+                    onChange={(e) => setSelectedGIE(e.target.value)}
+                  >
+                    <option value="">Select GEI</option>
+                    {GEIs.map((gei, index) => {
+                      return (
+                        <option value={gei._id} key={index}>
+                          {gei.name}
+                        </option>
+                      );
+                    })}
+                  </Input>
+                </InputGroup>
               </FormGroup>
               <FormGroup className="mb-3">
                 <label>Phone</label>
